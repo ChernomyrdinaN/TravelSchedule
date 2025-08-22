@@ -1,0 +1,141 @@
+#
+//  openapi.yaml
+//  TravelSchedule
+//
+//  Created by Наталья Черномырдина on 22.08.2025.
+//  Полная спецификация
+
+openapi: 3.0.3
+info:
+  title: API Яндекс Расписаний
+  description: API для получения расписания транспорта
+  version: 1.0.0
+servers:
+  - url: https://api.rasp.yandex.net/v3.0
+    description: Основной сервер API
+
+paths:
+  /nearest_stations:
+    get:
+      tags:
+        - stations
+      summary: Получение ближайших станций
+      operationId: getNearestStations
+      parameters:
+        - name: apikey
+          in: query
+          required: true
+          description: API ключ для доступа
+          schema:
+            type: string
+        - name: lat
+          in: query
+          required: true
+          description: Широта координаты
+          schema:
+            type: number
+            format: float
+        - name: lng
+          in: query
+          required: true
+          description: Долгота координаты
+          schema:
+            type: number
+            format: float
+        - name: distance
+          in: query
+          required: false
+          description: Расстояние поиска в километрах
+          schema:
+            type: integer
+            default: 50
+      responses:
+        '200':
+          description: Успешный ответ со списком станций
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Stations'
+        '400':
+          description: Неверные параметры запроса
+        '403':
+          description: Неверный API ключ
+        '500':
+          description: Ошибка сервера
+
+components:
+  schemas:
+    Stations:
+      type: object
+      properties:
+        pagination:
+          $ref: '#/components/schemas/Pagination'
+        stations:
+          type: array
+          items:
+            $ref: '#/components/schemas/Station'
+      required:
+        - pagination
+        - stations
+
+    Pagination:
+      type: object
+      properties:
+        total:
+          type: integer
+          description: Общее количество станций
+        limit:
+          type: integer
+          description: Лимит на страницу
+        offset:
+          type: integer
+          description: Смещение
+      required:
+        - total
+        - limit
+        - offset
+
+    Station:
+      type: object
+      properties:
+        _type:
+          type: string
+          description: Тип объекта
+        title:
+          type: string
+          description: Название станции
+        code:
+          type: string
+          description: Код станции
+        lat:
+          type: number
+          format: float
+          description: Широта
+        lng:
+          type: number
+          format: float
+          description: Долгота
+        station_type:
+          type: string
+          description: Тип станции
+        transport_type:
+          type: string
+          description: Тип транспорта
+        distance:
+          type: number
+          format: float
+          description: Расстояние в км
+      required:
+        - title
+        - code
+        - lat
+        - lng
+
+  securitySchemes:
+    ApiKeyAuth:
+      type: apiKey
+      in: query
+      name: apikey
+
+security:
+  - ApiKeyAuth: []
