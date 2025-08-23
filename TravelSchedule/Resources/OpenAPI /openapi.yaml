@@ -1,10 +1,3 @@
-#
-//  openapi.yaml
-//  TravelSchedule
-//
-//  Created by Наталья Черномырдина on 22.08.2025.
-//  Полная спецификация
-
 openapi: 3.0.3
 info:
   title: API Яндекс Расписаний
@@ -55,52 +48,23 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Stations'
-        '400':
-          description: Неверные параметры запроса
-        '403':
-          description: Неверный API ключ
-        '500':
-          description: Ошибка сервера
+                $ref: '#/components/schemas/StationsResponse'
 
 components:
   schemas:
-    Stations:
+    StationsResponse:
       type: object
       properties:
-        pagination:
-          $ref: '#/components/schemas/Pagination'
         stations:
           type: array
           items:
             $ref: '#/components/schemas/Station'
       required:
-        - pagination
         - stations
-
-    Pagination:
-      type: object
-      properties:
-        total:
-          type: integer
-          description: Общее количество станций
-        limit:
-          type: integer
-          description: Лимит на страницу
-        offset:
-          type: integer
-          description: Смещение
-      required:
-        - total
-        - limit
-        - offset
 
     Station:
       type: object
       properties:
-        _type:
-          type: string
-          description: Тип объекта
         title:
           type: string
           description: Название станции
@@ -130,12 +94,3 @@ components:
         - code
         - lat
         - lng
-
-  securitySchemes:
-    ApiKeyAuth:
-      type: apiKey
-      in: query
-      name: apikey
-
-security:
-  - ApiKeyAuth: []
