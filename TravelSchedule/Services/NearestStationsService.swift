@@ -14,7 +14,7 @@ import Foundation
 // Создаём псевдоним (typealias) для сгенерированного типа StationsResponse.
 // Полное имя Components.Schemas.StationsResponse соответствует пути в openapi.yaml:
 // components → schemas → StationsResponse
-typealias NearestStationsResponse = Components.Schemas.StationsResponse
+typealias NearestStationsResponse = Components.Schemas.Stations
 
 // Определяем протокол для нашего сервиса (хорошая практика для тестирования и гибкости)
 protocol NearestStationsServiceProtocol {
@@ -40,8 +40,8 @@ final class NearestStationsService: NearestStationsServiceProtocol {
         // 'getNearestStations' и её параметрам в openapi.yaml
         let response = try await client.getNearestStations(query: .init(
             apikey: apikey,     // Передаём API-ключ
-            lat: Float(lat),    // Передаём широту
-            lng: Float(lng),    // Передаём долготу 
+            lat: lat,    // Передаём широту
+            lng: lng,    // Передаём долготу 
             distance: distance  // Передаём дистанцию
         ))
         
