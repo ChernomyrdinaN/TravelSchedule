@@ -15,7 +15,7 @@ tags:
 - name: Список станций следования
   description: Список станций следования
 - name: Ближайший город
-  description: Ближайший населённый пункт
+  description: Ближайший город
 - name: Информация о перевозчике
   description: Информация о перевозчике
 - name: Список всех доступных станций
@@ -325,7 +325,7 @@ paths:
     get:
       tags:
       - Ближайший город
-      summary: Ближайший населённый пункт
+      summary: Ближайший город
       operationId: getNearestSettlement
       parameters:
       - name: apikey
@@ -432,7 +432,7 @@ paths:
           type: string
       - name: format
         in: query
-        description: формат ответа json или xml
+        description: формат ответа 
         required: false
         schema:
           type: string
