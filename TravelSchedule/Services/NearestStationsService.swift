@@ -16,16 +16,22 @@ protocol NearestStationsServiceProtocol {
 }
 
 final class NearestStationsService: NearestStationsServiceProtocol {
+    
+    // MARK: - Private Properties
+    
     private let client: Client
     private let apikey: String
+    
+    // MARK: - Init
     
     init(client: Client, apikey: String) {
         self.client = client
         self.apikey = apikey
     }
     
+    // MARK: - Public Methods
+    
     func getNearestStations(lat: Double, lng: Double, distance: Int) async throws -> NearestStationsResponse {
-        
         let response = try await client.getNearestStations(query: .init(
             apikey: apikey,
             lat: lat,

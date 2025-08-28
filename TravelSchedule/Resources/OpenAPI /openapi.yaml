@@ -272,7 +272,7 @@ paths:
           type: string
       - name: uid
         in: query
-        description: уникальный идентификатор нитки
+        description: уникальный идентификатор маршрута
         required: true
         schema:
           type: string
@@ -840,7 +840,7 @@ components:
       properties:
         title:
           type: string
-          description: Название нитки
+          description: Название маршрута
         uid:
           type: string
         from:

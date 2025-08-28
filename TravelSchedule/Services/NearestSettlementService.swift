@@ -16,13 +16,20 @@ protocol NearestSettlementServiceProtocol {
 }
 
 final class NearestSettlementService: NearestSettlementServiceProtocol {
+    
+    // MARK: - Private Properties
+    
     private let client: Client
     private let apikey: String
+    
+    // MARK: - Init
     
     init(client: Client, apikey: String) {
         self.client = client
         self.apikey = apikey
     }
+    
+    // MARK: - Public Methods
     
     func getNearestSettlement(
         lat: Double,
