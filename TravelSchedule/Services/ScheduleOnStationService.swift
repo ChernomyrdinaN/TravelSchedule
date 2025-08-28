@@ -24,13 +24,20 @@ protocol ScheduleOnStationServiceProtocol {
 }
 
 final class ScheduleOnStationService: ScheduleOnStationServiceProtocol {
+    
+    // MARK: - Private Properties
+    
     private let client: Client
     private let apikey: String
+    
+    // MARK: - Init
     
     init(client: Client, apikey: String) {
         self.client = client
         self.apikey = apikey
     }
+    
+    // MARK: - Public Methods
     
     func getScheduleOnStation(
         station: String,
