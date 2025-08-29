@@ -21,22 +21,9 @@ protocol ThreadStationsServiceProtocol {
     ) async throws -> ThreadStationsResponse
 }
 
-final class ThreadStationsService: ThreadStationsServiceProtocol {
-    
-    // MARK: - Private Properties
-    
-    private let client: Client
-    private let apikey: String
-    
-    // MARK: - Init
-    
-    init(client: Client, apikey: String) {
-        self.client = client
-        self.apikey = apikey
-    }
+final class ThreadStationsService: BaseService, ThreadStationsServiceProtocol {
     
     // MARK: - Public Methods
-    
     func getThreadStations(
         uid: String,
         from: String? = nil,
@@ -60,7 +47,7 @@ final class ThreadStationsService: ThreadStationsServiceProtocol {
                 return threadResponse
             }
         case .undocumented(statusCode: let statusCode, _):
-            throw NSError(domain: "API Error", code: statusCode)
+            throw APIError.unknownStatus(statusCode)
         }
     }
 }
