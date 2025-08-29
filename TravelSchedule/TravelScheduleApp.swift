@@ -9,6 +9,8 @@ import SwiftUI
 
 @main
 struct TravelScheduleApp: App {
+    
+    // MARK: - Body
     var body: some Scene {
         WindowGroup {
             ContentView()
