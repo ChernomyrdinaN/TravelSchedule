@@ -24,22 +24,9 @@ protocol ScheduleBetweenStationsServiceProtocol {
     ) async throws -> SegmentsResponse
 }
 
-final class ScheduleBetweenStationsService: ScheduleBetweenStationsServiceProtocol {
-    
-    // MARK: - Private Properties
-    
-    private let client: Client
-    private let apikey: String
-    
-    // MARK: - Init
-    
-    init(client: Client, apikey: String) {
-        self.client = client
-        self.apikey = apikey
-    }
+final class ScheduleBetweenStationsService: BaseService, ScheduleBetweenStationsServiceProtocol {
     
     // MARK: - Public Methods
-    
     func getScheduleBetweenStations(
         from: String,
         to: String,
@@ -69,7 +56,7 @@ final class ScheduleBetweenStationsService: ScheduleBetweenStationsServiceProtoc
                 return segmentsResponse
             }
         case .undocumented(statusCode: let statusCode, _):
-            throw NSError(domain: "API Error", code: statusCode)
+            throw APIError.unknownStatus(statusCode)
         }
     }
 }

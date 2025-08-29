@@ -15,22 +15,9 @@ protocol CopyrightsServiceProtocol {
     func getCopyrights() async throws -> CopyrightsResponse
 }
 
-final class CopyrightsService: CopyrightsServiceProtocol {
-    
-    // MARK: - Private Properties
-    
-    private let client: Client
-    private let apikey: String
-    
-    // MARK: - Init
-    
-    init(client: Client, apikey: String) {
-        self.client = client
-        self.apikey = apikey
-    }
+final class CopyrightsService:BaseService, CopyrightsServiceProtocol {
     
     // MARK: - Public Methods
-    
     func getCopyrights() async throws -> CopyrightsResponse {
         let response = try await client.getCopyrights(query: .init(
             apikey: apikey
@@ -43,7 +30,7 @@ final class CopyrightsService: CopyrightsServiceProtocol {
                 return copyrightsResponse
             }
         case .undocumented(statusCode: let statusCode, _):
-            throw NSError(domain: "API Error", code: statusCode)
+            throw APIError.unknownStatus(statusCode)
         }
     }
 }

@@ -23,22 +23,9 @@ protocol ScheduleOnStationServiceProtocol {
     ) async throws -> ScheduleOnStationResponse
 }
 
-final class ScheduleOnStationService: ScheduleOnStationServiceProtocol {
-    
-    // MARK: - Private Properties
-    
-    private let client: Client
-    private let apikey: String
-    
-    // MARK: - Init
-    
-    init(client: Client, apikey: String) {
-        self.client = client
-        self.apikey = apikey
-    }
+final class ScheduleOnStationService: BaseService, ScheduleOnStationServiceProtocol {
     
     // MARK: - Public Methods
-    
     func getScheduleOnStation(
         station: String,
         date: String? = nil,
@@ -66,7 +53,7 @@ final class ScheduleOnStationService: ScheduleOnStationServiceProtocol {
                 return scheduleResponse
             }
         case .undocumented(statusCode: let statusCode, _):
-            throw NSError(domain: "API Error", code: statusCode)
+            throw APIError.unknownStatus(statusCode)
         }
     }
 }

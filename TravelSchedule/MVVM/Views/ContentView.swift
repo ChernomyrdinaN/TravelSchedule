@@ -30,7 +30,6 @@ struct ContentView: View {
     }
     
     // MARK: - Private Methods
-    
     private func formattedDate(daysFromNow: Int = 0) -> String {
         let calendar = Calendar.current
         let date = calendar.date(byAdding: .day, value: daysFromNow, to: Date()) ?? Date()
@@ -43,7 +42,7 @@ struct ContentView: View {
         Task {
             do {
                 guard let url = URL(string: "https://api.rasp.yandex.net") else {
-                    print("❌ Nearest Stations: Invalid URL")
+                    print("❌ Ближайшие станции: Неверный URL")
                     return
                 }
                 let client = Client(serverURL: url, transport: URLSessionTransport())
@@ -55,9 +54,11 @@ struct ContentView: View {
                     distance: 50
                 )
                 
-                print("✅ Nearest Stations: Success")
+                print("✅ Ближайшие станции: Успех")
+            } catch let error as APIError {
+                print("❌ Ближайшие станции: \(error.localizedDescription)")
             } catch {
-                print("❌ Nearest Stations: Error - \(error.localizedDescription)")
+                print("❌ Ближайшие станции: Системная ошибка - \(error.localizedDescription)")
             }
         }
     }
@@ -66,16 +67,18 @@ struct ContentView: View {
         Task {
             do {
                 guard let url = URL(string: "https://api.rasp.yandex.net") else {
-                    print("❌ Stations List: Invalid URL")
+                    print("❌ Список станций: Неверный URL")
                     return
                 }
                 let client = Client(serverURL: url, transport: URLSessionTransport())
                 let service = AllStationsService(client: client, apikey: Constants.yandexAPIKey)
                 
                 _ = try await service.getStationsList()
-                print("✅ All Stations: Success")
+                print("✅ Все станции: Успех")
+            } catch let error as APIError {
+                print("❌ Все станции: \(error.localizedDescription)")
             } catch {
-                print("❌ All Stations: Error - \(error.localizedDescription)")
+                print("❌ Все станции: Системная ошибка - \(error.localizedDescription)")
             }
         }
     }
@@ -84,7 +87,7 @@ struct ContentView: View {
         Task {
             do {
                 guard let url = URL(string: "https://api.rasp.yandex.net") else {
-                    print("❌ Carrier Info: Invalid URL")
+                    print("❌ Информация о перевозчике: Неверный URL")
                     return
                 }
                 let client = Client(serverURL: url, transport: URLSessionTransport())
@@ -95,9 +98,11 @@ struct ContentView: View {
                     system: nil
                 )
                 
-                print("✅ Carrier Info: Success")
+                print("✅ Информация о перевозчике: Успех")
+            } catch let error as APIError {
+                print("❌ Информация о перевозчике: \(error.localizedDescription)")
             } catch {
-                print("❌ Carrier Info: Error - \(error.localizedDescription)")
+                print("❌ Информация о перевозчике: Системная ошибка - \(error.localizedDescription)")
             }
         }
     }
@@ -106,16 +111,18 @@ struct ContentView: View {
         Task {
             do {
                 guard let url = URL(string: "https://api.rasp.yandex.net") else {
-                    print("❌ Copyrights: Invalid URL")
+                    print("❌ Копирайты: Неверный URL")
                     return
                 }
                 let client = Client(serverURL: url, transport: URLSessionTransport())
                 let service = CopyrightsService(client: client, apikey: Constants.yandexAPIKey)
                 
                 _ = try await service.getCopyrights()
-                print("✅ Copyrights: Success")
+                print("✅ Копирайты: Успех")
+            } catch let error as APIError {
+                print("❌ Копирайты: \(error.localizedDescription)")
             } catch {
-                print("❌ Copyrights: Error - \(error.localizedDescription)")
+                print("❌ Копирайты: Системная ошибка - \(error.localizedDescription)")
             }
         }
     }
@@ -124,7 +131,7 @@ struct ContentView: View {
         Task {
             do {
                 guard let url = URL(string: "https://api.rasp.yandex.net") else {
-                    print("❌ Nearest Settlement: Invalid URL")
+                    print("❌ Ближайший населенный пункт: Неверный URL")
                     return
                 }
                 let client = Client(serverURL: url, transport: URLSessionTransport())
@@ -136,9 +143,11 @@ struct ContentView: View {
                     distance: 50
                 )
                 
-                print("✅ Nearest Settlement: Success")
+                print("✅ Ближайший населенный пункт: Успех")
+            } catch let error as APIError {
+                print("❌ Ближайший населенный пункт: \(error.localizedDescription)")
             } catch {
-                print("❌ Nearest Settlement: Error - \(error.localizedDescription)")
+                print("❌ Ближайший населенный пункт: Системная ошибка - \(error.localizedDescription)")
             }
         }
     }
@@ -147,7 +156,7 @@ struct ContentView: View {
         Task {
             do {
                 guard let url = URL(string: "https://api.rasp.yandex.net") else {
-                    print("❌ Schedule Between Stations: Invalid URL")
+                    print("❌ Расписание между станциями: Неверный URL")
                     return
                 }
                 
@@ -162,9 +171,11 @@ struct ContentView: View {
                     limit: 5
                 )
                 
-                print("✅ Schedule Between Stations: Success")
+                print("✅ Расписание между станциями: Успех")
+            } catch let error as APIError {
+                print("❌ Расписание между станциями: \(error.localizedDescription)")
             } catch {
-                print("❌ Schedule Between Stations: Error - \(error.localizedDescription)")
+                print("❌ Расписание между станциями: Системная ошибка - \(error.localizedDescription)")
             }
         }
     }
@@ -173,7 +184,7 @@ struct ContentView: View {
         Task {
             do {
                 guard let url = URL(string: "https://api.rasp.yandex.net") else {
-                    print("❌ Schedule On Station: Invalid URL")
+                    print("❌ Расписание на станции: Неверный URL")
                     return
                 }
                 let client = Client(serverURL: url, transport: URLSessionTransport())
@@ -186,9 +197,11 @@ struct ContentView: View {
                     event: "departure"
                 )
                 
-                print("✅ Schedule On Station: Success")
+                print("✅ Расписание на станции: Успех")
+            } catch let error as APIError {
+                print("❌ Расписание на станции: \(error.localizedDescription)")
             } catch {
-                print("❌ Schedule On Station: Error - \(error.localizedDescription)")
+                print("❌ Расписание на станции: Системная ошибка - \(error.localizedDescription)")
             }
         }
     }
@@ -197,7 +210,7 @@ struct ContentView: View {
         Task {
             do {
                 guard let url = URL(string: "https://api.rasp.yandex.net") else {
-                    print("❌ Thread Stations: Invalid URL")
+                    print("❌ Станции маршрута: Неверный URL")
                     return
                 }
                 
@@ -211,9 +224,11 @@ struct ContentView: View {
                     date: formattedDate()
                 )
                 
-                print("✅ Thread Stations: Success")
+                print("✅ Станции маршрута: Успех")
+            } catch let error as APIError {
+                print("❌ Станции маршрута: \(error.localizedDescription)")
             } catch {
-                print("❌ Thread Stations: Error - \(error.localizedDescription)")
+                print("❌ Станции маршрута: Системная ошибка - \(error.localizedDescription)")
             }
         }
     }

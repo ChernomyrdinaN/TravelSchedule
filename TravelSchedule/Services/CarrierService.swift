@@ -15,22 +15,9 @@ protocol CarrierServiceProtocol {
     func getCarrierInfo(code: String, system: String?) async throws -> CarrierResponse
 }
 
-final class CarrierService: CarrierServiceProtocol {
-    
-    // MARK: - Private Properties
-    
-    private let client: Client
-    private let apikey: String
-    
-    // MARK: - Init
-    
-    init(client: Client, apikey: String) {
-        self.client = client
-        self.apikey = apikey
-    }
+final class CarrierService: BaseService, CarrierServiceProtocol {
     
     // MARK: - Public Methods
-    
     func getCarrierInfo(
         code: String,
         system: String? = nil
@@ -48,7 +35,7 @@ final class CarrierService: CarrierServiceProtocol {
                 return carrierResponse
             }
         case .undocumented(statusCode: let statusCode, _):
-            throw NSError(domain: "API Error", code: statusCode)
+            throw APIError.unknownStatus(statusCode)
         }
     }
 }

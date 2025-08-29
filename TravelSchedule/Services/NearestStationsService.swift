@@ -15,22 +15,9 @@ protocol NearestStationsServiceProtocol {
     func getNearestStations(lat: Double, lng: Double, distance: Int) async throws -> NearestStationsResponse
 }
 
-final class NearestStationsService: NearestStationsServiceProtocol {
-    
-    // MARK: - Private Properties
-    
-    private let client: Client
-    private let apikey: String
-    
-    // MARK: - Init
-    
-    init(client: Client, apikey: String) {
-        self.client = client
-        self.apikey = apikey
-    }
+final class NearestStationsService: BaseService, NearestStationsServiceProtocol {
     
     // MARK: - Public Methods
-    
     func getNearestStations(lat: Double, lng: Double, distance: Int) async throws -> NearestStationsResponse {
         let response = try await client.getNearestStations(query: .init(
             apikey: apikey,
@@ -46,7 +33,7 @@ final class NearestStationsService: NearestStationsServiceProtocol {
                 return stationsResponse
             }
         case .undocumented(statusCode: let statusCode, _):
-            throw NSError(domain: "API Error", code: statusCode)
+            throw APIError.unknownStatus(statusCode)
         }
     }
 }

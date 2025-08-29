@@ -15,22 +15,9 @@ protocol NearestSettlementServiceProtocol {
     func getNearestSettlement(lat: Double, lng: Double, distance: Int?) async throws -> NearestSettlementResponse
 }
 
-final class NearestSettlementService: NearestSettlementServiceProtocol {
-    
-    // MARK: - Private Properties
-    
-    private let client: Client
-    private let apikey: String
-    
-    // MARK: - Init
-    
-    init(client: Client, apikey: String) {
-        self.client = client
-        self.apikey = apikey
-    }
+final class NearestSettlementService: BaseService, NearestSettlementServiceProtocol {
     
     // MARK: - Public Methods
-    
     func getNearestSettlement(
         lat: Double,
         lng: Double,
@@ -50,7 +37,7 @@ final class NearestSettlementService: NearestSettlementServiceProtocol {
                 return settlementResponse
             }
         case .undocumented(statusCode: let statusCode, _):
-            throw NSError(domain: "API Error", code: statusCode)
+            throw APIError.unknownStatus(statusCode)
         }
     }
 }
