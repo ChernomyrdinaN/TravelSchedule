@@ -9,6 +9,7 @@
 /* Begin PBXBuildFile section */
 		6E95E92B2E599F67000BB001 /* OpenAPIRuntime in Frameworks */ = {isa = PBXBuildFile; productRef = 6E95E92A2E599F67000BB001 /* OpenAPIRuntime */; };
 		6E95E92E2E599F7C000BB001 /* OpenAPIURLSession in Frameworks */ = {isa = PBXBuildFile; productRef = 6E95E92D2E599F7C000BB001 /* OpenAPIURLSession */; };
+		6E95ECBC2E6DF638000BB001 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 6E95ECBB2E6DF638000BB001 /* LaunchScreen.storyboard */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -29,6 +30,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		6E95ECBB2E6DF638000BB001 /* LaunchScreen.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = LaunchScreen.storyboard; sourceTree = "<group>"; };
 		6EF492D82E5758A000404D6E /* TravelSchedule.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = TravelSchedule.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		6EF492EE2E5758A100404D6E /* TravelScheduleTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = TravelScheduleTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		6EF492F82E5758A100404D6E /* TravelScheduleUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = TravelScheduleUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -102,6 +104,7 @@
 		6EF492CF2E5758A000404D6E = {
 			isa = PBXGroup;
 			children = (
+				6E95ECBB2E6DF638000BB001 /* LaunchScreen.storyboard */,
 				6EF492DA2E5758A000404D6E /* TravelSchedule */,
 				6EF492F12E5758A100404D6E /* TravelScheduleTests */,
 				6EF492FB2E5758A100404D6E /* TravelScheduleUITests */,
@@ -248,6 +251,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				6E95ECBC2E6DF638000BB001 /* LaunchScreen.storyboard in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
