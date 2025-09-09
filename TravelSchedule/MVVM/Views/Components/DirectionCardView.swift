@@ -41,7 +41,7 @@ struct DirectionCardView: View {
                     Image("ButtonСhange")
                         .resizable()
                         .frame(width: 36, height: 36)
-                        .foregroundColor(.white)
+                        .foregroundColor(.ypWhite1)
                 }
                 .padding(.trailing, 16)
             }
