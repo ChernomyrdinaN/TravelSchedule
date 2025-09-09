@@ -19,7 +19,7 @@ struct FindButtonView: View {
         }) {
             Text("Найти")
                 .font(.system(size: 17, weight: .regular))
-                .foregroundColor(.white)
+                .foregroundColor(.ypWhite1)
                 .frame(width: 150, height: 60)
                 .background(Color.ypBlue)
                 .cornerRadius(12)
