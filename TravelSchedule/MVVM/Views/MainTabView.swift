@@ -12,58 +12,47 @@ struct MainTabView: View {
     
     var body: some View {
         TabView(selection: $selectedTab) {
-            
-            // MARK: - First Tab (Schedule)
-            NavigationStack {
-                ZStack {
-                    Color.ypWhite
-                        .ignoresSafeArea()
-                    
-                    VStack {
-                        Text("Контент расписания будет здесь")
-                            .padding()
-                        Spacer()
-                    }
+            // MARK: - First Tab
+            MainView()
+                .tabItem {
+                    Image("icSchedule")
+                        .renderingMode(.template)
                 }
-            }
-            .tabItem {
-                Image("icSchedule")
-                    .renderingMode(.template)
-            }
-            .tag(0)
+                .tag(0)
             
-            // MARK: - Second Tab (Settings)
+            // MARK: - Second Tab
             NavigationStack {
                 ZStack {
                     Color.ypWhite
                         .ignoresSafeArea()
                     
-                    Text("Экран настроек будет здесь")
+                    Text("Настройки скоро будут реализованы")
                 }
             }
             .tabItem {
                 Image("icSettings")
-                    .renderingMode(.template) 
+                    .renderingMode(.template)
             }
             .tag(1)
         }
-        .tint(.black)
+        .tint(.ypBlack)
         .onAppear {
             configureTabBarToHideText()
         }
     }
     
-    // MARK: - TabBar Configuration
+    // MARK: - Private Methods
     private func configureTabBarToHideText() {
         let appearance = UITabBarAppearance()
         appearance.configureWithOpaqueBackground()
+        appearance.backgroundColor = .ypWhite
         
         let offset = UIOffset(horizontal: 0, vertical: 50)
         appearance.stackedLayoutAppearance.normal.titlePositionAdjustment = offset
         appearance.stackedLayoutAppearance.normal.iconColor = .systemGray
         
         appearance.stackedLayoutAppearance.selected.titlePositionAdjustment = offset
-        appearance.stackedLayoutAppearance.selected.iconColor = .black
+        appearance.stackedLayoutAppearance.selected.iconColor = .ypBlack
         
         UITabBar.appearance().standardAppearance = appearance
         UITabBar.appearance().scrollEdgeAppearance = appearance
