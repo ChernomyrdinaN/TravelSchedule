@@ -10,14 +10,17 @@ import Foundation
 struct Station: Identifiable, Hashable {
     let id = UUID()
     let name: String
-    let station: String
+    
+    static let mockData = [
+        Station(name: "Москва"),
+        Station(name: "Санкт-Петербург"),
+        Station(name: "Сочи"),
+        Station(name: "Горный воздух"),
+        Station(name: "Краснодар"),
+        Station(name: "Казань"),
+        Station(name: "Омск"),
+        Station(name: "Екатеринбург"),
+        Station(name: "Нижний Новгород"),
+        Station(name: "Новосибирск")
+    ]
 }
-
-// Пример данных для тестирования
-let mockStations = [
-    Station(name: "Москва", station: "Курский вокзал"),
-    Station(name: "Санкт-Петербург", station: "Балтийский вокзал"),
-    Station(name: "Нижний Новгород", station: "Московский вокзал"),
-    Station(name: "Казань", station: "Центральный вокзал"),
-    Station(name: "Екатеринбург", station: "Свердловский вокзал")
-]

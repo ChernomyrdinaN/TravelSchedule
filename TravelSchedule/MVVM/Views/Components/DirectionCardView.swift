@@ -24,12 +24,12 @@ struct DirectionCardView: View {
             HStack(spacing: 16) {
                 VStack(spacing: 16) {
                     stationField(text: fromStation?.name ?? "Откуда",
-                               isPlaceholder: fromStation == nil,
-                               action: { isShowingFromPicker = true })
+                                 isPlaceholder: fromStation == nil,
+                                 action: { isShowingFromPicker = true })
                     
                     stationField(text: toStation?.name ?? "Куда",
-                               isPlaceholder: toStation == nil,
-                               action: { isShowingToPicker = true })
+                                 isPlaceholder: toStation == nil,
+                                 action: { isShowingToPicker = true })
                 }
                 .frame(maxWidth: .infinity, maxHeight: 96)
                 .background(.white)
