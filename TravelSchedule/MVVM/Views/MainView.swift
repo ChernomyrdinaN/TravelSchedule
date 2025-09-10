@@ -39,9 +39,25 @@ struct MainView: View {
                     Spacer()
                 }
             }
-        }
-    }
-}
+            .fullScreenCover(isPresented: $isShowingFromPicker) {
+                            CitySelectionView(
+                                selectedStation: $fromStation,
+                                onStationSelected: { station in
+                                    fromStation = station
+                                }
+                            )
+                        }
+                        .fullScreenCover(isPresented: $isShowingToPicker) {
+                            CitySelectionView(
+                                selectedStation: $toStation,
+                                onStationSelected: { station in
+                                    toStation = station
+                                }
+                            )
+                        }
+                    }
+                }
+            }
 
 #Preview {
     MainView()

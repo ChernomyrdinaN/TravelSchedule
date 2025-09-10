@@ -15,7 +15,6 @@ struct FindButtonView: View {
     // MARK: - Body
     var body: some View {
         Button(action: {
-            // Search action
         }) {
             Text("Найти")
                 .font(.system(size: 17, weight: .regular))
