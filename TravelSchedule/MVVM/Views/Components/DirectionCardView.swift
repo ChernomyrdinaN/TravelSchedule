@@ -23,16 +23,20 @@ struct DirectionCardView: View {
             
             HStack(spacing: 16) {
                 VStack(spacing: 16) {
-                    stationField(text: fromStation?.name ?? "Откуда",
-                                 isPlaceholder: fromStation == nil,
-                                 action: { isShowingFromPicker = true })
+                    stationField(
+                        text: fromStation?.name ?? "Откуда",
+                        isPlaceholder: fromStation == nil,
+                        action: { isShowingFromPicker = true }
+                    )
                     
-                    stationField(text: toStation?.name ?? "Куда",
-                                 isPlaceholder: toStation == nil,
-                                 action: { isShowingToPicker = true })
+                    stationField(
+                        text: toStation?.name ?? "Куда",
+                        isPlaceholder: toStation == nil,
+                        action: { isShowingToPicker = true }
+                    )
                 }
                 .frame(maxWidth: .infinity, maxHeight: 96)
-                .background(.white)
+                .background(.ypWhite1)
                 .cornerRadius(20)
                 .padding(.leading, 16)
                 .padding(.vertical, 16)
@@ -62,7 +66,7 @@ struct DirectionCardView: View {
                 Text(text)
                     .font(.system(size: 17, weight: .regular))
                     .kerning(-0.41)
-                    .foregroundColor(isPlaceholder ? .ypGray : .ypBlack)
+                    .foregroundColor(isPlaceholder ? .ypGray : .ypBlack1)
                     .lineLimit(1)
                     .frame(maxWidth: .infinity, alignment: .leading)
                 

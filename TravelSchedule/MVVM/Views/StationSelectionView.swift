@@ -1,25 +1,30 @@
 //
-//  CitySelectionView.swift
+//  StationSelectionView.swift
 //  TravelSchedule
 //
-//  Created by Наталья Черномырдина on 10.09.2025.
+//  Created by Наталья Черномырдина on 11.09.2025.
 //
 
 import SwiftUI
 
-struct CitySelectionView: View {
+struct StationSelectionView: View {
     // MARK: - Properties
     @Environment(\.dismiss) private var dismiss
     @Binding var selectedStation: Station?
+    let city: String
     let onStationSelected: (Station) -> Void
     
     @State private var searchText = ""
     
+    private var cityStations: [Station] {
+        return Station.mockStations(for: city)
+    }
+    
     private var filteredStations: [Station] {
         if searchText.isEmpty {
-            return Station.mockData
+            return cityStations
         } else {
-            return Station.mockData.filter { station in
+            return cityStations.filter { station in
                 station.name.localizedCaseInsensitiveContains(searchText)
             }
         }
@@ -33,7 +38,7 @@ struct CitySelectionView: View {
                     .ignoresSafeArea()
                 
                 VStack(spacing: 0) {
-                    Text("Выбор города")
+                    Text("Выбор станции")
                         .font(.system(size: 17, weight: .bold))
                         .foregroundColor(.ypBlack)
                         .padding(.top, 16)
@@ -122,7 +127,7 @@ struct CitySelectionView: View {
         VStack(spacing: 8) {
             Spacer()
             
-            Text("Город не найден")
+            Text("Станция не найдена")
                 .font(.system(size: 24, weight: .bold))
                 .foregroundColor(.ypBlack)
             
@@ -130,4 +135,13 @@ struct CitySelectionView: View {
         }
         .frame(maxWidth: .infinity)
     }
+}
+
+// MARK: - Preview
+#Preview {
+    StationSelectionView(
+        selectedStation: .constant(nil),
+        city: "Москва",
+        onStationSelected: { _ in }
+    )
 }
