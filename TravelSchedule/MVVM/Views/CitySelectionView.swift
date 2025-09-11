@@ -4,11 +4,9 @@
 //
 //  Created by Наталья Черномырдина on 10.09.2025.
 //
-
 import SwiftUI
 
 struct CitySelectionView: View {
-    // MARK: - Properties
     @Environment(\.dismiss) private var dismiss
     @Binding var selectedStation: Station?
     let onStationSelected: (Station) -> Void
@@ -26,42 +24,42 @@ struct CitySelectionView: View {
     }
     
     // MARK: - Body
+    
     var body: some View {
-        NavigationStack {
-            ZStack {
-                Color.ypWhite
-                    .ignoresSafeArea()
+        ZStack {
+            Color.ypWhite
+                .ignoresSafeArea()
+            
+            VStack(spacing: 0) {
+                Text("Выбор города")
+                    .font(.system(size: 17, weight: .bold))
+                    .foregroundColor(.ypBlack)
+                    .padding(.top, 16)
                 
-                VStack(spacing: 0) {
-                    Text("Выбор города")
-                        .font(.system(size: 17, weight: .bold))
-                        .foregroundColor(.ypBlack)
-                        .padding(.top, 16)
-                    
-                    searchField
-                    
-                    if filteredStations.isEmpty {
-                        noResultsView
-                    } else {
-                        stationsList
-                    }
-                    
-                    Spacer()
+                searchField
+                
+                if filteredStations.isEmpty {
+                    noResultsView
+                } else {
+                    stationsList
                 }
+                
+                Spacer()
             }
-            .navigationBarBackButtonHidden(true)
-            .toolbar {
-                ToolbarItem(placement: .navigationBarLeading) {
-                    Button(action: { dismiss() }) {
-                        Image(systemName: "chevron.left")
-                            .foregroundColor(.ypBlack)
-                    }
+        }
+        .navigationBarBackButtonHidden(true)
+        .toolbar {
+            ToolbarItem(placement: .navigationBarLeading) {
+                Button(action: { dismiss() }) {
+                    Image(systemName: "chevron.left")
+                        .foregroundColor(.ypBlack)
                 }
             }
         }
     }
     
     // MARK: - Subviews
+    
     private var searchField: some View {
         HStack {
             Image(systemName: "magnifyingglass")
@@ -95,7 +93,6 @@ struct CitySelectionView: View {
                         .contentShape(Rectangle())
                         .onTapGesture {
                             onStationSelected(station)
-                            dismiss()
                         }
                 }
             }

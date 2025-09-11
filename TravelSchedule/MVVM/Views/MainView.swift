@@ -7,18 +7,16 @@
 import SwiftUI
 
 struct MainView: View {
-    // MARK: - Properties
     @State private var fromStation: Station?
     @State private var toStation: Station?
-    @State private var isShowingFromPicker = false
-    @State private var isShowingToPicker = false
-    @State private var isShowingStationPicker = false
+    @State private var navigationPath = NavigationPath()
     @State private var selectedCity: String = ""
     @State private var isSelectingFrom: Bool = true
     
     // MARK: - Body
+    
     var body: some View {
-        NavigationStack {
+        NavigationStack(path: $navigationPath) {
             ZStack {
                 Color.ypWhite
                     .ignoresSafeArea()
@@ -29,63 +27,74 @@ struct MainView: View {
                     DirectionCardView(
                         fromStation: $fromStation,
                         toStation: $toStation,
-                        isShowingFromPicker: $isShowingFromPicker,
-                        isShowingToPicker: $isShowingToPicker
+                        onFromStationTapped: { showCitySelection(isFrom: true) },
+                        onToStationTapped: { showCitySelection(isFrom: false) },
+                        onSwapStations: swapStations
                     )
                     .padding(.top, 44)
                     .padding(.horizontal, 16)
                     
-                    FindButtonView(
-                        fromStation: fromStation,
-                        toStation: toStation
-                    )
-                    .padding(.top, 16)
+                    if isFindButtonEnabled {
+                        FindButtonView(
+                            fromStation: fromStation,
+                            toStation: toStation
+                        )
+                        .padding(.top, 16)
+                    }
                     
                     Spacer()
                 }
             }
-            // MARK: - Full Screen Covers
-            .fullScreenCover(isPresented: $isShowingFromPicker) {
-                CitySelectionView(
-                    selectedStation: $fromStation,
-                    onStationSelected: { station in
-                        selectedCity = station.name
-                        isShowingFromPicker = false
-                        isShowingStationPicker = true
-                        isSelectingFrom = true
-                    }
-                )
-            }
-            .fullScreenCover(isPresented: $isShowingToPicker) {
-                CitySelectionView(
-                    selectedStation: $toStation,
-                    onStationSelected: { station in
-                        selectedCity = station.name
-                        isShowingToPicker = false
-                        isShowingStationPicker = true
-                        isSelectingFrom = false
-                    }
-                )
-            }
-            .fullScreenCover(isPresented: $isShowingStationPicker) {
-                StationSelectionView(
-                    selectedStation: isSelectingFrom ? $fromStation : $toStation,
-                    city: selectedCity,
-                    onStationSelected: { station in
-                        if isSelectingFrom {
-                            fromStation = Station(name: "\(selectedCity) (\(station.name))")
-                        } else {
-                            toStation = Station(name: "\(selectedCity) (\(station.name))")
+            .navigationDestination(for: String.self) { destination in
+                switch destination {
+                case "citySelection":
+                    CitySelectionView(
+                        selectedStation: isSelectingFrom ? $fromStation : $toStation,
+                        onStationSelected: { station in
+                            selectedCity = station.name
+                            navigationPath.append("stationSelection")
                         }
-                        isShowingStationPicker = false
-                    }
-                )
+                    )
+                case "stationSelection":
+                    StationSelectionView(
+                        selectedStation: isSelectingFrom ? $fromStation : $toStation,
+                        city: selectedCity,
+                        onStationSelected: { station in
+                            if isSelectingFrom {
+                                fromStation = Station(name: "\(selectedCity) (\(station.name))")
+                            } else {
+                                toStation = Station(name: "\(selectedCity) (\(station.name))")
+                            }
+                            navigationPath.removeLast(navigationPath.count)
+                        }
+                    )
+                default:
+                    EmptyView()
+                }
             }
         }
     }
+    
+    // MARK: - Computed Properties
+    
+    private var isFindButtonEnabled: Bool {
+        fromStation != nil && toStation != nil
+    }
+    
+    // MARK: - Private Methods
+    
+    private func showCitySelection(isFrom: Bool) {
+        isSelectingFrom = isFrom
+        navigationPath.append("citySelection")
+    }
+    
+    private func swapStations() {
+        let temp = fromStation
+        fromStation = toStation
+        toStation = temp
+    }
 }
 
-// MARK: - Preview
 #Preview {
     MainView()
 }

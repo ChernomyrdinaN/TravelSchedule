@@ -8,7 +8,6 @@
 import SwiftUI
 
 struct StationSelectionView: View {
-    // MARK: - Properties
     @Environment(\.dismiss) private var dismiss
     @Binding var selectedStation: Station?
     let city: String
@@ -31,42 +30,42 @@ struct StationSelectionView: View {
     }
     
     // MARK: - Body
+    
     var body: some View {
-        NavigationStack {
-            ZStack {
-                Color.ypWhite
-                    .ignoresSafeArea()
+        ZStack {
+            Color.ypWhite
+                .ignoresSafeArea()
+            
+            VStack(spacing: 0) {
+                Text("Выбор станции")
+                    .font(.system(size: 17, weight: .bold))
+                    .foregroundColor(.ypBlack)
+                    .padding(.top, 16)
                 
-                VStack(spacing: 0) {
-                    Text("Выбор станции")
-                        .font(.system(size: 17, weight: .bold))
-                        .foregroundColor(.ypBlack)
-                        .padding(.top, 16)
-                    
-                    searchField
-                    
-                    if filteredStations.isEmpty {
-                        noResultsView
-                    } else {
-                        stationsList
-                    }
-                    
-                    Spacer()
+                searchField
+                
+                if filteredStations.isEmpty {
+                    noResultsView
+                } else {
+                    stationsList
                 }
+                
+                Spacer()
             }
-            .navigationBarBackButtonHidden(true)
-            .toolbar {
-                ToolbarItem(placement: .navigationBarLeading) {
-                    Button(action: { dismiss() }) {
-                        Image(systemName: "chevron.left")
-                            .foregroundColor(.ypBlack)
-                    }
+        }
+        .navigationBarBackButtonHidden(true)
+        .toolbar {
+            ToolbarItem(placement: .navigationBarLeading) {
+                Button(action: { dismiss() }) {
+                    Image(systemName: "chevron.left")
+                        .foregroundColor(.ypBlack)
                 }
             }
         }
     }
     
     // MARK: - Subviews
+    
     private var searchField: some View {
         HStack {
             Image(systemName: "magnifyingglass")
@@ -100,7 +99,6 @@ struct StationSelectionView: View {
                         .contentShape(Rectangle())
                         .onTapGesture {
                             onStationSelected(station)
-                            dismiss()
                         }
                 }
             }
@@ -137,7 +135,6 @@ struct StationSelectionView: View {
     }
 }
 
-// MARK: - Preview
 #Preview {
     StationSelectionView(
         selectedStation: .constant(nil),
