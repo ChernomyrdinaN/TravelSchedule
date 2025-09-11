@@ -9,13 +9,14 @@
 import SwiftUI
 
 struct DirectionCardView: View {
-    // MARK: - Properties
     @Binding var fromStation: Station?
     @Binding var toStation: Station?
-    @Binding var isShowingFromPicker: Bool
-    @Binding var isShowingToPicker: Bool
+    let onFromStationTapped: () -> Void
+    let onToStationTapped: () -> Void
+    let onSwapStations: () -> Void
     
     // MARK: - Body
+    
     var body: some View {
         ZStack {
             Color.ypBlue
@@ -26,13 +27,13 @@ struct DirectionCardView: View {
                     stationField(
                         text: fromStation?.name ?? "Откуда",
                         isPlaceholder: fromStation == nil,
-                        action: { isShowingFromPicker = true }
+                        action: onFromStationTapped
                     )
                     
                     stationField(
                         text: toStation?.name ?? "Куда",
                         isPlaceholder: toStation == nil,
-                        action: { isShowingToPicker = true }
+                        action: onToStationTapped
                     )
                 }
                 .frame(maxWidth: .infinity, maxHeight: 96)
@@ -41,7 +42,7 @@ struct DirectionCardView: View {
                 .padding(.leading, 16)
                 .padding(.vertical, 16)
                 
-                Button(action: swapStations) {
+                Button(action: onSwapStations) {
                     Image("ButtonСhange")
                         .resizable()
                         .frame(width: 36, height: 36)
@@ -54,11 +55,6 @@ struct DirectionCardView: View {
     }
     
     // MARK: - Private Methods
-    private func swapStations() {
-        let temp = fromStation
-        fromStation = toStation
-        toStation = temp
-    }
     
     private func stationField(text: String, isPlaceholder: Bool, action: @escaping () -> Void) -> some View {
         Button(action: action) {
