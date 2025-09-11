@@ -74,3 +74,13 @@ struct DirectionCardView: View {
         .buttonStyle(PlainButtonStyle())
     }
 }
+
+#Preview {
+    DirectionCardView(
+        fromStation: .constant(nil),
+        toStation: .constant(nil),
+        onFromStationTapped: {},
+        onToStationTapped: {},
+        onSwapStations: {}
+    )
+}

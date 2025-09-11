@@ -10,8 +10,7 @@ struct MainView: View {
     @State private var fromStation: Station?
     @State private var toStation: Station?
     @State private var navigationPath = NavigationPath()
-    @State private var selectedCity: String = ""
-    @State private var isSelectingFrom: Bool = true
+    @State private var isSelectingFrom = true
     
     // MARK: - Body
     
@@ -45,37 +44,35 @@ struct MainView: View {
                     Spacer()
                 }
             }
-            .navigationDestination(for: String.self) { destination in
+            .navigationDestination(for: StationNavigation.self) { destination in
                 switch destination {
-                case "citySelection":
+                case .citySelection:
                     CitySelectionView(
                         selectedStation: isSelectingFrom ? $fromStation : $toStation,
                         onStationSelected: { station in
-                            selectedCity = station.name
-                            navigationPath.append("stationSelection")
+                            navigationPath.append(StationNavigation.stationSelection(city: station.name))
                         }
                     )
-                case "stationSelection":
+                case .stationSelection(let city):
                     StationSelectionView(
                         selectedStation: isSelectingFrom ? $fromStation : $toStation,
-                        city: selectedCity,
+                        city: city,
                         onStationSelected: { station in
+                            let fullStationName = "\(city) (\(station.name))"
                             if isSelectingFrom {
-                                fromStation = Station(name: "\(selectedCity) (\(station.name))")
+                                fromStation = Station(name: fullStationName)
                             } else {
-                                toStation = Station(name: "\(selectedCity) (\(station.name))")
+                                toStation = Station(name: fullStationName)
                             }
                             navigationPath.removeLast(navigationPath.count)
                         }
                     )
-                default:
-                    EmptyView()
                 }
             }
         }
     }
     
-    // MARK: - Computed Properties
+    // MARK: - Private Properties
     
     private var isFindButtonEnabled: Bool {
         fromStation != nil && toStation != nil
@@ -85,7 +82,7 @@ struct MainView: View {
     
     private func showCitySelection(isFrom: Bool) {
         isSelectingFrom = isFrom
-        navigationPath.append("citySelection")
+        navigationPath.append(StationNavigation.citySelection)
     }
     
     private func swapStations() {
