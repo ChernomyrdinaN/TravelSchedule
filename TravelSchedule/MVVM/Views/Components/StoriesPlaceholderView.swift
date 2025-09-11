@@ -60,6 +60,7 @@ struct StoriesPlaceholderView: View {
 
 // MARK: - Story Card Component
 struct StoryCard: View {
+    
     // MARK: - Properties
     let imageName: String
     let text: String

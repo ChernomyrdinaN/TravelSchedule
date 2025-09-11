@@ -11,6 +11,7 @@ struct MainView: View {
     @State private var toStation: Station?
     @State private var navigationPath = NavigationPath()
     @State private var isSelectingFrom = true
+    @State private var filter = CarrierFilter()
     
     // MARK: - Body
     
@@ -36,7 +37,8 @@ struct MainView: View {
                     if isFindButtonEnabled {
                         FindButtonView(
                             fromStation: fromStation,
-                            toStation: toStation
+                            toStation: toStation,
+                            onFindTapped: showCarrierList
                         )
                         .padding(.top, 16)
                     }
@@ -67,8 +69,26 @@ struct MainView: View {
                             navigationPath.removeLast(navigationPath.count)
                         }
                     )
+                    
+                case .carrierList(let from, let to):
+                    CarrierListView(
+                        fromStation: from,
+                        toStation: to,
+                        navigationPath: $navigationPath
+                    )
+                    
+                case .filters:
+                    FilterView(filter: $filter, applyFilters: applyFilters)
                 }
             }
+        }
+    }
+    
+    private var filterButton: some View {
+        NavigationLink(value: StationNavigation.filters) {
+            Text("Фильтры")
+                .font(.system(size: 17, weight: .regular))
+                .foregroundColor(.ypBlue)
         }
     }
     
@@ -85,10 +105,20 @@ struct MainView: View {
         navigationPath.append(StationNavigation.citySelection)
     }
     
+    private func showCarrierList() {
+        guard let from = fromStation?.name, let to = toStation?.name else { return }
+        navigationPath.append(StationNavigation.carrierList(from: from, to: to))
+    }
+    
     private func swapStations() {
         let temp = fromStation
         fromStation = toStation
         toStation = temp
+    }
+    
+    private func applyFilters() {
+        // Здесь будет логика применения фильтров
+        navigationPath.removeLast()
     }
 }
 

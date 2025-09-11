@@ -10,4 +10,6 @@ import Foundation
 enum StationNavigation: Hashable {
     case citySelection
     case stationSelection(city: String)
+    case carrierList(from: String, to: String)
+    case filters
 }
