@@ -10,11 +10,11 @@ import SwiftUI
 struct FindButtonView: View {
     let fromStation: Station?
     let toStation: Station?
+    let onFindTapped: () -> Void
     
     // MARK: - Body
-    
     var body: some View {
-        Button(action: {}) {
+        Button(action: onFindTapped) {
             Text("Найти")
                 .font(.system(size: 17, weight: .regular))
                 .foregroundColor(.ypWhite1)
@@ -30,6 +30,7 @@ struct FindButtonView: View {
 #Preview {
     FindButtonView(
         fromStation: Station(name: "Москва"),
-        toStation: Station(name: "Санкт-Петербург")
+        toStation: Station(name: "Санкт-Петербург"),
+        onFindTapped: {}
     )
 }

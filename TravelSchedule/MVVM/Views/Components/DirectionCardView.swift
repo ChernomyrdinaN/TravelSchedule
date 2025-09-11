@@ -16,7 +16,6 @@ struct DirectionCardView: View {
     let onSwapStations: () -> Void
     
     // MARK: - Body
-    
     var body: some View {
         ZStack {
             Color.ypBlue
@@ -55,7 +54,6 @@ struct DirectionCardView: View {
     }
     
     // MARK: - Private Methods
-    
     private func stationField(text: String, isPlaceholder: Bool, action: @escaping () -> Void) -> some View {
         Button(action: action) {
             HStack {

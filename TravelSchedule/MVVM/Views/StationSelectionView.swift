@@ -12,7 +12,6 @@ struct StationSelectionView: View {
     @Binding var selectedStation: Station?
     let city: String
     let onStationSelected: (Station) -> Void
-    
     @State private var searchText = ""
     
     // MARK: - Body
@@ -51,7 +50,6 @@ struct StationSelectionView: View {
     }
     
     // MARK: - Private Properties
-    
     private var cityStations: [Station] {
         Station.mockStations(for: city)
     }
@@ -65,7 +63,6 @@ struct StationSelectionView: View {
     }
     
     // MARK: - Subviews
-    
     private var searchField: some View {
         HStack {
             Image(systemName: "magnifyingglass")
