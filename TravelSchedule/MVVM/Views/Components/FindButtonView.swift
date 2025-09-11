@@ -8,14 +8,13 @@
 import SwiftUI
 
 struct FindButtonView: View {
-    // MARK: - Properties
     let fromStation: Station?
     let toStation: Station?
     
     // MARK: - Body
+    
     var body: some View {
-        Button(action: {
-        }) {
+        Button(action: {}) {
             Text("Найти")
                 .font(.system(size: 17, weight: .regular))
                 .foregroundColor(.ypWhite1)
@@ -26,4 +25,11 @@ struct FindButtonView: View {
         .disabled(fromStation == nil || toStation == nil)
         .opacity((fromStation == nil || toStation == nil) ? 0.5 : 1.0)
     }
+}
+
+#Preview {
+    FindButtonView(
+        fromStation: Station(name: "Москва"),
+        toStation: Station(name: "Санкт-Петербург")
+    )
 }

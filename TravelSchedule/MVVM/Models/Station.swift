@@ -12,6 +12,7 @@ struct Station: Identifiable, Hashable {
     let name: String
     
     // MARK: - Mock Data
+    
     static let mockData = [
         Station(name: "Москва"),
         Station(name: "Санкт-Петербург"),
@@ -44,12 +45,38 @@ struct Station: Identifiable, Hashable {
                 Station(name: "Московский вокзал"),
                 Station(name: "Финляндский вокзал")
             ]
-        default:
+        case "Сочи":
             return [
-                Station(name: "\(city) Центральный"),
-                Station(name: "\(city) Северный"),
-                Station(name: "\(city) Южный")
+                Station(name: "Сочи Центральный"),
+                Station(name: "Адлер")
             ]
+        case "Казань":
+            return [
+                Station(name: "Казань Главный"),
+                Station(name: "Восстания")
+            ]
+        case "Екатеринбург":
+            return [
+                Station(name: "Екатеринбург Пассажирский"),
+                Station(name: "Сортировочный")
+            ]
+        case "Нижний Новгород":
+            return [
+                Station(name: "Московский вокзал"),
+                Station(name: "Сортировочный")
+            ]
+        case "Новосибирск":
+            return [
+                Station(name: "Новосибирск Главный"),
+                Station(name: "Инская")
+            ]
+        case "Краснодар":
+            return [
+                Station(name: "Краснодар I"),
+                Station(name: "Краснодар II")
+            ]
+        default:
+            return []
         }
     }
 }

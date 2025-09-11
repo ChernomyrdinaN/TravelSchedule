@@ -4,6 +4,7 @@
 //
 //  Created by Наталья Черномырдина on 10.09.2025.
 //
+
 import SwiftUI
 
 struct CitySelectionView: View {
@@ -12,16 +13,6 @@ struct CitySelectionView: View {
     let onStationSelected: (Station) -> Void
     
     @State private var searchText = ""
-    
-    private var filteredStations: [Station] {
-        if searchText.isEmpty {
-            return Station.mockData
-        } else {
-            return Station.mockData.filter { station in
-                station.name.localizedCaseInsensitiveContains(searchText)
-            }
-        }
-    }
     
     // MARK: - Body
     
@@ -55,6 +46,16 @@ struct CitySelectionView: View {
                         .foregroundColor(.ypBlack)
                 }
             }
+        }
+    }
+    
+    // MARK: - Private Properties
+    
+    private var filteredStations: [Station] {
+        if searchText.isEmpty {
+            return Station.mockData
+        } else {
+            return Station.mockData.filter { $0.name.localizedCaseInsensitiveContains(searchText) }
         }
     }
     
@@ -127,4 +128,11 @@ struct CitySelectionView: View {
         }
         .frame(maxWidth: .infinity)
     }
+}
+
+#Preview {
+    CitySelectionView(
+        selectedStation: .constant(nil),
+        onStationSelected: { _ in }
+    )
 }

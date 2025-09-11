@@ -15,20 +15,6 @@ struct StationSelectionView: View {
     
     @State private var searchText = ""
     
-    private var cityStations: [Station] {
-        return Station.mockStations(for: city)
-    }
-    
-    private var filteredStations: [Station] {
-        if searchText.isEmpty {
-            return cityStations
-        } else {
-            return cityStations.filter { station in
-                station.name.localizedCaseInsensitiveContains(searchText)
-            }
-        }
-    }
-    
     // MARK: - Body
     
     var body: some View {
@@ -61,6 +47,20 @@ struct StationSelectionView: View {
                         .foregroundColor(.ypBlack)
                 }
             }
+        }
+    }
+    
+    // MARK: - Private Properties
+    
+    private var cityStations: [Station] {
+        Station.mockStations(for: city)
+    }
+    
+    private var filteredStations: [Station] {
+        if searchText.isEmpty {
+            return cityStations
+        } else {
+            return cityStations.filter { $0.name.localizedCaseInsensitiveContains(searchText) }
         }
     }
     
