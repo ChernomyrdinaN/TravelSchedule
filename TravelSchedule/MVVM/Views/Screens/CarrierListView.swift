@@ -4,6 +4,12 @@
 //
 //  Created by Наталья Черномырдина on 12.09.2025.
 //
+//
+//  CarrierListView.swift
+//  TravelSchedule
+//
+//  Created by Наталья Черномырдина on 12.09.2025.
+//
 
 import SwiftUI
 
@@ -20,8 +26,6 @@ struct CarrierListView: View {
         self._carriers = State(initialValue: carriers)
     }
     
-    // MARK: - Body
-    
     var body: some View {
         ZStack {
             Color.ypWhite
@@ -37,21 +41,18 @@ struct CarrierListView: View {
                 }
             }
             
-            // ПЕРЕНЕСЕНО ВНУТРЬ УСЛОВИЯ - кнопка показывается только когда есть перевозчики
-            if !carriers.isEmpty {
-                VStack {
-                    Spacer()
-                    clarifyTimeButton
-                        .padding(.horizontal, 16)
-                        .padding(.bottom, 24)
-                }
+            VStack {
+                Spacer()
+                clarifyTimeButton
+                    .padding(.horizontal, 16)
+                    .padding(.bottom, 24)
             }
         }
         .navigationBarBackButtonHidden(true)
         .toolbar {
             ToolbarItem(placement: .navigationBarLeading) {
                 Button(action: {
-                    navigationPath.removeLast() // Действие для кнопки назад
+                    navigationPath.removeLast()
                 }) {
                     Image(systemName: "chevron.left")
                         .foregroundColor(.ypBlack)
@@ -60,9 +61,8 @@ struct CarrierListView: View {
         }
         .toolbar(.hidden, for: .tabBar)
     }
-
-    // MARK: - Subviews
     
+    // MARK: - Private Views
     private var headerView: some View {
         VStack(alignment: .leading, spacing: 8) {
             Text("\(fromStation) → \(toStation)")
@@ -143,6 +143,6 @@ struct CarrierListView: View {
         fromStation: "Москва (Ярославский вокзал)",
         toStation: "Санкт-Петербург (Балтийский вокзал)",
         navigationPath: .constant(NavigationPath()),
-        carriers: []  
+        carriers: []
     )
 }

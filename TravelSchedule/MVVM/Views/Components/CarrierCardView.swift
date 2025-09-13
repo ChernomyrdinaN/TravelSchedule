@@ -11,11 +11,8 @@ struct CarrierCardView: View {
     let carrier: Carrier
     let onTimeClarificationTapped: () -> Void
     
-    // MARK: - Body
-    
     var body: some View {
         VStack(alignment: .leading, spacing: 12) {
-            
             HStack(alignment: .top) {
                 Image(carrier.logo)
                     .resizable()
@@ -40,7 +37,6 @@ struct CarrierCardView: View {
                     .font(.system(size: 12, weight: .regular))
                     .foregroundColor(.ypBlack1)
             }
-            
             
             if carrier.departureTime == "Уточнить время" {
                 Button(action: onTimeClarificationTapped) {
@@ -73,9 +69,9 @@ struct CarrierCardView: View {
         )
     }
     
+    // MARK: - Private Views
     private var timelineView: some View {
         HStack(spacing: 4) {
-            
             Rectangle()
                 .fill(.ypGray)
                 .frame(height: 1)

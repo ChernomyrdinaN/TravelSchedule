@@ -4,7 +4,6 @@
 //
 //  Created by Наталья Черномырдина on 12.09.2025.
 //
-
 import SwiftUI
 
 struct FilterView: View {
@@ -12,21 +11,18 @@ struct FilterView: View {
     let applyFilters: () -> Void
     @Environment(\.dismiss) private var dismiss
     
-    // MARK: - Body
-    
     var body: some View {
         ZStack {
             Color.ypWhite
                 .ignoresSafeArea()
             
             VStack(spacing: 0) {
-                // УБРАТЬ ScrollView - экран не должен скроллиться
                 VStack(alignment: .leading, spacing: 24) {
                     timeFilterSection
                     
                     transfersFilterSection
                     
-                    Spacer() // Добавить Spacer чтобы контент был сверху
+                    Spacer()
                 }
                 .padding(.horizontal, 16)
                 .padding(.top, 24)
@@ -51,7 +47,6 @@ struct FilterView: View {
         .toolbar(.hidden, for: .tabBar)
     }
     
-    
     // MARK: - Private Properties
     private var hasSelectedFilters: Bool {
         let hasTimeFilters = !filter.timeOptions.isEmpty
@@ -59,8 +54,7 @@ struct FilterView: View {
         return hasTimeFilters || hasTransferFilter
     }
     
-    // MARK: - Subviews
-    
+    // MARK: - Private Views
     private var timeFilterSection: some View {
         VStack(alignment: .leading, spacing: 16) {
             Text("Время отправления")
@@ -85,7 +79,6 @@ struct FilterView: View {
                 Text(option.rawValue)
                     .font(.system(size: 17, weight: .regular))
                     .foregroundColor(.ypBlack)
-                //  .padding(.leading, 16)
                 
                 Spacer()
                 
@@ -167,7 +160,6 @@ struct FilterView: View {
     }
     
     // MARK: - Private Methods
-    
     private func toggleTimeOption(_ option: CarrierFilter.TimeOption) {
         if filter.timeOptions.contains(option) {
             filter.timeOptions.removeAll { $0 == option }
