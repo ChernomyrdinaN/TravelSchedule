@@ -11,8 +11,14 @@ struct CarrierListView: View {
     let fromStation: String
     let toStation: String
     @Binding var navigationPath: NavigationPath
-    @State private var carriers = Carrier.mockData
-    @Environment(\.dismiss) private var dismiss
+    @State private var carriers: [Carrier]
+    
+    init(fromStation: String, toStation: String, navigationPath: Binding<NavigationPath>, carriers: [Carrier] = Carrier.mockData) {
+        self.fromStation = fromStation
+        self.toStation = toStation
+        self._navigationPath = navigationPath
+        self._carriers = State(initialValue: carriers)
+    }
     
     // MARK: - Body
     
@@ -31,19 +37,18 @@ struct CarrierListView: View {
                 }
             }
             
-            if !carriers.isEmpty {
-                VStack {
-                    Spacer()
-                    clarifyTimeButton
-                        .padding(.horizontal, 16)
-                        .padding(.bottom, 24)
-                }
+            VStack {
+                Spacer()
+                clarifyTimeButton
+                    .padding(.horizontal, 16)
+                    .padding(.bottom, 24)
             }
         }
+        
         .navigationBarBackButtonHidden(true)
         .toolbar {
             ToolbarItem(placement: .navigationBarLeading) {
-                Button(action: { dismiss() }) {
+                Button(action: {  }) {
                     Image(systemName: "chevron.left")
                         .foregroundColor(.ypBlack)
                 }
@@ -94,7 +99,7 @@ struct CarrierListView: View {
             HStack {
                 Text("Уточнить время")
                     .font(.system(size: 17, weight: .regular))
-                    .foregroundColor(.ypWhite)
+                    .foregroundColor(.ypWhite1)
                 
                 Circle()
                     .fill(Color.red)
@@ -126,5 +131,14 @@ struct CarrierListView: View {
         fromStation: "Москва (Ярославский вокзал)",
         toStation: "Санкт-Петербург (Балтийский вокзал)",
         navigationPath: .constant(NavigationPath())
+    )
+}
+
+#Preview("Без перевозчиков") {
+    CarrierListView(
+        fromStation: "Москва (Ярославский вокзал)",
+        toStation: "Санкт-Петербург (Балтийский вокзал)",
+        navigationPath: .constant(NavigationPath()),
+        carriers: []  
     )
 }

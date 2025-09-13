@@ -15,7 +15,8 @@ struct ErrorView: View {
             Image(errorModel.imageName)
                 .resizable()
                 .scaledToFit()
-                .frame(width: 120, height: 120)
+                .frame(width: 223, height: 223)
+                .cornerRadius(70)
             
             Text(errorModel.title)
                 .font(.system(size: 24, weight: .bold))

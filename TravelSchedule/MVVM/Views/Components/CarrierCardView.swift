@@ -25,7 +25,7 @@ struct CarrierCardView: View {
                 VStack(alignment: .leading, spacing: 4) {
                     Text(carrier.name)
                         .font(.system(size: 17, weight: .regular))
-                        .foregroundColor(.ypBlack)
+                        .foregroundColor(.ypBlack1)
                     
                     if let transferInfo = carrier.transferInfo {
                         Text(transferInfo)
@@ -38,7 +38,7 @@ struct CarrierCardView: View {
                 
                 Text(carrier.date)
                     .font(.system(size: 12, weight: .regular))
-                    .foregroundColor(.ypBlack)
+                    .foregroundColor(.ypBlack1)
             }
             
             
@@ -53,14 +53,14 @@ struct CarrierCardView: View {
                 HStack(spacing: 0) {
                     Text(carrier.departureTime)
                         .font(.system(size: 17, weight: .regular))
-                        .foregroundColor(.ypBlack)
+                        .foregroundColor(.ypBlack1)
                         .frame(width: 60, alignment: .leading)
                     
                     timelineView
                     
                     Text(carrier.arrivalTime)
                         .font(.system(size: 17, weight: .regular))
-                        .foregroundColor(.ypBlack)
+                        .foregroundColor(.ypBlack1)
                         .frame(width: 60, alignment: .trailing)
                 }
             }
@@ -75,28 +75,21 @@ struct CarrierCardView: View {
     
     private var timelineView: some View {
         HStack(spacing: 4) {
-            Circle()
-                .fill(Color.ypBlack)
-                .frame(width: 8, height: 8)
             
             Rectangle()
-                .fill(Color.ypLightGray)
+                .fill(.ypGray)
                 .frame(height: 1)
                 .frame(maxWidth: .infinity)
             
             Text(carrier.travelTime)
                 .font(.system(size: 12, weight: .regular))
-                .foregroundColor(.ypBlack)
+                .foregroundColor(.ypBlack1)
                 .fixedSize()
             
             Rectangle()
-                .fill(Color.ypLightGray)
+                .fill(.ypGray)
                 .frame(height: 1)
                 .frame(maxWidth: .infinity)
-            
-            Circle()
-                .fill(Color.ypBlack)
-                .frame(width: 8, height: 8)
         }
     }
 }
