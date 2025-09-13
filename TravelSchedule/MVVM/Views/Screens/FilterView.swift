@@ -20,16 +20,16 @@ struct FilterView: View {
                 .ignoresSafeArea()
             
             VStack(spacing: 0) {
-                ScrollView {
-                    VStack(alignment: .leading, spacing: 24) {
-                        timeFilterSection
-                        
-                        transfersFilterSection
-                    }
-                    .padding(.horizontal, 16)
-                    .padding(.top, 24)
+                // УБРАТЬ ScrollView - экран не должен скроллиться
+                VStack(alignment: .leading, spacing: 24) {
+                    timeFilterSection
+                    
+                    transfersFilterSection
+                    
+                    Spacer() // Добавить Spacer чтобы контент был сверху
                 }
-                
+                .padding(.horizontal, 16)
+                .padding(.top, 24)
                 
                 if hasSelectedFilters {
                     applyButton
@@ -50,6 +50,7 @@ struct FilterView: View {
         }
         .toolbar(.hidden, for: .tabBar)
     }
+    
     
     // MARK: - Private Properties
     private var hasSelectedFilters: Bool {
