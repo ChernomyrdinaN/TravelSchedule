@@ -18,7 +18,6 @@ struct Carrier: Identifiable, Hashable {
     let arrivalTime: String
     
     // MARK: - Mock Data
-    
     static let mockData = [
         Carrier(
             name: "РЖД",

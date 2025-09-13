@@ -4,7 +4,6 @@
 //
 //  Created by Наталья Черномырдина on 11.09.2025.
 //
-
 import SwiftUI
 
 struct StationSelectionView: View {
@@ -13,8 +12,6 @@ struct StationSelectionView: View {
     let city: String
     let onStationSelected: (Station) -> Void
     @State private var searchText = ""
-    
-    // MARK: - Body
     
     var body: some View {
         ZStack {
@@ -63,7 +60,7 @@ struct StationSelectionView: View {
         }
     }
     
-    // MARK: - Subviews
+    // MARK: - Private Views
     private var searchField: some View {
         HStack {
             Image(systemName: "magnifyingglass")
@@ -72,7 +69,8 @@ struct StationSelectionView: View {
             
             TextField("Введите запрос", text: $searchText)
                 .padding(.vertical, 12)
-                .foregroundColor(.ypBlack)
+                .foregroundColor(.ypBlack1)
+                .tint(.ypBlack1)
             
             if !searchText.isEmpty {
                 Button(action: { searchText = "" }) {

@@ -11,6 +11,7 @@ struct CarrierFilter: Hashable {
     var timeOptions: [TimeOption] = []
     var showTransfers: Bool? = nil
     
+    // MARK: - Time Options
     enum TimeOption: String, CaseIterable, Hashable {
         case morning = "Утро 06:00 - 12:00"
         case afternoon = "День 12:00 - 18:00"

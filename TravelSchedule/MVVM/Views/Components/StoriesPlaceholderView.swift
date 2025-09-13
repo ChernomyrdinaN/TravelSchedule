@@ -4,19 +4,15 @@
 //
 //  Created by Наталья Черномырдина on 08.09.2025.
 //
-
 import SwiftUI
 
-// MARK: - Model
 struct StoryItem: Identifiable {
     let id = UUID()
     let image: String
     let text: String
 }
 
-// MARK: - Main View
 struct StoriesPlaceholderView: View {
-    // MARK: - Properties
     private let stories = [
         StoryItem(image: "ilBig1", text: "Москва"),
         StoryItem(image: "ilBig2", text: "Санкт-Петербург"),
@@ -28,7 +24,6 @@ struct StoriesPlaceholderView: View {
     
     @State private var selectedStoryIndex = 0
     
-    // MARK: - Body
     var body: some View {
         VStack(spacing: 0) {
             Spacer()
@@ -39,7 +34,7 @@ struct StoriesPlaceholderView: View {
         .background(.ypWhite)
     }
     
-    // MARK: - Subviews
+    // MARK: - Private Views
     private var storiesScrollView: some View {
         ScrollView(.horizontal, showsIndicators: false) {
             HStack(spacing: 12) {
@@ -58,10 +53,7 @@ struct StoriesPlaceholderView: View {
     }
 }
 
-// MARK: - Story Card Component
 struct StoryCard: View {
-    
-    // MARK: - Properties
     let imageName: String
     let text: String
     let isActive: Bool
@@ -69,7 +61,6 @@ struct StoryCard: View {
     
     @State private var isPressed = false
     
-    // MARK: - Body
     var body: some View {
         Button(action: onTap) {
             cardContent
@@ -79,7 +70,7 @@ struct StoryCard: View {
         .simultaneousGesture(pressGesture)
     }
     
-    // MARK: - Subviews
+    // MARK: - Private Views
     private var cardContent: some View {
         ZStack(alignment: .bottom) {
             backgroundImage
@@ -124,7 +115,7 @@ struct StoryCard: View {
         .frame(height: 140)
     }
     
-    // MARK: - Gesture
+    // MARK: - Gestures
     private var pressGesture: some Gesture {
         LongPressGesture(minimumDuration: 0.1)
             .onChanged { _ in isPressed = true }

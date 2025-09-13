@@ -14,8 +14,6 @@ struct CitySelectionView: View {
     
     @State private var searchText = ""
     
-    // MARK: - Body
-    
     var body: some View {
         ZStack {
             Color.ypWhite
@@ -51,7 +49,6 @@ struct CitySelectionView: View {
     }
     
     // MARK: - Private Properties
-    
     private var filteredStations: [Station] {
         if searchText.isEmpty {
             return Station.mockData
@@ -60,8 +57,7 @@ struct CitySelectionView: View {
         }
     }
     
-    // MARK: - Subviews
-    
+    // MARK: - Private Views
     private var searchField: some View {
         HStack {
             Image(systemName: "magnifyingglass")
@@ -70,7 +66,8 @@ struct CitySelectionView: View {
             
             TextField("Введите запрос", text: $searchText)
                 .padding(.vertical, 12)
-                .foregroundColor(.ypBlack)
+                .foregroundColor(.ypBlack1)
+                .tint(.ypBlack1)
             
             if !searchText.isEmpty {
                 Button(action: { searchText = "" }) {

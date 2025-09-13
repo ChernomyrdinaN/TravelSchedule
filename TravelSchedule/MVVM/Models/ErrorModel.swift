@@ -7,17 +7,18 @@
 
 import SwiftUI
 
-// MARK: - Модель ошибок
 struct ErrorModel {
     let type: ErrorType
     let title: String
     let imageName: String
     
+    // MARK: - Error Type
     enum ErrorType {
         case noInternet
         case serverError
     }
     
+    // MARK: - Static Instances
     static let error1 = ErrorModel(
         type: .noInternet,
         title: "Нет интернета",

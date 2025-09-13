@@ -15,9 +15,7 @@ struct MainView: View {
     @State private var navigationPath = NavigationPath()
     @State private var isSelectingFrom = true
     @State private var filter = CarrierFilter()
-    @State private var showingError: ErrorModel.ErrorType? = nil // Добавляем состояние для ошибки
-    
-    // MARK: - Body
+    @State private var showingError: ErrorModel.ErrorType? = nil
     
     var body: some View {
         NavigationStack(path: $navigationPath) {
@@ -25,7 +23,6 @@ struct MainView: View {
                 Color.ypWhite
                     .ignoresSafeArea()
                 
-                // Условное отображение: ошибка или основной контент
                 if let errorType = showingError {
                     ErrorView(errorModel: errorType == .noInternet ? .error1 : .error2)
                 } else {
@@ -91,13 +88,12 @@ struct MainView: View {
                 }
             }
             .onAppear {
-                // Для тестирования - показываем ошибку через 2 секунды
                 testErrorDisplay()
             }
         }
     }
     
-    // MARK: - Методы для тестирования
+    // MARK: - Private Methods
     private func testErrorDisplay() {
         DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
             //showError(.noInternet)
@@ -114,12 +110,9 @@ struct MainView: View {
     }
     
     // MARK: - Private Properties
-    
     private var isFindButtonEnabled: Bool {
         fromStation != nil && toStation != nil
     }
-    
-    // MARK: - Private Methods
     
     private func showCitySelection(isFrom: Bool) {
         isSelectingFrom = isFrom
@@ -141,7 +134,7 @@ struct MainView: View {
         navigationPath.removeLast()
     }
     
-    // MARK: - Методы для управления ошибками
+    // MARK: - Error Handling
     func showError(_ errorType: ErrorModel.ErrorType) {
         showingError = errorType
     }

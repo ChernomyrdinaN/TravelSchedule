@@ -12,7 +12,6 @@ struct MainTabView: View {
     
     var body: some View {
         TabView(selection: $selectedTab) {
-            // MARK: - First Tab
             MainView()
                 .tabItem {
                     Image("icSchedule")
@@ -20,8 +19,6 @@ struct MainTabView: View {
                 }
                 .tag(0)
 
-            
-            // MARK: - Second Tab
             NavigationStack {
                 ZStack {
                     Color.ypWhite
