@@ -9,7 +9,7 @@ import Foundation
 
 struct CarrierFilter: Hashable {
     var timeOptions: [TimeOption] = []
-    var showTransfers: Bool = true
+    var showTransfers: Bool? = nil
     
     enum TimeOption: String, CaseIterable, Hashable {
         case morning = "Утро 06:00 - 12:00"

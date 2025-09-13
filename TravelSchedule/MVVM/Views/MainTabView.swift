@@ -19,6 +19,7 @@ struct MainTabView: View {
                         .renderingMode(.template)
                 }
                 .tag(0)
+
             
             // MARK: - Second Tab
             NavigationStack {

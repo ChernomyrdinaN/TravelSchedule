@@ -15,7 +15,7 @@ struct CarrierCardView: View {
     
     var body: some View {
         VStack(alignment: .leading, spacing: 12) {
-    
+            
             HStack(alignment: .top) {
                 Image(carrier.logo)
                     .resizable()
@@ -41,7 +41,7 @@ struct CarrierCardView: View {
                     .foregroundColor(.ypBlack)
             }
             
-
+            
             if carrier.departureTime == "Уточнить время" {
                 Button(action: onTimeClarificationTapped) {
                     Text("Уточнить время")
@@ -66,7 +66,6 @@ struct CarrierCardView: View {
             }
         }
         .padding(16)
-        .background(Color.ypWhite)
         .cornerRadius(12)
         .overlay(
             RoundedRectangle(cornerRadius: 12)
