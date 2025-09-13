@@ -28,13 +28,16 @@ struct CarrierListView: View {
                     emptyStateView
                 } else {
                     carriersList
-     
-                    clarifyTimeButton
-                        .padding(.top, 16)
-                        .padding(.horizontal, 16)
                 }
-                
-                Spacer()
+            }
+            
+            if !carriers.isEmpty {
+                VStack {
+                    Spacer()
+                    clarifyTimeButton
+                        .padding(.horizontal, 16)
+                        .padding(.bottom, 24)
+                }
             }
         }
         .navigationBarBackButtonHidden(true)
@@ -46,6 +49,7 @@ struct CarrierListView: View {
                 }
             }
         }
+        .toolbar(.hidden, for: .tabBar)
     }
     
     // MARK: - Subviews
@@ -55,6 +59,10 @@ struct CarrierListView: View {
             Text("\(fromStation) → \(toStation)")
                 .font(.system(size: 24, weight: .bold))
                 .foregroundColor(.ypBlack)
+                .lineLimit(2)
+                .minimumScaleFactor(0.8)
+                .multilineTextAlignment(.leading)
+                .frame(maxWidth: .infinity, alignment: .leading)
                 .padding(.top, 16)
                 .padding(.horizontal, 16)
         }
@@ -70,6 +78,8 @@ struct CarrierListView: View {
                             navigationPath.append(StationNavigation.filters)
                         }
                     )
+                    .background(Color.ypLightGray)
+                    .cornerRadius(24)
                 }
             }
             .padding(.horizontal, 16)
@@ -81,13 +91,19 @@ struct CarrierListView: View {
         Button(action: {
             navigationPath.append(StationNavigation.filters)
         }) {
-            Text("Уточнить время")
-                .font(.system(size: 17, weight: .regular))
-                .foregroundColor(.ypWhite)
-                .frame(maxWidth: .infinity)
-                .frame(height: 60)
-                .background(Color.ypBlue)
-                .cornerRadius(12)
+            HStack {
+                Text("Уточнить время")
+                    .font(.system(size: 17, weight: .regular))
+                    .foregroundColor(.ypWhite)
+                
+                Circle()
+                    .fill(Color.red)
+                    .frame(width: 8, height: 8)
+            }
+            .frame(maxWidth: .infinity)
+            .frame(height: 60)
+            .background(Color.ypBlue)
+            .cornerRadius(12)
         }
     }
     
@@ -98,10 +114,6 @@ struct CarrierListView: View {
             Text("Варианты не найдены")
                 .font(.system(size: 24, weight: .bold))
                 .foregroundColor(.ypBlack)
-            
-            Text("Попробуйте изменить параметры фильтра")
-                .font(.system(size: 16, weight: .regular))
-                .foregroundColor(.ypGray)
             
             Spacer()
         }

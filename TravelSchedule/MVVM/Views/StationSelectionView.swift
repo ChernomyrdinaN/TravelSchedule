@@ -47,6 +47,7 @@ struct StationSelectionView: View {
                 }
             }
         }
+        .toolbar(.hidden, for: .tabBar)
     }
     
     // MARK: - Private Properties
