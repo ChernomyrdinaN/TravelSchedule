@@ -37,18 +37,22 @@ struct CarrierListView: View {
                 }
             }
             
-            VStack {
-                Spacer()
-                clarifyTimeButton
-                    .padding(.horizontal, 16)
-                    .padding(.bottom, 24)
+            // ПЕРЕНЕСЕНО ВНУТРЬ УСЛОВИЯ - кнопка показывается только когда есть перевозчики
+            if !carriers.isEmpty {
+                VStack {
+                    Spacer()
+                    clarifyTimeButton
+                        .padding(.horizontal, 16)
+                        .padding(.bottom, 24)
+                }
             }
         }
-        
         .navigationBarBackButtonHidden(true)
         .toolbar {
             ToolbarItem(placement: .navigationBarLeading) {
-                Button(action: {  }) {
+                Button(action: {
+                    navigationPath.removeLast() // Действие для кнопки назад
+                }) {
                     Image(systemName: "chevron.left")
                         .foregroundColor(.ypBlack)
                 }
@@ -56,7 +60,7 @@ struct CarrierListView: View {
         }
         .toolbar(.hidden, for: .tabBar)
     }
-    
+
     // MARK: - Subviews
     
     private var headerView: some View {
