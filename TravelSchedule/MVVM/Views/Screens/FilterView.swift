@@ -127,7 +127,6 @@ struct FilterView: View {
                 Text(title)
                     .font(.system(size: 17, weight: .regular))
                     .foregroundColor(.ypBlack)
-                //.padding(.leading, 16)
                 
                 Spacer()
                 
@@ -153,7 +152,7 @@ struct FilterView: View {
             HStack {
                 Text("Применить")
                     .font(.system(size: 17, weight: .regular))
-                    .foregroundColor(.ypWhite)
+                    .foregroundColor(.ypWhite1)
                 
                 Circle()
                     .fill(Color.red)

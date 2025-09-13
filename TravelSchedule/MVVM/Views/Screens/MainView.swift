@@ -4,6 +4,9 @@
 //
 //  Created by Наталья Черномырдина on 08.09.2025.
 
+// Пока оставляем логику здесь, при подключении API перенесем в ViewModel
+// @StateObject private var viewModel = MainViewModel()
+
 import SwiftUI
 
 struct MainView: View {
@@ -12,6 +15,7 @@ struct MainView: View {
     @State private var navigationPath = NavigationPath()
     @State private var isSelectingFrom = true
     @State private var filter = CarrierFilter()
+    @State private var showingError: ErrorModel.ErrorType? = nil // Добавляем состояние для ошибки
     
     // MARK: - Body
     
@@ -21,29 +25,34 @@ struct MainView: View {
                 Color.ypWhite
                     .ignoresSafeArea()
                 
-                VStack(spacing: 0) {
-                    StoriesPlaceholderView()
-                    
-                    DirectionCardView(
-                        fromStation: $fromStation,
-                        toStation: $toStation,
-                        onFromStationTapped: { showCitySelection(isFrom: true) },
-                        onToStationTapped: { showCitySelection(isFrom: false) },
-                        onSwapStations: swapStations
-                    )
-                    .padding(.top, 44)
-                    .padding(.horizontal, 16)
-                    
-                    if isFindButtonEnabled {
-                        FindButtonView(
-                            fromStation: fromStation,
-                            toStation: toStation,
-                            onFindTapped: showCarrierList
+                // Условное отображение: ошибка или основной контент
+                if let errorType = showingError {
+                    ErrorView(errorModel: errorType == .noInternet ? .error1 : .error2)
+                } else {
+                    VStack(spacing: 0) {
+                        StoriesPlaceholderView()
+                        
+                        DirectionCardView(
+                            fromStation: $fromStation,
+                            toStation: $toStation,
+                            onFromStationTapped: { showCitySelection(isFrom: true) },
+                            onToStationTapped: { showCitySelection(isFrom: false) },
+                            onSwapStations: swapStations
                         )
-                        .padding(.top, 16)
+                        .padding(.top, 44)
+                        .padding(.horizontal, 16)
+                        
+                        if isFindButtonEnabled {
+                            FindButtonView(
+                                fromStation: fromStation,
+                                toStation: toStation,
+                                onFindTapped: showCarrierList
+                            )
+                            .padding(.top, 16)
+                        }
+                        
+                        Spacer()
                     }
-                    
-                    Spacer()
                 }
             }
             .navigationDestination(for: StationNavigation.self) { destination in
@@ -81,6 +90,18 @@ struct MainView: View {
                     FilterView(filter: $filter, applyFilters: applyFilters)
                 }
             }
+            .onAppear {
+                // Для тестирования - показываем ошибку через 2 секунды
+                testErrorDisplay()
+            }
+        }
+    }
+    
+    // MARK: - Методы для тестирования
+    private func testErrorDisplay() {
+        DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
+            //showError(.noInternet)
+            //showError(.serverError)
         }
     }
     
@@ -117,8 +138,16 @@ struct MainView: View {
     }
     
     private func applyFilters() {
-        // Здесь будет логика применения фильтров
         navigationPath.removeLast()
+    }
+    
+    // MARK: - Методы для управления ошибками
+    func showError(_ errorType: ErrorModel.ErrorType) {
+        showingError = errorType
+    }
+    
+    func hideError() {
+        showingError = nil
     }
 }
 

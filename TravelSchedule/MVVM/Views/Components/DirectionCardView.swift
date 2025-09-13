@@ -47,10 +47,11 @@ struct DirectionCardView: View {
                         .frame(width: 36, height: 36)
                         .foregroundColor(.ypWhite1)
                 }
-                .padding(.trailing, 16)
+                 .padding(.trailing, 16)
             }
         }
         .frame(maxWidth: .infinity, maxHeight: 128)
+       // .padding(.horizontal, 16)
     }
     
     // MARK: - Private Methods
