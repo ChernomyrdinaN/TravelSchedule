@@ -14,29 +14,29 @@ struct CitySelectionView: View {
     
     @State private var searchText = ""
     
+    // MARK: - Body
     var body: some View {
         ZStack {
             Color.ypWhite
                 .ignoresSafeArea()
             
             VStack(spacing: 0) {
-                Text("Выбор города")
-                    .font(.system(size: 17, weight: .bold))
-                    .foregroundColor(.ypBlack)
-                    .padding(.top, 16)
-                
                 searchField
+                    .padding(.top, 8)
                 
                 if filteredStations.isEmpty {
                     noResultsView
                 } else {
                     stationsList
+                        .padding(.top, 8)
                 }
                 
                 Spacer()
             }
         }
         .navigationBarBackButtonHidden(true)
+        .navigationTitle("Выбор города")
+        .navigationBarTitleDisplayMode(.inline)
         .toolbar {
             ToolbarItem(placement: .navigationBarLeading) {
                 Button(action: { dismiss() }) {
@@ -80,8 +80,7 @@ struct CitySelectionView: View {
         .background(Color.ypLightGray)
         .cornerRadius(10)
         .padding(.horizontal, 16)
-        .padding(.top, 16)
-        .padding(.bottom, 8)
+        .frame(height: 42)
     }
     
     private var stationsList: some View {
@@ -103,7 +102,8 @@ struct CitySelectionView: View {
             Text(station.name)
                 .font(.system(size: 17, weight: .regular))
                 .foregroundColor(.ypBlack)
-                .padding(.vertical, 12)
+                .padding(.vertical, 19)
+                .frame(maxWidth: .infinity, alignment: .leading)
             
             Spacer()
             
@@ -111,16 +111,20 @@ struct CitySelectionView: View {
                 .foregroundColor(.ypBlack)
         }
         .padding(.horizontal, 16)
+        .frame(height: 60)
         .background(Color.ypWhite)
     }
     
+    // MARK: - No Results View
     private var noResultsView: some View {
-        VStack(spacing: 8) {
-            Spacer()
-            
+        VStack(spacing: 0) {
             Text("Город не найден")
                 .font(.system(size: 24, weight: .bold))
                 .foregroundColor(.ypBlack)
+                .multilineTextAlignment(.center)
+                .lineSpacing(0)
+                .kerning(0)
+                .padding(.top, 228)
             
             Spacer()
         }
@@ -128,9 +132,12 @@ struct CitySelectionView: View {
     }
 }
 
+// MARK: - Preview
 #Preview {
-    CitySelectionView(
-        selectedStation: .constant(nil),
-        onStationSelected: { _ in }
-    )
+    NavigationView {
+        CitySelectionView(
+            selectedStation: .constant(nil),
+            onStationSelected: { _ in }
+        )
+    }
 }

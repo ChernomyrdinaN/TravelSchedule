@@ -21,7 +21,7 @@ struct DirectionCardView: View {
                 .cornerRadius(20)
             
             HStack(spacing: 16) {
-                VStack(spacing: 16) {
+                VStack(spacing: 0) {
                     stationField(
                         text: fromStation?.name ?? "Откуда",
                         isPlaceholder: fromStation == nil,
@@ -34,8 +34,7 @@ struct DirectionCardView: View {
                         action: onToStationTapped
                     )
                 }
-                .frame(maxWidth: .infinity, maxHeight: 96)
-                .background(.ypWhite1)
+                .background(Color.ypWhite)
                 .cornerRadius(20)
                 .padding(.leading, 16)
                 .padding(.vertical, 16)
@@ -46,11 +45,10 @@ struct DirectionCardView: View {
                         .frame(width: 36, height: 36)
                         .foregroundColor(.ypWhite1)
                 }
-                 .padding(.trailing, 16)
+                .padding(.trailing, 16)
             }
         }
-        .frame(maxWidth: .infinity, maxHeight: 128)
-       // .padding(.horizontal, 16)
+        .frame(height: 128)
     }
     
     // MARK: - Private Methods
@@ -63,20 +61,22 @@ struct DirectionCardView: View {
                     .foregroundColor(isPlaceholder ? .ypGray : .ypBlack1)
                     .lineLimit(1)
                     .frame(maxWidth: .infinity, alignment: .leading)
+                    .padding(.horizontal, 16)
+                    .padding(.vertical, 14)
                 
                 Spacer()
             }
-            .padding(.horizontal, 16)
-            .frame(height: 20)
+            .frame(height: 48)
         }
         .buttonStyle(PlainButtonStyle())
     }
 }
 
+// MARK: - Preview
 #Preview {
     DirectionCardView(
-        fromStation: .constant(nil),
-        toStation: .constant(nil),
+        fromStation: .constant(Station(name: "Москва (Курский вокзал)")),
+        toStation: .constant(Station(name: "Санкт-Петербург (Балтийский вокзал)")),
         onFromStationTapped: {},
         onToStationTapped: {},
         onSwapStations: {}
