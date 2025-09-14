@@ -85,9 +85,7 @@ struct MainView: View {
                 case .filters:
                     FilterView(
                         filter: $filter,
-                        applyFilters: {
-                            navigationPath.removeLast()
-                        }
+                        applyFilters: {}
                     )
                 }
             }
@@ -100,7 +98,7 @@ struct MainView: View {
     // MARK: - Private Methods
     private func testErrorDisplay() {
         DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
-            // Для тестирования ошибок раскомментируйте нужную строку:
+            // Для тестирования ошибок:
             // showError(.noInternet)
             // showError(.serverError)
         }

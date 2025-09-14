@@ -4,6 +4,7 @@
 //
 //  Created by Наталья Черномырдина on 12.09.2025.
 //
+
 import SwiftUI
 
 struct CarrierListView: View {
@@ -130,7 +131,7 @@ struct CarrierListView: View {
                 .lineSpacing(0)
                 .kerning(0)
                 .padding(.top, 237)
-             
+            
             Spacer()
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
