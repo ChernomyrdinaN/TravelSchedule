@@ -14,7 +14,6 @@ struct StationSelectionView: View {
     let onStationSelected: (Station) -> Void
     @State private var searchText = ""
     
-    // MARK: - Body
     var body: some View {
         ZStack {
             Color.ypWhite
@@ -136,7 +135,6 @@ struct StationSelectionView: View {
     }
 }
 
-// MARK: - Preview
 #Preview {
     NavigationView {
         StationSelectionView(

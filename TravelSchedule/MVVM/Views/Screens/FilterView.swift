@@ -4,12 +4,21 @@
 //
 //  Created by Наталья Черномырдина on 12.09.2025.
 //
+
+import SwiftUI
 import SwiftUI
 
 struct FilterView: View {
     @Binding var filter: CarrierFilter
     let applyFilters: () -> Void
     @Environment(\.dismiss) private var dismiss
+    @State private var localFilter: CarrierFilter
+    
+    init(filter: Binding<CarrierFilter>, applyFilters: @escaping () -> Void) {
+        self._filter = filter
+        self.applyFilters = applyFilters
+        self._localFilter = State(initialValue: filter.wrappedValue)
+    }
     
     var body: some View {
         ZStack {
@@ -47,13 +56,6 @@ struct FilterView: View {
         .toolbar(.hidden, for: .tabBar)
     }
     
-    // MARK: - Private Properties
-    private var hasSelectedFilters: Bool {
-        let hasTimeFilters = !filter.timeOptions.isEmpty
-        let hasTransferFilter = filter.showTransfers != nil
-        return hasTimeFilters || hasTransferFilter
-    }
-    
     // MARK: - Private Views
     private var timeFilterSection: some View {
         VStack(alignment: .leading, spacing: 16) {
@@ -82,7 +84,7 @@ struct FilterView: View {
                 
                 Spacer()
                 
-                if filter.timeOptions.contains(option) {
+                if localFilter.timeOptions.contains(option) {
                     Image("checkBoxOn")
                         .resizable()
                         .frame(width: 24, height: 24)
@@ -103,11 +105,11 @@ struct FilterView: View {
                 .foregroundColor(.ypBlack)
             
             VStack(spacing: 0) {
-                transferOptionRow(title: "Да", isSelected: filter.showTransfers == true) {
-                    filter.showTransfers = true
+                transferOptionRow(title: "Да", isSelected: localFilter.showTransfers == true) {
+                    localFilter.showTransfers = true
                 }
-                transferOptionRow(title: "Нет", isSelected: filter.showTransfers == false) {
-                    filter.showTransfers = false
+                transferOptionRow(title: "Нет", isSelected: localFilter.showTransfers == false) {
+                    localFilter.showTransfers = false
                 }
             }
             .background(Color.ypWhite)
@@ -140,31 +142,31 @@ struct FilterView: View {
     
     private var applyButton: some View {
         Button(action: {
+            filter = localFilter
             applyFilters()
             dismiss()
         }) {
-            HStack {
-                Text("Применить")
-                    .font(.system(size: 17, weight: .regular))
-                    .foregroundColor(.ypWhite1)
-                
-                Circle()
-                    .fill(Color.red)
-                    .frame(width: 8, height: 8)
-            }
-            .frame(maxWidth: .infinity)
-            .frame(height: 60)
-            .background(Color.ypBlue)
-            .cornerRadius(12)
+            Text("Применить")
+                .font(.system(size: 17, weight: .regular))
+                .foregroundColor(.ypWhite1)
+                .frame(maxWidth: .infinity)
+                .frame(height: 60)
+                .background(Color.ypBlue)
+                .cornerRadius(12)
         }
+    }
+    
+    // MARK: - Private Properties
+    private var hasSelectedFilters: Bool {
+        !localFilter.timeOptions.isEmpty && localFilter.showTransfers != nil
     }
     
     // MARK: - Private Methods
     private func toggleTimeOption(_ option: CarrierFilter.TimeOption) {
-        if filter.timeOptions.contains(option) {
-            filter.timeOptions.removeAll { $0 == option }
+        if localFilter.timeOptions.contains(option) {
+            localFilter.timeOptions.removeAll { $0 == option }
         } else {
-            filter.timeOptions.append(option)
+            localFilter.timeOptions.append(option)
         }
     }
 }

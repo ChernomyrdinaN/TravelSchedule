@@ -14,7 +14,6 @@ struct CitySelectionView: View {
     
     @State private var searchText = ""
     
-    // MARK: - Body
     var body: some View {
         ZStack {
             Color.ypWhite
@@ -132,7 +131,6 @@ struct CitySelectionView: View {
     }
 }
 
-// MARK: - Preview
 #Preview {
     NavigationView {
         CitySelectionView(

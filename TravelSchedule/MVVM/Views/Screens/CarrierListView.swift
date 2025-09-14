@@ -4,26 +4,23 @@
 //
 //  Created by Наталья Черномырдина on 12.09.2025.
 //
-//
-//  CarrierListView.swift
-//  TravelSchedule
-//
-//  Created by Наталья Черномырдина on 12.09.2025.
-//
-
 import SwiftUI
 
 struct CarrierListView: View {
     let fromStation: String
     let toStation: String
     @Binding var navigationPath: NavigationPath
+    @Binding var filter: CarrierFilter
     @State private var carriers: [Carrier]
+    @State private var filteredCarriers: [Carrier] = []
     
-    init(fromStation: String, toStation: String, navigationPath: Binding<NavigationPath>, carriers: [Carrier] = Carrier.mockData) {
+    init(fromStation: String, toStation: String, navigationPath: Binding<NavigationPath>, filter: Binding<CarrierFilter>, carriers: [Carrier] = Carrier.mockData) {
         self.fromStation = fromStation
         self.toStation = toStation
         self._navigationPath = navigationPath
+        self._filter = filter
         self._carriers = State(initialValue: carriers)
+        self._filteredCarriers = State(initialValue: carriers)
     }
     
     var body: some View {
@@ -34,7 +31,7 @@ struct CarrierListView: View {
             VStack(spacing: 0) {
                 headerView
                 
-                if carriers.isEmpty {
+                if filteredCarriers.isEmpty {
                     emptyStateView
                 } else {
                     carriersList
@@ -60,6 +57,9 @@ struct CarrierListView: View {
             }
         }
         .toolbar(.hidden, for: .tabBar)
+        .onAppear {
+            applyFilters()
+        }
     }
     
     // MARK: - Private Views
@@ -80,7 +80,7 @@ struct CarrierListView: View {
     private var carriersList: some View {
         ScrollView {
             LazyVStack(spacing: 16) {
-                ForEach(carriers) { carrier in
+                ForEach(filteredCarriers) { carrier in
                     CarrierCardView(
                         carrier: carrier,
                         onTimeClarificationTapped: {
@@ -105,28 +105,80 @@ struct CarrierListView: View {
                     .font(.system(size: 17, weight: .regular))
                     .foregroundColor(.ypWhite1)
                 
-                Circle()
-                    .fill(Color.red)
-                    .frame(width: 8, height: 8)
+                if hasActiveFilters {
+                    Circle()
+                        .fill(Color.red)
+                        .frame(width: 8, height: 8)
+                }
             }
             .frame(maxWidth: .infinity)
             .frame(height: 60)
             .background(Color.ypBlue)
             .cornerRadius(12)
         }
+        .buttonStyle(PlainButtonStyle())
+        .background(Color.ypLightGray)
+        .cornerRadius(12)
     }
     
     private var emptyStateView: some View {
-        VStack(spacing: 8) {
-            Spacer()
-            
-            Text("Варианты не найдены")
+        VStack(spacing: 0) {
+            Text("Вариантов нет")
                 .font(.system(size: 24, weight: .bold))
                 .foregroundColor(.ypBlack)
-            
+                .multilineTextAlignment(.center)
+                .lineSpacing(0)
+                .kerning(0)
+                .padding(.top, 237)
+             
             Spacer()
         }
-        .frame(maxWidth: .infinity)
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
+    }
+    
+    // MARK: - Private Properties
+    private var hasActiveFilters: Bool {
+        !filter.timeOptions.isEmpty || filter.showTransfers != nil
+    }
+    
+    // MARK: - Private Methods
+    private func applyFilters() {
+        if filter.timeOptions.isEmpty && filter.showTransfers == nil {
+            filteredCarriers = carriers
+            return
+        }
+        
+        filteredCarriers = carriers.filter { carrier in
+            if let showTransfers = filter.showTransfers {
+                let hasTransfer = carrier.transferInfo != nil
+                if showTransfers && !hasTransfer {
+                    return false
+                }
+                if !showTransfers && hasTransfer {
+                    return false
+                }
+            }
+            
+            if !filter.timeOptions.isEmpty {
+                let hour = carrier.departureHour
+                var matchesTime = false
+                
+                for timeOption in filter.timeOptions {
+                    switch timeOption {
+                    case .morning: if (6..<12).contains(hour) { matchesTime = true }
+                    case .afternoon: if (12..<18).contains(hour) { matchesTime = true }
+                    case .evening: if (18..<24).contains(hour) { matchesTime = true }
+                    case .night: if (0..<6).contains(hour) { matchesTime = true }
+                    }
+                }
+                
+                if !matchesTime {
+                    return false
+                }
+            }
+            
+            return true
+        }
     }
 }
 
@@ -134,7 +186,8 @@ struct CarrierListView: View {
     CarrierListView(
         fromStation: "Москва (Ярославский вокзал)",
         toStation: "Санкт-Петербург (Балтийский вокзал)",
-        navigationPath: .constant(NavigationPath())
+        navigationPath: .constant(NavigationPath()),
+        filter: .constant(CarrierFilter())
     )
 }
 
@@ -143,6 +196,7 @@ struct CarrierListView: View {
         fromStation: "Москва (Ярославский вокзал)",
         toStation: "Санкт-Петербург (Балтийский вокзал)",
         navigationPath: .constant(NavigationPath()),
+        filter: .constant(CarrierFilter()),
         carriers: []
     )
 }
