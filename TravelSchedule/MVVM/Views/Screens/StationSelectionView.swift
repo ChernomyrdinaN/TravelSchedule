@@ -14,29 +14,29 @@ struct StationSelectionView: View {
     let onStationSelected: (Station) -> Void
     @State private var searchText = ""
     
+    // MARK: - Body
     var body: some View {
         ZStack {
             Color.ypWhite
                 .ignoresSafeArea()
             
             VStack(spacing: 0) {
-                Text("Выбор станции")
-                    .font(.system(size: 17, weight: .bold))
-                    .foregroundColor(.ypBlack)
-                    .padding(.top, 16)
-                
                 searchField
+                    .padding(.top, 8)
                 
                 if filteredStations.isEmpty {
                     noResultsView
                 } else {
                     stationsList
+                        .padding(.top, 8)
                 }
                 
                 Spacer()
             }
         }
         .navigationBarBackButtonHidden(true)
+        .navigationTitle("Выбор станции")
+        .navigationBarTitleDisplayMode(.inline)
         .toolbar {
             ToolbarItem(placement: .navigationBarLeading) {
                 Button(action: { dismiss() }) {
@@ -84,8 +84,7 @@ struct StationSelectionView: View {
         .background(Color.ypLightGray)
         .cornerRadius(10)
         .padding(.horizontal, 16)
-        .padding(.top, 16)
-        .padding(.bottom, 8)
+        .frame(height: 42)
     }
     
     private var stationsList: some View {
@@ -107,7 +106,8 @@ struct StationSelectionView: View {
             Text(station.name)
                 .font(.system(size: 17, weight: .regular))
                 .foregroundColor(.ypBlack)
-                .padding(.vertical, 12)
+                .padding(.vertical, 19)
+                .frame(maxWidth: .infinity, alignment: .leading)
             
             Spacer()
             
@@ -115,16 +115,20 @@ struct StationSelectionView: View {
                 .foregroundColor(.ypBlack)
         }
         .padding(.horizontal, 16)
+        .frame(height: 60)
         .background(Color.ypWhite)
     }
     
+    // MARK: - No Results View
     private var noResultsView: some View {
-        VStack(spacing: 8) {
-            Spacer()
-            
+        VStack(spacing: 0) {
             Text("Станция не найдена")
                 .font(.system(size: 24, weight: .bold))
                 .foregroundColor(.ypBlack)
+                .multilineTextAlignment(.center)
+                .lineSpacing(0)
+                .kerning(0)
+                .padding(.top, 228)
             
             Spacer()
         }
@@ -132,10 +136,13 @@ struct StationSelectionView: View {
     }
 }
 
+// MARK: - Preview
 #Preview {
-    StationSelectionView(
-        selectedStation: .constant(nil),
-        city: "Москва",
-        onStationSelected: { _ in }
-    )
+    NavigationView {
+        StationSelectionView(
+            selectedStation: .constant(nil),
+            city: "Москва",
+            onStationSelected: { _ in }
+        )
+    }
 }
