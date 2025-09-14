@@ -154,6 +154,9 @@ struct FilterView: View {
                 .background(Color.ypBlue)
                 .cornerRadius(12)
         }
+        .buttonStyle(PlainButtonStyle())
+        .background(Color.ypLightGray)
+        .cornerRadius(12)
     }
     
     // MARK: - Private Properties
