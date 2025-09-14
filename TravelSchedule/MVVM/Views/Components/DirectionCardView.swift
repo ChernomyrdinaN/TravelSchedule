@@ -34,7 +34,7 @@ struct DirectionCardView: View {
                         action: onToStationTapped
                     )
                 }
-                .background(Color.ypWhite)
+                .background(Color.ypWhite1)
                 .cornerRadius(20)
                 .padding(.leading, 16)
                 .padding(.vertical, 16)

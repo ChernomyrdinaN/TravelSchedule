@@ -16,6 +16,28 @@ struct Carrier: Identifiable, Hashable {
     let departureTime: String
     let travelTime: String
     let arrivalTime: String
+
+    var hasTransfer: Bool {
+        transferInfo != nil
+    }
+    
+    var departureHour: Int {
+        let components = departureTime.split(separator: ":")
+        if components.count == 2, let hour = Int(components[0]) {
+            return hour
+        }
+        return 0
+    }
+    
+    var timeRange: CarrierFilter.TimeOption {
+        let hour = departureHour
+        switch hour {
+        case 6..<12: return .morning
+        case 12..<18: return .afternoon
+        case 18..<24: return .evening
+        default: return .night
+        }
+    }
     
     // MARK: - Mock Data
     static let mockData = [
@@ -54,6 +76,34 @@ struct Carrier: Identifiable, Hashable {
             departureTime: "22:30",
             travelTime: "20 часов",
             arrivalTime: "08:15"
+        ),
+     
+        Carrier(
+            name: "РЖД",
+            logo: "BrandIcon1",
+            transferInfo: nil,
+            date: "14 января",
+            departureTime: "08:30",
+            travelTime: "4 часа",
+            arrivalTime: "12:30"
+        ),
+        Carrier(
+            name: "ФГК",
+            logo: "BrandIcon2",
+            transferInfo: "С пересадкой в Ярославле",
+            date: "14 января",
+            departureTime: "14:20",
+            travelTime: "6 часов",
+            arrivalTime: "20:20"
+        ),
+        Carrier(
+            name: "Урал логистика",
+            logo: "BrandIcon1",
+            transferInfo: nil,
+            date: "14 января",
+            departureTime: "19:30",
+            travelTime: "4 часа 15 мин",
+            arrivalTime: "23:45"
         )
     ]
 }

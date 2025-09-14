@@ -3,9 +3,7 @@
 //  TravelSchedule
 //
 //  Created by Наталья Черномырдина on 08.09.2025.
-
-// Пока оставляем логику здесь, при подключении API перенесем в ViewModel
-// @StateObject private var viewModel = MainViewModel()
+//
 
 import SwiftUI
 
@@ -80,11 +78,17 @@ struct MainView: View {
                     CarrierListView(
                         fromStation: from,
                         toStation: to,
-                        navigationPath: $navigationPath
+                        navigationPath: $navigationPath,
+                        filter: $filter
                     )
                     
                 case .filters:
-                    FilterView(filter: $filter, applyFilters: applyFilters)
+                    FilterView(
+                        filter: $filter,
+                        applyFilters: {
+                            navigationPath.removeLast()
+                        }
+                    )
                 }
             }
             .onAppear {
@@ -96,20 +100,12 @@ struct MainView: View {
     // MARK: - Private Methods
     private func testErrorDisplay() {
         DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
-            //showError(.noInternet)
-            //showError(.serverError)
+            // Для тестирования ошибок раскомментируйте нужную строку:
+            // showError(.noInternet)
+            // showError(.serverError)
         }
     }
     
-    private var filterButton: some View {
-        NavigationLink(value: StationNavigation.filters) {
-            Text("Фильтры")
-                .font(.system(size: 17, weight: .regular))
-                .foregroundColor(.ypBlue)
-        }
-    }
-    
-    // MARK: - Private Properties
     private var isFindButtonEnabled: Bool {
         fromStation != nil && toStation != nil
     }
@@ -130,16 +126,11 @@ struct MainView: View {
         toStation = temp
     }
     
-    private func applyFilters() {
-        navigationPath.removeLast()
-    }
-    
-    // MARK: - Error Handling
-    func showError(_ errorType: ErrorModel.ErrorType) {
+    private func showError(_ errorType: ErrorModel.ErrorType) {
         showingError = errorType
     }
     
-    func hideError() {
+    private func hideError() {
         showingError = nil
     }
 }
