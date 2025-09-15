@@ -30,15 +30,18 @@ struct CarrierListView: View {
                 .ignoresSafeArea()
             
             VStack(spacing: 0) {
+    
                 headerView
-                
+                    .padding(.top, 16)
+                    .background(Color.ypWhite)
+            
                 if filteredCarriers.isEmpty {
                     emptyStateView
                 } else {
                     carriersList
                 }
             }
-            
+
             VStack {
                 Spacer()
                 clarifyTimeButton
@@ -65,22 +68,19 @@ struct CarrierListView: View {
     
     // MARK: - Private Views
     private var headerView: some View {
-        VStack(alignment: .leading, spacing: 8) {
-            Text("\(fromStation) → \(toStation)")
-                .font(.system(size: 24, weight: .bold))
-                .foregroundColor(.ypBlack)
-                .lineLimit(2)
-                .minimumScaleFactor(0.8)
-                .multilineTextAlignment(.leading)
-                .frame(maxWidth: .infinity, alignment: .leading)
-                .padding(.top, 16)
-                .padding(.horizontal, 16)
-        }
+        Text("\(fromStation) → \(toStation)")
+            .font(.system(size: 24, weight: .bold))
+            .foregroundColor(.ypBlack)
+            .lineLimit(2)
+            .multilineTextAlignment(.leading)
+            .frame(maxWidth: .infinity, alignment: .leading)
+            .padding(.horizontal, 16)
+            .padding(.bottom, 16)
     }
     
     private var carriersList: some View {
         ScrollView {
-            LazyVStack(spacing: 16) {
+            LazyVStack(spacing: 8) {
                 ForEach(filteredCarriers) { carrier in
                     CarrierCardView(
                         carrier: carrier,
@@ -93,7 +93,6 @@ struct CarrierListView: View {
                 }
             }
             .padding(.horizontal, 16)
-            .padding(.top, 16)
         }
     }
     
@@ -181,23 +180,4 @@ struct CarrierListView: View {
             return true
         }
     }
-}
-
-#Preview {
-    CarrierListView(
-        fromStation: "Москва (Ярославский вокзал)",
-        toStation: "Санкт-Петербург (Балтийский вокзал)",
-        navigationPath: .constant(NavigationPath()),
-        filter: .constant(CarrierFilter())
-    )
-}
-
-#Preview("Без перевозчиков") {
-    CarrierListView(
-        fromStation: "Москва (Ярославский вокзал)",
-        toStation: "Санкт-Петербург (Балтийский вокзал)",
-        navigationPath: .constant(NavigationPath()),
-        filter: .constant(CarrierFilter()),
-        carriers: []
-    )
 }
