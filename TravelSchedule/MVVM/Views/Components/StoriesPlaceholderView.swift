@@ -103,7 +103,7 @@ struct StoryCard: View {
             HStack {
                 Text(text)
                     .font(.system(size: 12, weight: .regular))
-                    .foregroundColor(.ypWhite1)
+                    .foregroundColor(.ypWhiteUniversal)
                     .multilineTextAlignment(.leading)
                     .lineLimit(2)
                     .frame(width: 76, height: 45, alignment: .leading)

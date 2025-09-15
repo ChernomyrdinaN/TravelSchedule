@@ -147,8 +147,8 @@ struct FilterView: View {
             dismiss()
         }) {
             Text("Применить")
-                .font(.system(size: 17, weight: .regular))
-                .foregroundColor(.ypWhite1)
+                .font(.system(size: 17, weight: .bold))
+                .foregroundColor(.ypWhiteUniversal)
                 .frame(maxWidth: .infinity)
                 .frame(height: 60)
                 .background(Color.ypBlue)
