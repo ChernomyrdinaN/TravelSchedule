@@ -114,6 +114,7 @@ struct MainView: View {
     }
     
     private func showCarrierList() {
+        filter = CarrierFilter()
         guard let from = fromStation?.name, let to = toStation?.name else { return }
         navigationPath.append(StationNavigation.carrierList(from: from, to: to))
     }

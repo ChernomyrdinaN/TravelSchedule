@@ -58,7 +58,7 @@ struct FilterView: View {
     
     // MARK: - Private Views
     private var timeFilterSection: some View {
-        VStack(alignment: .leading, spacing: 16) {
+        VStack(alignment: .leading, spacing: 8) {
             Text("Время отправления")
                 .font(.system(size: 24, weight: .bold))
                 .foregroundColor(.ypBlack)
