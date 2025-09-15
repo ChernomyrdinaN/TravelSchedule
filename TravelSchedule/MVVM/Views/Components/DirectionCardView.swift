@@ -34,7 +34,7 @@ struct DirectionCardView: View {
                         action: onToStationTapped
                     )
                 }
-                .background(Color.ypWhite1)
+                .background(Color.ypWhiteUniversal)
                 .cornerRadius(20)
                 .padding(.leading, 16)
                 .padding(.vertical, 16)
@@ -43,7 +43,7 @@ struct DirectionCardView: View {
                     Image("ButtonСhange")
                         .resizable()
                         .frame(width: 36, height: 36)
-                        .foregroundColor(.ypWhite1)
+                        .foregroundColor(.ypWhiteUniversal)
                 }
                 .padding(.trailing, 16)
             }
@@ -58,7 +58,7 @@ struct DirectionCardView: View {
                 Text(text)
                     .font(.system(size: 17, weight: .regular))
                     .kerning(-0.41)
-                    .foregroundColor(isPlaceholder ? .ypGray : .ypBlack1)
+                    .foregroundColor(isPlaceholder ? .ypGrayUniversal: .ypBlackUniversal)
                     .lineLimit(1)
                     .frame(maxWidth: .infinity, alignment: .leading)
                     .padding(.horizontal, 16)

@@ -102,8 +102,8 @@ struct CarrierListView: View {
         }) {
             HStack {
                 Text("Уточнить время")
-                    .font(.system(size: 17, weight: .regular))
-                    .foregroundColor(.ypWhite1)
+                    .font(.system(size: 17, weight: .bold))
+                    .foregroundColor(.ypWhiteUniversal)
                 
                 if hasActiveFilters {
                     Circle()

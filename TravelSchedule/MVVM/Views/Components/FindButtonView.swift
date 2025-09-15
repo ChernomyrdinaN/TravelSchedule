@@ -15,8 +15,8 @@ struct FindButtonView: View {
     var body: some View {
         Button(action: onFindTapped) {
             Text("Найти")
-                .font(.system(size: 17, weight: .regular))
-                .foregroundColor(.ypWhite1)
+                .font(.system(size: 17, weight: .bold))
+                .foregroundColor(.ypWhiteUniversal)
                 .frame(width: 150, height: 60)
                 .background(Color.ypBlue)
                 .cornerRadius(12)

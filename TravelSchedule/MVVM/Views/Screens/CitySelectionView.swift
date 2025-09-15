@@ -21,16 +21,12 @@ struct CitySelectionView: View {
             
             VStack(spacing: 0) {
                 searchField
-                    .padding(.top, 8)
-                
                 if filteredStations.isEmpty {
                     noResultsView
                 } else {
                     stationsList
                         .padding(.top, 8)
                 }
-                
-                Spacer()
             }
         }
         .navigationBarBackButtonHidden(true)
@@ -60,26 +56,26 @@ struct CitySelectionView: View {
     private var searchField: some View {
         HStack {
             Image(systemName: "magnifyingglass")
-                .foregroundColor(.ypGray)
-                .padding(.leading, 16)
+                .foregroundColor(.ypGrayUniversal)
+                .padding(.leading, 8)
             
             TextField("Введите запрос", text: $searchText)
-                .padding(.vertical, 12)
-                .foregroundColor(.ypBlack1)
-                .tint(.ypBlack1)
+                .padding(.vertical, 6)
+                .foregroundColor(.ypBlack)
+                .tint(.ypBlack)
             
             if !searchText.isEmpty {
                 Button(action: { searchText = "" }) {
                     Image(systemName: "xmark.circle.fill")
-                        .foregroundColor(.ypGray)
-                        .padding(.trailing, 16)
+                        .foregroundColor(.ypGrayUniversal)
+                        .padding(.horizontal, 8)
                 }
             }
         }
-        .background(Color.ypLightGray)
-        .cornerRadius(10)
+        .frame(maxWidth: .infinity, maxHeight: 36)
+        .background(.ypSearchField)
+        .clipShape(RoundedRectangle(cornerRadius: 10, style: .continuous))
         .padding(.horizontal, 16)
-        .frame(height: 42)
     }
     
     private var stationsList: some View {
@@ -104,14 +100,11 @@ struct CitySelectionView: View {
                 .padding(.vertical, 19)
                 .frame(maxWidth: .infinity, alignment: .leading)
             
-            Spacer()
-            
             Image(systemName: "chevron.right")
                 .foregroundColor(.ypBlack)
         }
         .padding(.horizontal, 16)
         .frame(height: 60)
-        .background(Color.ypWhite)
     }
     
     // MARK: - No Results View
@@ -121,15 +114,13 @@ struct CitySelectionView: View {
                 .font(.system(size: 24, weight: .bold))
                 .foregroundColor(.ypBlack)
                 .multilineTextAlignment(.center)
-                .lineSpacing(0)
-                .kerning(0)
                 .padding(.top, 228)
             
             Spacer()
         }
         .frame(maxWidth: .infinity)
     }
-}
+    }
 
 #Preview {
     NavigationView {

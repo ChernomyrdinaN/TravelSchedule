@@ -22,7 +22,7 @@ struct CarrierCardView: View {
                 VStack(alignment: .leading, spacing: 4) {
                     Text(carrier.name)
                         .font(.system(size: 17, weight: .regular))
-                        .foregroundColor(.ypBlack1)
+                        .foregroundColor(.ypBlackUniversal)
                     
                     if let transferInfo = carrier.transferInfo {
                         Text(transferInfo)
@@ -35,7 +35,7 @@ struct CarrierCardView: View {
                 
                 Text(carrier.date)
                     .font(.system(size: 12, weight: .regular))
-                    .foregroundColor(.ypBlack1)
+                    .foregroundColor(.ypBlackUniversal)
             }
             
             if carrier.departureTime == "Уточнить время" {
@@ -49,14 +49,14 @@ struct CarrierCardView: View {
                 HStack(spacing: 0) {
                     Text(carrier.departureTime)
                         .font(.system(size: 17, weight: .regular))
-                        .foregroundColor(.ypBlack1)
+                        .foregroundColor(.ypBlackUniversal)
                         .frame(width: 60, alignment: .leading)
                     
                     timelineView
                     
                     Text(carrier.arrivalTime)
                         .font(.system(size: 17, weight: .regular))
-                        .foregroundColor(.ypBlack1)
+                        .foregroundColor(.ypBlackUniversal)
                         .frame(width: 60, alignment: .trailing)
                 }
             }
@@ -73,17 +73,17 @@ struct CarrierCardView: View {
     private var timelineView: some View {
         HStack(spacing: 4) {
             Rectangle()
-                .fill(.ypGray)
+                .fill(.ypGrayUniversal)
                 .frame(height: 1)
                 .frame(maxWidth: .infinity)
             
             Text(carrier.travelTime)
                 .font(.system(size: 12, weight: .regular))
-                .foregroundColor(.ypBlack1)
+                .foregroundColor(.ypBlackUniversal)
                 .fixedSize()
             
             Rectangle()
-                .fill(.ypGray)
+                .fill(.ypGrayUniversal)
                 .frame(height: 1)
                 .frame(maxWidth: .infinity)
         }

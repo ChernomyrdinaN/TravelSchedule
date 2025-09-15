@@ -21,16 +21,12 @@ struct StationSelectionView: View {
             
             VStack(spacing: 0) {
                 searchField
-                    .padding(.top, 8)
-                
                 if filteredStations.isEmpty {
                     noResultsView
                 } else {
                     stationsList
                         .padding(.top, 8)
                 }
-                
-                Spacer()
             }
         }
         .navigationBarBackButtonHidden(true)
@@ -62,85 +58,80 @@ struct StationSelectionView: View {
     
     // MARK: - Private Views
     private var searchField: some View {
-        HStack {
-            Image(systemName: "magnifyingglass")
-                .foregroundColor(.ypGray)
-                .padding(.leading, 16)
-            
-            TextField("Введите запрос", text: $searchText)
-                .padding(.vertical, 12)
-                .foregroundColor(.ypBlack1)
-                .tint(.ypBlack1)
-            
-            if !searchText.isEmpty {
-                Button(action: { searchText = "" }) {
-                    Image(systemName: "xmark.circle.fill")
-                        .foregroundColor(.ypGray)
-                        .padding(.trailing, 16)
+            HStack {
+                Image(systemName: "magnifyingglass")
+                    .foregroundColor(.ypGrayUniversal)
+                    .padding(.leading, 8)
+                
+                TextField("Введите запрос", text: $searchText)
+                    .padding(.vertical, 6)
+                    .foregroundColor(.ypBlack)
+                    .tint(.ypBlack)
+                
+                if !searchText.isEmpty {
+                    Button(action: { searchText = "" }) {
+                        Image(systemName: "xmark.circle.fill")
+                            .foregroundColor(.ypGrayUniversal)
+                            .padding(.horizontal, 8)
+                    }
+                }
+            }
+            .frame(maxWidth: .infinity, maxHeight: 36)
+            .background(.ypSearchField)
+            .clipShape(RoundedRectangle(cornerRadius: 10, style: .continuous))
+            .padding(.horizontal, 16)
+        }
+        
+        private var stationsList: some View {
+            ScrollView {
+                LazyVStack(spacing: 0) {
+                    ForEach(filteredStations) { station in
+                        stationRow(station: station)
+                            .contentShape(Rectangle())
+                            .onTapGesture {
+                                onStationSelected(station)
+                            }
+                    }
                 }
             }
         }
-        .background(Color.ypLightGray)
-        .cornerRadius(10)
-        .padding(.horizontal, 16)
-        .frame(height: 42)
-    }
-    
-    private var stationsList: some View {
-        ScrollView {
-            LazyVStack(spacing: 0) {
-                ForEach(filteredStations) { station in
-                    stationRow(station: station)
-                        .contentShape(Rectangle())
-                        .onTapGesture {
-                            onStationSelected(station)
-                        }
-                }
+        
+        private func stationRow(station: Station) -> some View {
+            HStack {
+                Text(station.name)
+                    .font(.system(size: 17, weight: .regular))
+                    .foregroundColor(.ypBlack)
+                    .padding(.vertical, 19)
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                
+                Image(systemName: "chevron.right")
+                    .foregroundColor(.ypBlack)
             }
+            .padding(.horizontal, 16)
+            .frame(height: 60)
         }
-    }
-    
-    private func stationRow(station: Station) -> some View {
-        HStack {
-            Text(station.name)
-                .font(.system(size: 17, weight: .regular))
-                .foregroundColor(.ypBlack)
-                .padding(.vertical, 19)
-                .frame(maxWidth: .infinity, alignment: .leading)
-            
-            Spacer()
-            
-            Image(systemName: "chevron.right")
-                .foregroundColor(.ypBlack)
-        }
-        .padding(.horizontal, 16)
-        .frame(height: 60)
-        .background(Color.ypWhite)
-    }
-    
-    // MARK: - No Results View
+        
+        // MARK: - No Results View
     private var noResultsView: some View {
-        VStack(spacing: 0) {
-            Text("Станция не найдена")
-                .font(.system(size: 24, weight: .bold))
-                .foregroundColor(.ypBlack)
-                .multilineTextAlignment(.center)
-                .lineSpacing(0)
-                .kerning(0)
-                .padding(.top, 228)
-            
-            Spacer()
-        }
-        .frame(maxWidth: .infinity)
-    }
-}
+          VStack(spacing: 0) {
+              Text("Станция не найдена")
+                  .font(.system(size: 24, weight: .bold))
+                  .foregroundColor(.ypBlack)
+                  .multilineTextAlignment(.center)
+                  .padding(.top, 228)
+              
+              Spacer()
+          }
+          .frame(maxWidth: .infinity)
+      }
+  }
 
-#Preview {
-    NavigationView {
-        StationSelectionView(
-            selectedStation: .constant(nil),
-            city: "Москва",
-            onStationSelected: { _ in }
-        )
+    #Preview {
+        NavigationView {
+            StationSelectionView(
+                selectedStation: .constant(nil),
+                city: "Москва",
+                onStationSelected: { _ in }
+            )
+        }
     }
-}
