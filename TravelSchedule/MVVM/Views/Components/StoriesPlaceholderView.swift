@@ -24,8 +24,9 @@ struct StoriesPlaceholderView: View {
     
     @State private var selectedStoryIndex = 0
     
+    // MARK: - Body
     var body: some View {
-        VStack(spacing: 0) {
+        VStack(spacing: .zero) {
             Spacer()
                 .frame(height: 24)
             

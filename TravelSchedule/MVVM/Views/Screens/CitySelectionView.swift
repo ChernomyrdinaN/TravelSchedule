@@ -14,12 +14,13 @@ struct CitySelectionView: View {
     
     @State private var searchText = ""
     
+    // MARK: - Body
     var body: some View {
         ZStack {
             Color.ypWhite
                 .ignoresSafeArea()
             
-            VStack(spacing: 0) {
+            VStack(spacing: .zero) {
                 searchField
                 if filteredStations.isEmpty {
                     noResultsView
@@ -80,7 +81,7 @@ struct CitySelectionView: View {
     
     private var stationsList: some View {
         ScrollView {
-            LazyVStack(spacing: 0) {
+            LazyVStack(spacing: .zero) {
                 ForEach(filteredStations) { station in
                     stationRow(station: station)
                         .contentShape(Rectangle())
@@ -97,19 +98,19 @@ struct CitySelectionView: View {
             Text(station.name)
                 .font(.system(size: 17, weight: .regular))
                 .foregroundColor(.ypBlack)
-                .padding(.vertical, 19)
                 .frame(maxWidth: .infinity, alignment: .leading)
             
             Image(systemName: "chevron.right")
                 .foregroundColor(.ypBlack)
         }
         .padding(.horizontal, 16)
+        .padding(.top, 16)
         .frame(height: 60)
     }
     
     // MARK: - No Results View
     private var noResultsView: some View {
-        VStack(spacing: 0) {
+        VStack(spacing: .zero) {
             Text("Город не найден")
                 .font(.system(size: 24, weight: .bold))
                 .foregroundColor(.ypBlack)
