@@ -21,7 +21,7 @@ struct DirectionCardView: View {
                 .cornerRadius(20)
             
             HStack(spacing: 16) {
-                VStack(spacing: 0) {
+                VStack(spacing: .zero) {
                     stationField(
                         text: fromStation?.name ?? "Откуда",
                         isPlaceholder: fromStation == nil,

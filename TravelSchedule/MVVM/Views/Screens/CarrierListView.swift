@@ -24,12 +24,13 @@ struct CarrierListView: View {
         self._filteredCarriers = State(initialValue: carriers)
     }
     
+    // MARK: - Body
     var body: some View {
         ZStack {
             Color.ypWhite
                 .ignoresSafeArea()
             
-            VStack(spacing: 0) {
+            VStack(spacing: .zero) {
     
                 headerView
                     .padding(.top, 16)
@@ -122,7 +123,7 @@ struct CarrierListView: View {
     }
     
     private var emptyStateView: some View {
-        VStack(spacing: 0) {
+        VStack(spacing: .zero) {
             Text("Вариантов нет")
                 .font(.system(size: 24, weight: .bold))
                 .foregroundColor(.ypBlack)

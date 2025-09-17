@@ -16,7 +16,7 @@ struct Carrier: Identifiable, Hashable {
     let departureTime: String
     let travelTime: String
     let arrivalTime: String
-
+    
     var hasTransfer: Bool {
         transferInfo != nil
     }
@@ -38,72 +38,4 @@ struct Carrier: Identifiable, Hashable {
         default: return .night
         }
     }
-    
-    // MARK: - Mock Data
-    static let mockData = [
-        Carrier(
-            name: "РЖД",
-            logo: "BrandIcon1",
-            transferInfo: "С пересадкой в Костроме",
-            date: "14 января",
-            departureTime: "22:30",
-            travelTime: "20 часов",
-            arrivalTime: "08:15"
-        ),
-        Carrier(
-            name: "ФГК",
-            logo: "BrandIcon2",
-            transferInfo: nil,
-            date: "15 января",
-            departureTime: "01:15",
-            travelTime: "9 часов",
-            arrivalTime: "09:00"
-        ),
-        Carrier(
-            name: "Урал логистика",
-            logo: "BrandIcon1",
-            transferInfo: nil,
-            date: "16 января",
-            departureTime: "12:30",
-            travelTime: "9 часов",
-            arrivalTime: "21:00"
-        ),
-        Carrier(
-            name: "РЖД",
-            logo: "BrandIcon1",
-            transferInfo: "С пересадкой в Костроме",
-            date: "17 января",
-            departureTime: "22:30",
-            travelTime: "20 часов",
-            arrivalTime: "08:15"
-        ),
-     
-        Carrier(
-            name: "РЖД",
-            logo: "BrandIcon1",
-            transferInfo: nil,
-            date: "14 января",
-            departureTime: "08:30",
-            travelTime: "4 часа",
-            arrivalTime: "12:30"
-        ),
-        Carrier(
-            name: "ФГК",
-            logo: "BrandIcon2",
-            transferInfo: "С пересадкой в Ярославле",
-            date: "14 января",
-            departureTime: "14:20",
-            travelTime: "6 часов",
-            arrivalTime: "20:20"
-        ),
-        Carrier(
-            name: "Урал логистика",
-            logo: "BrandIcon1",
-            transferInfo: nil,
-            date: "14 января",
-            departureTime: "19:30",
-            travelTime: "4 часа 15 мин",
-            arrivalTime: "23:45"
-        )
-    ]
 }

@@ -15,6 +15,7 @@ struct MainView: View {
     @State private var filter = CarrierFilter()
     @State private var showingError: ErrorModel.ErrorType? = nil
     
+    // MARK: - Body
     var body: some View {
         NavigationStack(path: $navigationPath) {
             ZStack {
@@ -24,7 +25,7 @@ struct MainView: View {
                 if let errorType = showingError {
                     ErrorView(errorModel: errorType == .noInternet ? .error1 : .error2)
                 } else {
-                    VStack(spacing: 0) {
+                    VStack(spacing: .zero) {
                         StoriesPlaceholderView()
                         
                         DirectionCardView(

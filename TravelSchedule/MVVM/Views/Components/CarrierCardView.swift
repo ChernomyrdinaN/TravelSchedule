@@ -11,6 +11,7 @@ struct CarrierCardView: View {
     let carrier: Carrier
     let onTimeClarificationTapped: () -> Void
     
+    // MARK: - Body
     var body: some View {
         VStack(alignment: .leading, spacing: 12) {
             HStack(alignment: .top) {
@@ -46,7 +47,7 @@ struct CarrierCardView: View {
                         .frame(maxWidth: .infinity, alignment: .center)
                 }
             } else {
-                HStack(spacing: 0) {
+                HStack(spacing: .zero) {
                     Text(carrier.departureTime)
                         .font(.system(size: 17, weight: .regular))
                         .foregroundColor(.ypBlackUniversal)

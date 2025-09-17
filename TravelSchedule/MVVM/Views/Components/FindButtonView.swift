@@ -12,6 +12,7 @@ struct FindButtonView: View {
     let toStation: Station?
     let onFindTapped: () -> Void
     
+    // MARK: - Body
     var body: some View {
         Button(action: onFindTapped) {
             Text("Найти")

@@ -6,26 +6,29 @@
 //
 
 import SwiftUI
-import SwiftUI
 
 struct FilterView: View {
+    
+    // MARK: - Properties
     @Binding var filter: CarrierFilter
     let applyFilters: () -> Void
     @Environment(\.dismiss) private var dismiss
     @State private var localFilter: CarrierFilter
     
+    // MARK: - Init
     init(filter: Binding<CarrierFilter>, applyFilters: @escaping () -> Void) {
         self._filter = filter
         self.applyFilters = applyFilters
         self._localFilter = State(initialValue: filter.wrappedValue)
     }
     
+    // MARK: - Body
     var body: some View {
         ZStack {
             Color.ypWhite
                 .ignoresSafeArea()
             
-            VStack(spacing: 0) {
+            VStack(spacing: .zero) {
                 VStack(alignment: .leading, spacing: 24) {
                     timeFilterSection
                     
@@ -63,7 +66,7 @@ struct FilterView: View {
                 .font(.system(size: 24, weight: .bold))
                 .foregroundColor(.ypBlack)
             
-            VStack(spacing: 0) {
+            VStack(spacing: .zero) {
                 ForEach(CarrierFilter.TimeOption.allCases, id: \.self) { option in
                     timeOptionRow(option: option)
                 }
@@ -104,7 +107,7 @@ struct FilterView: View {
                 .font(.system(size: 24, weight: .bold))
                 .foregroundColor(.ypBlack)
             
-            VStack(spacing: 0) {
+            VStack(spacing: .zero) {
                 transferOptionRow(title: "Да", isSelected: localFilter.showTransfers == true) {
                     localFilter.showTransfers = true
                 }
@@ -174,6 +177,7 @@ struct FilterView: View {
     }
 }
 
+// MARK: - Preview
 #Preview {
     FilterView(
         filter: .constant(CarrierFilter()),
