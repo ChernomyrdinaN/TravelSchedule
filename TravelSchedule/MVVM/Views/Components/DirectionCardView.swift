@@ -17,7 +17,7 @@ struct DirectionCardView: View {
     // MARK: - Body
     var body: some View {
         ZStack {
-            Color.ypBlue
+            Color.ypBlueUniversal
                 .cornerRadius(20)
             
             HStack(spacing: 16) {

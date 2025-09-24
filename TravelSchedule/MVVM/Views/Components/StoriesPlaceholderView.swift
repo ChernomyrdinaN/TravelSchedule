@@ -4,6 +4,7 @@
 //
 //  Created by Наталья Черномырдина on 08.09.2025.
 //
+
 import SwiftUI
 
 struct StoryItem: Identifiable {
@@ -93,7 +94,7 @@ struct StoryCard: View {
     private var borderOverlay: some View {
         RoundedRectangle(cornerRadius: 16)
             .stroke(
-                isActive ? .ypBlue : Color.clear,
+                isActive ? .ypBlueUniversal : Color.clear,
                 lineWidth: isActive ? 4 : 0
             )
     }
@@ -124,6 +125,7 @@ struct StoryCard: View {
     }
 }
 
+// MARK: - Preview
 #Preview {
     StoriesPlaceholderView()
 }

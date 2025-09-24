@@ -19,7 +19,7 @@ struct FindButtonView: View {
                 .font(.system(size: 17, weight: .bold))
                 .foregroundColor(.ypWhiteUniversal)
                 .frame(width: 150, height: 60)
-                .background(Color.ypBlue)
+                .background(.ypBlueUniversal)
                 .cornerRadius(12)
         }
         .disabled(fromStation == nil || toStation == nil)
@@ -27,6 +27,7 @@ struct FindButtonView: View {
     }
 }
 
+// MARK: - Preview
 #Preview {
     FindButtonView(
         fromStation: Station(name: "Москва"),

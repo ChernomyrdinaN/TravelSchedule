@@ -154,7 +154,7 @@ struct FilterView: View {
                 .foregroundColor(.ypWhiteUniversal)
                 .frame(maxWidth: .infinity)
                 .frame(height: 60)
-                .background(Color.ypBlue)
+                .background(.ypBlueUniversal)
                 .cornerRadius(12)
         }
         .buttonStyle(PlainButtonStyle())
