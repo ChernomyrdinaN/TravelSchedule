@@ -45,12 +45,12 @@ struct StoriesCardView: View {
     }
     
     private var borderOverlay: some View {
-        RoundedRectangle(cornerRadius: 16)
-            .stroke(
-                isViewed ? Color.clear : .ypBlueUniversal,
-                lineWidth: isViewed ? 0 : 4
-            )
-    }
+            RoundedRectangle(cornerRadius: 16)
+                .stroke(
+                    isViewed ? Color.clear : .ypBlueUniversal,
+                    lineWidth: isViewed ? 0 : 4
+                )
+        }
     
     private var textOverlay: some View {
         VStack {

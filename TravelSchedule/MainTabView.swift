@@ -9,6 +9,7 @@ import SwiftUI
 
 struct MainTabView: View {
     @State private var selectedTab = 0
+    @AppStorage("isDarkTheme") private var isDarkTheme = false
     
     // MARK: - Body
     var body: some View {
@@ -28,6 +29,7 @@ struct MainTabView: View {
                     }
                     .tag(1)
         }
+        .preferredColorScheme(isDarkTheme ? .dark : .light)
         .tint(.ypBlack)
         .onAppear {
             configureTabBarToHideText()

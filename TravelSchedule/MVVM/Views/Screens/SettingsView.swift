@@ -75,7 +75,7 @@ struct SettingsView: View {
                 }
             }
             
-            .preferredColorScheme(isDarkTheme ? .dark : .light)
+           
         }
     }
 }
