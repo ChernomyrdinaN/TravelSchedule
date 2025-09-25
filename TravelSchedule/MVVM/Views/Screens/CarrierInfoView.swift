@@ -41,12 +41,10 @@ struct CarrierInfoView: View {
     private var carrierImage: some View {
         Image(carrier.logo)
             .resizable()
-            
-            .frame(height: 104)
-          
-            .cornerRadius(24)
             .scaledToFit()
-        
+            .frame(maxWidth: .infinity, maxHeight: 104)
+            .background(.ypWhiteUniversal)
+            .cornerRadius(24)
             .padding(.horizontal, 16)
             .padding(.bottom, 16)
     }
@@ -68,34 +66,44 @@ struct CarrierInfoView: View {
     // MARK: - Contact Info
     private var contactInfo: some View {
         VStack(spacing: .zero) {
-            // Блок Email
             VStack(alignment: .leading, spacing: .zero) {
                 Text("E-mail")
                     .font(.system(size: 17, weight: .regular))
                     .foregroundColor(.ypBlack)
                     .frame(maxWidth: .infinity, alignment: .leading)
-                    
-                Link(
-                    "i.lozgkina@yandex.ru",
-                    destination: URL(string: "mailto:i.lozgkina@yandex.ru")!
-                ).tint(.ypBlueUniversal)
-                    .font(.system(size: 12, weight: .regular))
-                    .frame(maxWidth: .infinity, alignment: .leading)
-                  //  .foregroundColor(.ypBlueUniversal)
+             
+                if let emailURL = URL(string: "mailto:i.lozgkina@yandex.ru") {
+                    Link("i.lozgkina@yandex.ru", destination: emailURL)
+                        .tint(.ypBlueUniversal)
+                        .font(.system(size: 12, weight: .regular))
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                } else {
+                    Text("i.lozgkina@yandex.ru")
+                        .font(.system(size: 12, weight: .regular))
+                        .foregroundColor(.ypBlueUniversal)
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                }
             }
             .padding(.vertical, 16)
             .padding(.horizontal, 16)
             
-            // Блок Телефон
             VStack(alignment: .leading, spacing: .zero) {
                 Text("Телефон")
                     .font(.system(size: 17, weight: .regular))
                     .foregroundColor(.ypBlack)
                     .frame(maxWidth: .infinity, alignment: .leading)
-                
-                Link("+7 (904) 329-27-71", destination: URL(string: "tel://+79043292771")!).tint(.ypBlueUniversal)
-                    .font(.system(size: 12, weight: .regular))
-                    .frame(maxWidth: .infinity, alignment: .leading)
+
+                if let phoneURL = URL(string: "tel://+79043292771") {
+                    Link("+7 (904) 329-27-71", destination: phoneURL)
+                        .tint(.ypBlueUniversal)
+                        .font(.system(size: 12, weight: .regular))
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                } else {
+                    Text("+7 (904) 329-27-71")
+                        .font(.system(size: 12, weight: .regular))
+                        .foregroundColor(.ypBlueUniversal)
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                }
             }
             .padding(.vertical, 16)
             .padding(.horizontal, 16)
