@@ -13,7 +13,7 @@ extension Carrier {
     static let mockData: [Carrier] = [
         Carrier(
             name: "ОАО РЖД",
-            logo: "BrandIcon1",
+            logo: "BrandIcon1", // Image1
             transferInfo: "С пересадкой в Костроме",
             date: "14 января",
             departureTime: "22:30",
