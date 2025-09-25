@@ -18,21 +18,15 @@ struct MainTabView: View {
                     Image("icSchedule")
                         .renderingMode(.template)
                 }
+            
                 .tag(0)
-
-            NavigationStack {
-                ZStack {
-                    Color.ypWhite
-                        .ignoresSafeArea()
-                    
-                    Text("Настройки скоро будут реализованы")
-                }
-            }
-            .tabItem {
-                Image("icSettings")
-                    .renderingMode(.template)
-            }
-            .tag(1)
+          
+            SettingsView() 
+                    .tabItem {
+                        Image("icSettings")
+                            .renderingMode(.template)
+                    }
+                    .tag(1)
         }
         .tint(.ypBlack)
         .onAppear {
