@@ -89,7 +89,7 @@ struct SettingsView: View {
                     }
                 }
             }
-            .toolbar(.visible, for: .tabBar) 
+            .toolbar(.hidden, for: .tabBar) 
             .preferredColorScheme(isDarkTheme ? .dark : .light)
         }
     }

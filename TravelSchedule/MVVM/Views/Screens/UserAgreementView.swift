@@ -14,8 +14,7 @@ struct UserAgreementView: View {
         ZStack {
             Color.ypWhite
                 .ignoresSafeArea()
-            
-            NavigationStack {
+        
                 ScrollView {
                     VStack(alignment: .leading, spacing: 24) {
                         Text("Оферта на оказание образовательных услуг дополнительного образования Яндекс.Практикум для физических лиц")
@@ -46,8 +45,21 @@ struct UserAgreementView: View {
                             Text("Вводный курс — начальный Курс обучения по представленным на Сервисе Программам обучения в рамках выбранной Студентом Профессии или Курсу, рассчитанный на определенное количество часов самостоятельного")
                                 .font(.system(size: 16, weight: .regular))
                                 .foregroundColor(.ypBlack)
+                            
+                            Text("Вводный курс — начальный Курс обучения по представленным на Сервисе Программам обучения в рамках выбранной Студентом Профессии или Курсу, рассчитанный на определенное количество часов самостоятельного")
+                                .font(.system(size: 16, weight: .regular))
+                                .foregroundColor(.ypBlack)
+                            
+                            
+                            Text("Вводный курс — начальный Курс обучения по представленным на Сервисе Программам обучения в рамках выбранной Студентом Профессии или Курсу, рассчитанный на определенное количество часов самостоятельного")
+                                .font(.system(size: 16, weight: .regular))
+                                .foregroundColor(.ypBlack)
+                            
+                            
+                            Text("Вводный курс — начальный Курс обучения по представленным на Сервисе Программам обучения в рамках выбранной Студентом Профессии или Курсу, рассчитанный на определенное количество часов самостоятельного")
+                                .font(.system(size: 16, weight: .regular))
+                                .foregroundColor(.ypBlack)
                         }
-                    
                         
                         Spacer()
                     }
@@ -66,10 +78,10 @@ struct UserAgreementView: View {
                     }
                 }
             }
-            .toolbar(.visible, for: .tabBar)
+            .toolbar(.hidden, for: .tabBar)
         }
     }
-}
+
 
 // MARK: - Preview
 #Preview {
