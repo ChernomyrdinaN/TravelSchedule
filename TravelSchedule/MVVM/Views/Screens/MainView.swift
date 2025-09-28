@@ -26,7 +26,7 @@ struct MainView: View {
                     ErrorView(errorModel: errorType == .noInternet ? .error1 : .error2)
                 } else {
                     VStack(spacing: .zero) {
-                        StoriesPlaceholderView()
+                        StoriesView()
                         
                         DirectionCardView(
                             fromStation: $fromStation,

@@ -12,6 +12,7 @@ struct SettingsView: View {
     @AppStorage("isDarkTheme") private var isDarkTheme = false
     @State private var showUserAgreement = false
     
+    // MARK: - Body
     var body: some View {
         NavigationStack {
             ZStack {
