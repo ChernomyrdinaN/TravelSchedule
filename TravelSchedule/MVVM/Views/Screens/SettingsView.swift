@@ -34,9 +34,7 @@ struct SettingsView: View {
                                 .tint(.ypBlueUniversal)
                                 .frame(width: 51, height: 31)
                         }
-                        
                         .frame(height: 60)
-                        
                         
                         NavigationLink(destination: UserAgreementView()) {
                             HStack {
@@ -48,48 +46,34 @@ struct SettingsView: View {
                                 
                                 Image(systemName: "chevron.right")
                                     .foregroundColor(.ypBlack)
-                                    .font(.system(size: 17, weight: .medium))
                             }
                             .frame(height: 60)
                         }
-                        .buttonStyle(PlainButtonStyle()) 
+                        .buttonStyle(PlainButtonStyle())
                     }
                     .background(Color.ypWhite)
-                    .cornerRadius(12)
                     .padding(.horizontal, 16)
                     .padding(.top, 24)
                     
                     Spacer()
                     
-                    
-                    VStack(spacing: 30) {
+                    // MARK: - Info Section
+                    VStack(spacing: 16) {
                         Text("Приложение использует API «Яндекс.Расписания»")
                             .font(.system(size: 12, weight: .regular))
                             .foregroundColor(.ypBlack)
                             .multilineTextAlignment(.center)
                         
-                            .tracking(0.4) // letter-spacing: 0.4px
-                        
-                        Text("**Версия 1.0 (beta)**")
+                        Text("Версия 1.0 (beta)")
                             .font(.system(size: 12, weight: .regular))
                             .foregroundColor(.ypBlack)
                             .multilineTextAlignment(.center)
-                            .tracking(0.4) // letter-spacing: 0.4px
                     }
-                    
+                    .frame(height: 44)
                     .padding(.bottom, 24)
                 }
             }
-            .navigationBarBackButtonHidden(true)
-            .toolbar {
-                ToolbarItem(placement: .navigationBarLeading) {
-                    Button(action: { dismiss() }) {
-                        Image(systemName: "chevron.left")
-                            .foregroundColor(.ypBlack)
-                    }
-                }
-            }
-            .toolbar(.hidden, for: .tabBar) 
+            
             .preferredColorScheme(isDarkTheme ? .dark : .light)
         }
     }
