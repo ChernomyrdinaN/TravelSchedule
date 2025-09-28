@@ -55,11 +55,10 @@ struct FullscreenStoriesView: View {
                 ForEach(Array(stories.enumerated()), id: \.offset) { index, story in
                     TabView(selection: $currentSlideIndex) {
                         ForEach(Array(story.slides.enumerated()), id: \.offset) { slideIndex, slide in
-                            SingleStoryView(slide: slide, onClose: { dismiss() })
+                            SingleStoryView(slide: slide)
                                 .tag(slideIndex)
                         }
                     }
-                    .cornerRadius(40)
                     .tabViewStyle(.page(indexDisplayMode: .never))
                     .tag(index)
                 }
@@ -70,7 +69,29 @@ struct FullscreenStoriesView: View {
             }
             
             VStack {
-                HStack(spacing: 4) {
+                Spacer()
+                
+                VStack(alignment: .leading, spacing: 16) {
+                    Text(currentSlide.text)
+                        .font(.system(size: 34, weight: .bold))
+                        .foregroundColor(.white)
+                        .lineLimit(2)
+                        .truncationMode(.tail)
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                    
+                    Text(currentSlide.subtitle)
+                        .font(.system(size: 20, weight: .regular))
+                        .foregroundColor(.white)
+                        .lineLimit(3)
+                        .truncationMode(.tail)
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                }
+                .padding(.bottom, 40)
+                .padding(.horizontal, 16)
+            }
+            
+            VStack {
+                HStack(spacing: 6) {
                     ForEach(0..<currentSlides.count, id: \.self) { index in
                         ProgressBarSegment(
                             isActive: index == currentSlideIndex,
@@ -78,8 +99,8 @@ struct FullscreenStoriesView: View {
                         )
                     }
                 }
-                .padding(.horizontal, 16)
-                .padding(.top, 60)
+                .padding(.top, 28)
+                .padding(.horizontal, 12)
                 Spacer()
             }
             
@@ -90,14 +111,14 @@ struct FullscreenStoriesView: View {
                         dismiss()
                     }) {
                         Image(systemName: "xmark")
-                            .font(.system(size: 20, weight: .bold))
+                            .font(.system(size: 16, weight: .bold))
                             .foregroundColor(.white)
-                            .padding(12)
+                            .frame(width: 30, height: 30)
                             .background(Color.black.opacity(0.7))
                             .clipShape(Circle())
                     }
-                    .padding(.top, 60)
-                    .padding(.trailing, 20)
+                    .padding(.top, 50)
+                    .padding(.horizontal, 16)
                 }
                 Spacer()
             }
@@ -210,36 +231,12 @@ struct FullscreenStoriesView: View {
 // MARK: - SingleStoryView
 struct SingleStoryView: View {
     let slide: StorySlide
-    let onClose: () -> Void
     
     var body: some View {
-        ZStack {
-            Image(slide.image)
-                .resizable()
-                .scaledToFill()
-                .ignoresSafeArea()
-            
-            VStack {
-                Spacer()
-                
-                VStack(alignment: .leading, spacing: 16) {
-                    Text(slide.text)
-                        .font(.system(size: 34, weight: .bold))
-                        .foregroundColor(.white)
-                        .lineLimit(2)
-                        .frame(maxWidth: .infinity, alignment: .leading)
-                    
-                    Text(slide.subtitle)
-                        .font(.system(size: 20, weight: .regular))
-                        .foregroundColor(.white)
-                        .lineLimit(3)
-                        .frame(maxWidth: .infinity, alignment: .leading)
-                }
-                .frame(width: 343, alignment: .leading)
-                .padding(.bottom, 40)
-                .padding(.horizontal, 16)
-            }
-        }
+        Image(slide.image)
+            .resizable()
+            .scaledToFill()
+            .ignoresSafeArea()
     }
 }
 
@@ -252,16 +249,16 @@ struct ProgressBarSegment: View {
         GeometryReader { geometry in
             ZStack(alignment: .leading) {
                 RoundedRectangle(cornerRadius: 2)
-                    .frame(width: geometry.size.width, height: 4)
+                    .frame(width: geometry.size.width, height: 6)
                     .foregroundColor(.white.opacity(0.3))
                 
                 RoundedRectangle(cornerRadius: 2)
-                    .frame(width: progress * geometry.size.width, height: 4)
+                    .frame(width: progress * geometry.size.width, height: 6)
                     .foregroundColor(.ypBlueUniversal)
                     .animation(.linear(duration: 0.05), value: progress)
             }
         }
-        .frame(height: 4)
+        .frame(height: 6)
     }
 }
 
@@ -270,12 +267,12 @@ struct ProgressBarSegment: View {
     FullscreenStoriesView(
         stories: .constant([
             StoryItem(slides: [
-                StorySlide(image: "ilPreview1", text: "Text Text Text", subtitle: "Text Text Text Text"),
-                StorySlide(image: "ilBig2", text: "Text Text Text", subtitle: "Text Text Text Text")
-            ]),
-            StoryItem(slides: [
-                StorySlide(image: "ilPreview2", text: "Text Text Text", subtitle: "Text Text Text Text"),
-                StorySlide(image: "ilBig4", text: "Text Text Text", subtitle: "Text Text Text Text")
+                StorySlide(image: "ilPreview1",
+                           text: "Очень длинный заголовок который не помещается в две строки и должен обрезаться с многоточием",
+                           subtitle: "Очень длинный подзаголовок который содержит много текста и не помещается в три строки поэтому должен обрезаться с многоточием в конце текста"),
+                StorySlide(image: "ilBig2",
+                           text: "Очень длинный заголовок который не помещается в две строки и должен обрезаться с многоточием",
+                           subtitle: "чень длинный подзаголовок который содержит много текста и не помещается в три строки поэтому должен обрезаться с многоточием в конце текста")
             ])
         ]),
         initialStoryIndex: 0
