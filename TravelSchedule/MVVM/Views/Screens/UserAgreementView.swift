@@ -10,6 +10,7 @@ import SwiftUI
 struct UserAgreementView: View {
     @Environment(\.dismiss) private var dismiss
     
+    // MARK: - Body
     var body: some View {
         NavigationStack {
             ZStack {

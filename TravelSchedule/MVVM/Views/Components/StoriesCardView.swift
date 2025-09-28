@@ -1,68 +1,21 @@
 //
-//  StoriesPlaceholderView.swift
+//  StoriesCardView.swift
 //  TravelSchedule
 //
-//  Created by Наталья Черномырдина on 08.09.2025.
+//  Created by Наталья Черномырдина on 28.09.2025.
 //
 
 import SwiftUI
 
-struct StoryItem: Identifiable {
-    let id = UUID()
-    let image: String
-    let text: String
-}
-
-struct StoriesPlaceholderView: View {
-    private let stories = [
-        StoryItem(image: "ilBig1", text: "Москва"),
-        StoryItem(image: "ilBig2", text: "Санкт-Петербург"),
-        StoryItem(image: "ilBig3", text: "Сочи"),
-        StoryItem(image: "ilBig4", text: "Казань"),
-        StoryItem(image: "ilBig5", text: "Екатеринбург"),
-        StoryItem(image: "ilBig6", text: "Нижний Новгород")
-    ]
-    
-    @State private var selectedStoryIndex = 0
-    
-    // MARK: - Body
-    var body: some View {
-        VStack(spacing: .zero) {
-            Spacer()
-                .frame(height: 24)
-            
-            storiesScrollView
-        }
-        .background(.ypWhite)
-    }
-    
-    // MARK: - Private Views
-    private var storiesScrollView: some View {
-        ScrollView(.horizontal, showsIndicators: false) {
-            HStack(spacing: 12) {
-                ForEach(Array(stories.enumerated()), id: \.element.id) { index, story in
-                    StoryCard(
-                        imageName: story.image,
-                        text: story.text,
-                        isActive: index == selectedStoryIndex,
-                        onTap: { selectedStoryIndex = index }
-                    )
-                }
-            }
-            .padding(.horizontal, 16)
-        }
-        .background(.ypWhite)
-    }
-}
-
-struct StoryCard: View {
+struct StoriesCardView: View {
     let imageName: String
     let text: String
-    let isActive: Bool
+    let isViewed: Bool
     let onTap: () -> Void
     
     @State private var isPressed = false
     
+    // MARK: - Body
     var body: some View {
         Button(action: onTap) {
             cardContent
@@ -88,14 +41,14 @@ struct StoryCard: View {
             .frame(width: 92, height: 140)
             .cornerRadius(16)
             .overlay(borderOverlay)
-            .opacity(isActive ? 1.0 : 0.5)
+            .opacity(isViewed ? 0.5 : 1.0)
     }
     
     private var borderOverlay: some View {
         RoundedRectangle(cornerRadius: 16)
             .stroke(
-                isActive ? .ypBlueUniversal : Color.clear,
-                lineWidth: isActive ? 4 : 0
+                isViewed ? Color.clear : .ypBlueUniversal,
+                lineWidth: isViewed ? 0 : 4
             )
     }
     
@@ -127,5 +80,37 @@ struct StoryCard: View {
 
 // MARK: - Preview
 #Preview {
-    StoriesPlaceholderView()
+    VStack {
+        Text("Непросмотренные (яркие + обводка)")
+        HStack {
+            StoriesCardView(
+                imageName: "ilBig1",
+                text: "Москва",
+                isViewed: false,
+                onTap: {}
+            )
+            StoriesCardView(
+                imageName: "ilBig2",
+                text: "Санкт-Петербург",
+                isViewed: false,
+                onTap: {}
+            )
+        }
+        
+        Text("Просмотренные (блеклые без обводки)")
+        HStack {
+            StoriesCardView(
+                imageName: "ilBig3",
+                text: "Сочи",
+                isViewed: true,
+                onTap: {}
+            )
+            StoriesCardView(
+                imageName: "ilBig4",
+                text: "Казань",
+                isViewed: true,
+                onTap: {}
+            )
+        }
+    }
 }
