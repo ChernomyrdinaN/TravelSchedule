@@ -86,7 +86,9 @@ struct FullscreenStoriesView: View {
                         .truncationMode(.tail)
                         .frame(maxWidth: .infinity, alignment: .leading)
                 }
-                .padding(.bottom, 40)
+            .padding(.bottom, 40)
+
+                
                 .padding(.horizontal, 16)
             }
             
@@ -111,14 +113,14 @@ struct FullscreenStoriesView: View {
                         dismiss()
                     }) {
                         Image(systemName: "xmark")
-                            .font(.system(size: 16, weight: .bold))
-                            .foregroundColor(.white)
-                            .frame(width: 30, height: 30)
-                            .background(Color.black.opacity(0.7))
+                            .font(.system(size: 14, weight: .bold))
+                            .foregroundColor(.ypWhiteUniversal)
+                            .frame(width: 24, height: 24)
+                            .background(Color.ypBlackUniversal)
                             .clipShape(Circle())
                     }
                     .padding(.top, 50)
-                    .padding(.horizontal, 16)
+                    .padding(.trailing, 12)
                 }
                 Spacer()
             }
@@ -145,6 +147,7 @@ struct FullscreenStoriesView: View {
         .onChange(of: currentSlideIndex) { oldValue, newValue in
             resetProgress()
         }
+        .cornerRadius(40)
     }
     
     // MARK: - Timer Management
@@ -250,7 +253,7 @@ struct ProgressBarSegment: View {
             ZStack(alignment: .leading) {
                 RoundedRectangle(cornerRadius: 2)
                     .frame(width: geometry.size.width, height: 6)
-                    .foregroundColor(.white.opacity(0.3))
+                    .foregroundColor(.ypWhiteUniversal)
                 
                 RoundedRectangle(cornerRadius: 2)
                     .frame(width: progress * geometry.size.width, height: 6)
