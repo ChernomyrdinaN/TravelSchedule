@@ -86,8 +86,8 @@ struct FullscreenStoriesView: View {
                         .truncationMode(.tail)
                         .frame(maxWidth: .infinity, alignment: .leading)
                 }
-            .padding(.bottom, 40)
-
+                .padding(.bottom, 40)
+                
                 
                 .padding(.horizontal, 16)
             }
