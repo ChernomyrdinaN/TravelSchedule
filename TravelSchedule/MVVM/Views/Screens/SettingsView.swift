@@ -74,8 +74,6 @@ struct SettingsView: View {
                     .padding(.bottom, 24)
                 }
             }
-            
-            .preferredColorScheme(isDarkTheme ? .dark : .light)
         }
     }
 }
