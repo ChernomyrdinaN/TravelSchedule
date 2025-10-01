@@ -148,7 +148,6 @@ struct FullscreenStoriesView: View {
         .onChange(of: currentSlideIndex) { oldValue, newValue in
             resetProgress()
         }
-        .preferredColorScheme(.dark)
         .cornerRadius(40)
     }
     

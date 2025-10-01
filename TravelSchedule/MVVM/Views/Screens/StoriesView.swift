@@ -64,7 +64,8 @@ struct StoriesView: View {
                 stories: $stories,
                 initialStoryIndex: selectedStoryIndex
             )
-            .id(selectedStoryIndex) 
+            .id(selectedStoryIndex)
+            .preferredColorScheme(.dark)
         }
     }
     
