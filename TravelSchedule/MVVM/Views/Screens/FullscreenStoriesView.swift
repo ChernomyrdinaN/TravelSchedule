@@ -65,7 +65,6 @@ struct FullscreenStoriesView: View {
             }
             .tabViewStyle(.page(indexDisplayMode: .never))
             .onAppear {
-                // Принудительно устанавливаем выбранную историю
                 currentStoryIndex = initialStoryIndex
             }
             .onChange(of: currentStoryIndex) { oldValue, newValue in
@@ -149,6 +148,7 @@ struct FullscreenStoriesView: View {
         .onChange(of: currentSlideIndex) { oldValue, newValue in
             resetProgress()
         }
+        .preferredColorScheme(.dark)
         .cornerRadius(40)
     }
     
