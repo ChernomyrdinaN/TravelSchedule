@@ -17,12 +17,19 @@ struct StoriesCardView: View {
     
     // MARK: - Body
     var body: some View {
-        Button(action: onTap) {
+        Button(action: {
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+                onTap()
+            }
+        }) {
             cardContent
                 .scaleEffect(isPressed ? 0.95 : 1.0)
+                .animation(.easeInOut(duration: 0.1), value: isPressed)
         }
         .buttonStyle(PlainButtonStyle())
-        .simultaneousGesture(pressGesture)
+        ._onButtonGesture { pressing in
+            isPressed = pressing
+        } perform: {}
     }
     
     // MARK: - Private Views
@@ -45,12 +52,12 @@ struct StoriesCardView: View {
     }
     
     private var borderOverlay: some View {
-            RoundedRectangle(cornerRadius: 16)
-                .stroke(
-                    isViewed ? Color.clear : .ypBlueUniversal,
-                    lineWidth: isViewed ? 0 : 4
-                )
-        }
+        RoundedRectangle(cornerRadius: 16)
+            .stroke(
+                isViewed ? Color.clear : .ypBlueUniversal,
+                lineWidth: isViewed ? 0 : 4
+            )
+    }
     
     private var textOverlay: some View {
         VStack {
@@ -68,13 +75,6 @@ struct StoriesCardView: View {
             .padding(.bottom, 8)
         }
         .frame(height: 140)
-    }
-    
-    // MARK: - Gestures
-    private var pressGesture: some Gesture {
-        LongPressGesture(minimumDuration: 0.1)
-            .onChanged { _ in isPressed = true }
-            .onEnded { _ in isPressed = false }
     }
 }
 
