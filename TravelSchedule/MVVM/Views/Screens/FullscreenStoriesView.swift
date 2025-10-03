@@ -44,7 +44,7 @@ struct FullscreenStoriesView: View {
         self._stories = stories
         self.initialStoryIndex = initialStoryIndex
         self._currentStoryIndex = State(initialValue: initialStoryIndex)
-        self.timer = Timer.publish(every: timerInterval, on: .main, in: .common)
+        _timer = State(initialValue: Timer.publish(every: timerInterval, on: .main, in: .common))
     }
     
     // MARK: - Body
@@ -61,6 +61,7 @@ struct FullscreenStoriesView: View {
                         }
                     }
                     .tabViewStyle(.page(indexDisplayMode: .never))
+                    .id(index)
                     .tag(index)
                 }
             }
@@ -73,28 +74,6 @@ struct FullscreenStoriesView: View {
                     return
                 }
                 handleStoryChange()
-            }
-            
-            VStack {
-                Spacer()
-                
-                VStack(alignment: .leading, spacing: 16) {
-                    Text(currentSlide.text)
-                        .font(.system(size: 34, weight: .bold))
-                        .foregroundColor(.white)
-                        .lineLimit(2)
-                        .truncationMode(.tail)
-                        .frame(maxWidth: .infinity, alignment: .leading)
-                    
-                    Text(currentSlide.subtitle)
-                        .font(.system(size: 20, weight: .regular))
-                        .foregroundColor(.white)
-                        .lineLimit(3)
-                        .truncationMode(.tail)
-                        .frame(maxWidth: .infinity, alignment: .leading)
-                }
-                .padding(.bottom, 40)
-                .padding(.horizontal, 16)
             }
             
             VStack {
@@ -153,7 +132,9 @@ struct FullscreenStoriesView: View {
         .onChange(of: currentSlideIndex) { oldValue, newValue in
             resetProgress()
         }
-        .cornerRadius(40)
+        .mask {
+            RoundedRectangle(cornerRadius: 40, style: .continuous)
+        }
     }
     
     // MARK: - Timer Management
@@ -241,10 +222,50 @@ struct SingleStoryView: View {
     let slide: StorySlide
     
     var body: some View {
-        Image(slide.image)
-            .resizable()
-            .scaledToFill()
-            .ignoresSafeArea()
+        GeometryReader { proxy in
+            ZStack {
+                Image(slide.image)
+                    .resizable()
+                    .scaledToFill()
+                    .frame(width: proxy.size.width, height: proxy.size.height)
+                    .clipped()
+                    .ignoresSafeArea()
+                
+                LinearGradient(
+                    gradient: Gradient(colors: [Color.black.opacity(0.0), Color.black.opacity(0.6)]),
+                    startPoint: .center,
+                    endPoint: .bottom
+                )
+                .allowsHitTesting(false)
+                .ignoresSafeArea()
+                
+                VStack(alignment: .leading, spacing: 12) {
+                    Spacer()
+                    
+                    Text(slide.text)
+                        .font(.system(size: 34, weight: .bold))
+                        .foregroundColor(.white)
+                        .lineLimit(2)
+                        .truncationMode(.tail)
+                        .minimumScaleFactor(0.9)
+                        .allowsTightening(true)
+                        .multilineTextAlignment(.leading)
+                    
+                    Text(slide.subtitle)
+                        .font(.system(size: 20, weight: .regular))
+                        .foregroundColor(.white)
+                        .lineLimit(3)
+                        .truncationMode(.tail)
+                        .allowsTightening(true)
+                        .multilineTextAlignment(.leading)
+                }
+                .padding(.horizontal, 16)
+                .padding(.bottom, max(24, 24 + proxy.safeAreaInsets.bottom))
+                .frame(maxWidth: .infinity, alignment: .leading)
+            }
+            .frame(width: proxy.size.width, height: proxy.size.height)
+            .contentShape(Rectangle())
+        }
     }
 }
 
@@ -286,3 +307,4 @@ struct ProgressBarSegment: View {
         initialStoryIndex: 0
     )
 }
+
