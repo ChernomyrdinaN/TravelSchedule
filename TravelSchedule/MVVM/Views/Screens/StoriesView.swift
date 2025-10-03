@@ -7,6 +7,8 @@
 
 import SwiftUI
 
+private struct StorySelection: Identifiable { let id: Int }
+
 struct StoriesView: View {
     @State private var stories = [
         StoryItem(slides: [
@@ -47,8 +49,7 @@ struct StoriesView: View {
         ])
     ]
     
-    @State private var selectedStoryIndex = 0
-    @State private var showFullscreenStories = false
+    @State private var selectedStory: StorySelection? = nil
     
     // MARK: - Body
     var body: some View {
@@ -59,12 +60,11 @@ struct StoriesView: View {
             storiesScrollView
         }
         .background(.ypWhite)
-        .fullScreenCover(isPresented: $showFullscreenStories) {
+        .fullScreenCover(item: $selectedStory) { selection in
             FullscreenStoriesView(
                 stories: $stories,
-                initialStoryIndex: selectedStoryIndex
+                initialStoryIndex: selection.id
             )
-            .id(selectedStoryIndex)
             .preferredColorScheme(.dark)
         }
     }
@@ -79,8 +79,7 @@ struct StoriesView: View {
                         text: "Text Text Text Text Text Text Text Text Text Text",
                         isViewed: story.isViewed,
                         onTap: {
-                            selectedStoryIndex = index
-                            showFullscreenStories = true
+                            selectedStory = StorySelection(id: index)
                         }
                     )
                 }

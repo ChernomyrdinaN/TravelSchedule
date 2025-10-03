@@ -18,6 +18,7 @@ struct FullscreenStoriesView: View {
     @State private var progress: CGFloat = 0.0
     @State private var timer: Timer.TimerPublisher
     @State private var cancellable: Cancellable?
+    @State private var didInitialize: Bool = false
     
     // MARK: - Configuration
     private let timerInterval: TimeInterval = 0.05
@@ -64,10 +65,13 @@ struct FullscreenStoriesView: View {
                 }
             }
             .tabViewStyle(.page(indexDisplayMode: .never))
-            .onAppear {
-                currentStoryIndex = initialStoryIndex
-            }
             .onChange(of: currentStoryIndex) { oldValue, newValue in
+                if !didInitialize {
+                    if newValue == initialStoryIndex {
+                        didInitialize = true
+                    }
+                    return
+                }
                 handleStoryChange()
             }
             
@@ -128,7 +132,8 @@ struct FullscreenStoriesView: View {
         }
         .onAppear {
             startTimer()
-            markCurrentStoryAsViewed()
+            markStoryAsViewed(at: initialStoryIndex)
+            didInitialize = (currentStoryIndex == initialStoryIndex)
         }
         .onDisappear {
             stopTimer()
@@ -211,7 +216,7 @@ struct FullscreenStoriesView: View {
         resetProgress()
         stopTimer()
         startTimer()
-        markCurrentStoryAsViewed()
+        markStoryAsViewed(at: currentStoryIndex)
     }
     
     private func handleDragGesture(_ value: DragGesture.Value) {
@@ -225,10 +230,9 @@ struct FullscreenStoriesView: View {
     }
     
     // MARK: - Story State
-    private func markCurrentStoryAsViewed() {
-        if currentStoryIndex < stories.count {
-            stories[currentStoryIndex].isViewed = true
-        }
+    private func markStoryAsViewed(at index: Int) {
+        guard stories.indices.contains(index) else { return }
+        stories[index].isViewed = true
     }
 }
 
