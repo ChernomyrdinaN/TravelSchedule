@@ -9,6 +9,7 @@ import SwiftUI
 
 struct MainTabView: View {
     @State private var selectedTab = 0
+    @AppStorage("isDarkTheme") private var isDarkTheme = false
     
     // MARK: - Body
     var body: some View {
@@ -18,22 +19,17 @@ struct MainTabView: View {
                     Image("icSchedule")
                         .renderingMode(.template)
                 }
+            
                 .tag(0)
-
-            NavigationStack {
-                ZStack {
-                    Color.ypWhite
-                        .ignoresSafeArea()
-                    
-                    Text("Настройки скоро будут реализованы")
-                }
-            }
-            .tabItem {
-                Image("icSettings")
-                    .renderingMode(.template)
-            }
-            .tag(1)
+          
+            SettingsView() 
+                    .tabItem {
+                        Image("icSettings")
+                            .renderingMode(.template)
+                    }
+                    .tag(1)
         }
+        .preferredColorScheme(isDarkTheme ? .dark : .light)
         .tint(.ypBlack)
         .onAppear {
             configureTabBarToHideText()
@@ -58,6 +54,7 @@ struct MainTabView: View {
     }
 }
 
+// MARK: - Preview
 #Preview {
     MainTabView()
 }

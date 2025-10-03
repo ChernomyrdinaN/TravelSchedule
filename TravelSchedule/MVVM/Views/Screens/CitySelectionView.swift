@@ -123,6 +123,7 @@ struct CitySelectionView: View {
     }
     }
 
+// MARK: - Preview
 #Preview {
     NavigationView {
         CitySelectionView(

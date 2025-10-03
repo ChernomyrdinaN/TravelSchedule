@@ -43,7 +43,7 @@ struct CarrierCardView: View {
                 Button(action: onTimeClarificationTapped) {
                     Text("Уточнить время")
                         .font(.system(size: 17, weight: .regular))
-                        .foregroundColor(.ypBlue)
+                        .foregroundColor(.ypBlueUniversal)
                         .frame(maxWidth: .infinity, alignment: .center)
                 }
             } else {

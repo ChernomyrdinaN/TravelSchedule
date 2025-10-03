@@ -8,11 +8,12 @@
 import Foundation
 
 extension Carrier {
+    
     // MARK: - Mock Data
     static let mockData: [Carrier] = [
         Carrier(
-            name: "РЖД",
-            logo: "BrandIcon1",
+            name: "ОАО РЖД",
+            logo: "BrandIcon1", // Image1
             transferInfo: "С пересадкой в Костроме",
             date: "14 января",
             departureTime: "22:30",
@@ -38,7 +39,7 @@ extension Carrier {
             arrivalTime: "21:00"
         ),
         Carrier(
-            name: "РЖД",
+            name: "ОАО РЖД",
             logo: "BrandIcon1",
             transferInfo: "С пересадкой в Костроме",
             date: "17 января",

@@ -83,12 +83,18 @@ struct CarrierListView: View {
         ScrollView {
             LazyVStack(spacing: 8) {
                 ForEach(filteredCarriers) { carrier in
-                    CarrierCardView(
-                        carrier: carrier,
-                        onTimeClarificationTapped: {
-                            navigationPath.append(StationNavigation.filters)
-                        }
-                    )
+                    // MARK: - Navigation Link для перехода к информации о перевозчике
+                    NavigationLink {
+                        CarrierInfoView(carrier: carrier)
+                    } label: {
+                        CarrierCardView(
+                            carrier: carrier,
+                            onTimeClarificationTapped: {
+                                navigationPath.append(StationNavigation.filters)
+                            }
+                        )
+                    }
+                    .buttonStyle(PlainButtonStyle())
                     .background(Color.ypLightGray)
                     .cornerRadius(24)
                 }
@@ -114,7 +120,7 @@ struct CarrierListView: View {
             }
             .frame(maxWidth: .infinity)
             .frame(height: 60)
-            .background(Color.ypBlue)
+            .background(.ypBlueUniversal)
             .cornerRadius(12)
         }
         .buttonStyle(PlainButtonStyle())
