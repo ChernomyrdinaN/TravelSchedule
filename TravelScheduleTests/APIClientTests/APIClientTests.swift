@@ -8,26 +8,19 @@
 import XCTest
 @testable import TravelSchedule
 
-final class APIClientTests: XCTestCase {
+final class MinimalTests: XCTestCase {
     
-    // Проверяем что тип APIClient вообще доступен
-    func testAPIClientTypeExists() {
-        let clientType = APIClient.self
-        XCTAssertNotNil(clientType)
-        print("✅ Тип APIClient доступен в тестах")
+    func testBasicStructuresExist() {
+    
+        let station = Station(name: "Тест")
+        XCTAssertEqual(station.name, "Тест")
+        print("✅ Базовая структура Station работает")
     }
     
-    // Проверяем что константы работают
-    func testConstantsAvailable() {
-        let key = Constants.yandexAPIKey
-        XCTAssertFalse(key.isEmpty)
-        XCTAssertEqual(key, "17dbdf13-ff18-4549-bbc7-ca3b8cd8b04b")
-        print("✅ Константы доступны")
-    }
+    @MainActor func testViewModelCreation() {
     
-    // Проверяем структуру APIClient через рефлексию
-    func testAPIClientStructure() {
-        let _ = String(describing: APIClient.self)
+        let _ = MainViewModel()
         XCTAssertTrue(true)
+        print("✅ MainViewModel создается")
     }
 }

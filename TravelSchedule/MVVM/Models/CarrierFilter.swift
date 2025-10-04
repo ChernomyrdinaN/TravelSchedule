@@ -7,7 +7,7 @@
 
 import Foundation
 
-struct CarrierFilter: Hashable {
+struct CarrierFilter: Hashable, Sendable{
     var timeOptions: [TimeOption] = []
     var showTransfers: Bool? = nil
     

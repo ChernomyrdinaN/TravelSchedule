@@ -8,12 +8,10 @@
 import SwiftUI
 
 struct MainView: View {
-    @State private var fromStation: Station?
-    @State private var toStation: Station?
+    @StateObject private var viewModel = MainViewModel()
     @State private var navigationPath = NavigationPath()
     @State private var isSelectingFrom = true
     @State private var filter = CarrierFilter()
-    @State private var showingError: ErrorModel.ErrorType? = nil
     
     // MARK: - Body
     var body: some View {
@@ -22,26 +20,26 @@ struct MainView: View {
                 Color.ypWhite
                     .ignoresSafeArea()
                 
-                if let errorType = showingError {
+                if let errorType = viewModel.showingError {
                     ErrorView(errorModel: errorType == .noInternet ? .error1 : .error2)
                 } else {
                     VStack(spacing: .zero) {
                         StoriesView()
                         
                         DirectionCardView(
-                            fromStation: $fromStation,
-                            toStation: $toStation,
+                            fromStation: $viewModel.fromStation,
+                            toStation: $viewModel.toStation,
                             onFromStationTapped: { showCitySelection(isFrom: true) },
                             onToStationTapped: { showCitySelection(isFrom: false) },
-                            onSwapStations: swapStations
+                            onSwapStations: viewModel.swapStations
                         )
                         .padding(.top, 44)
                         .padding(.horizontal, 16)
                         
-                        if isFindButtonEnabled {
+                        if viewModel.isFindButtonEnabled {
                             FindButtonView(
-                                fromStation: fromStation,
-                                toStation: toStation,
+                                fromStation: viewModel.fromStation,
+                                toStation: viewModel.toStation,
                                 onFindTapped: showCarrierList
                             )
                             .padding(.top, 16)
@@ -55,21 +53,21 @@ struct MainView: View {
                 switch destination {
                 case .citySelection:
                     CitySelectionView(
-                        selectedStation: isSelectingFrom ? $fromStation : $toStation,
+                        selectedStation: isSelectingFrom ? $viewModel.fromStation : $viewModel.toStation,
                         onStationSelected: { station in
                             navigationPath.append(StationNavigation.stationSelection(city: station.name))
                         }
                     )
                 case .stationSelection(let city):
                     StationSelectionView(
-                        selectedStation: isSelectingFrom ? $fromStation : $toStation,
+                        selectedStation: isSelectingFrom ? $viewModel.fromStation : $viewModel.toStation,
                         city: city,
                         onStationSelected: { station in
                             let fullStationName = "\(city) (\(station.name))"
                             if isSelectingFrom {
-                                fromStation = Station(name: fullStationName)
+                                viewModel.fromStation = Station(name: fullStationName)
                             } else {
-                                toStation = Station(name: fullStationName)
+                                viewModel.toStation = Station(name: fullStationName)
                             }
                             navigationPath.removeLast(navigationPath.count)
                         }
@@ -90,25 +88,13 @@ struct MainView: View {
                     )
                 }
             }
-            .onAppear {
-                testErrorDisplay()
+            .task {
+                await viewModel.loadInitialData()
             }
         }
     }
     
     // MARK: - Private Methods
-    private func testErrorDisplay() {
-        DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
-            // Для тестирования ошибок:
-            // showError(.noInternet)
-            // showError(.serverError)
-        }
-    }
-    
-    private var isFindButtonEnabled: Bool {
-        fromStation != nil && toStation != nil
-    }
-    
     private func showCitySelection(isFrom: Bool) {
         isSelectingFrom = isFrom
         navigationPath.append(StationNavigation.citySelection)
@@ -116,22 +102,9 @@ struct MainView: View {
     
     private func showCarrierList() {
         filter = CarrierFilter()
-        guard let from = fromStation?.name, let to = toStation?.name else { return }
+        guard let from = viewModel.fromStation?.name,
+              let to = viewModel.toStation?.name else { return }
         navigationPath.append(StationNavigation.carrierList(from: from, to: to))
-    }
-    
-    private func swapStations() {
-        let temp = fromStation
-        fromStation = toStation
-        toStation = temp
-    }
-    
-    private func showError(_ errorType: ErrorModel.ErrorType) {
-        showingError = errorType
-    }
-    
-    private func hideError() {
-        showingError = nil
     }
 }
 

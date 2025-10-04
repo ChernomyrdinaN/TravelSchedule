@@ -8,7 +8,7 @@
 import SwiftUI
 
 // MARK: - StorySlide
-struct StorySlide: Identifiable {
+struct StorySlide: Identifiable, Sendable {
     let id = UUID()
     let image: String
     let text: String

@@ -19,7 +19,11 @@ public actor APIClient {
         self.apiKey = apiKey
         self.baseURL = baseURL
     }
+}
 
+// MARK: - Basic API Methods
+extension APIClient {
+    
     // MARK: - Nearest Stations
     public func getNearestStations(
         lat: Double,
@@ -56,14 +60,6 @@ public actor APIClient {
             system: system
         ))
         return try handleCarrierResponse(response)
-    }
-
-    // MARK: - Copyrights
-    public func getCopyrights() async throws -> Components.Schemas.CopyrightsResponse {
-        let response = try await client.getCopyrights(query: .init(
-            apikey: apiKey
-        ))
-        return try handleCopyrightsResponse(response)
     }
 
     // MARK: - Nearest Settlement
@@ -146,151 +142,5 @@ public actor APIClient {
             show_systems: showSystems
         ))
         return try handleThreadStationsResponse(response)
-    }
-}
-
-// MARK: - Private Helpers
-private extension APIClient {
-    
-    // MARK: - Response Handlers
-    
-    func handleNearestStationsResponse(_ response: Operations.getNearestStations.Output) throws -> Components.Schemas.Stations {
-        switch response {
-        case .ok(let okResponse):
-            switch okResponse.body {
-            case .json(let stationsResponse):
-                return stationsResponse
-            @unknown default:
-                throw APIError.invalidResponse
-            }
-        case .undocumented(statusCode: let statusCode, _):
-            throw APIError.unknownStatus(statusCode)
-        @unknown default:
-            throw APIError.invalidResponse
-        }
-    }
-    
-    func handleAllStationsResponse(_ response: Operations.getStationsList.Output) async throws -> Components.Schemas.AllStationsResponse {
-        switch response {
-        case .ok(let okResponse):
-            switch okResponse.body {
-            case .json(let payload):
-                return payload
-            case .html(let body):
-                // Для HTML ответа делаем отдельную async обработку
-                return try await handleHTMLResponse(body)
-            @unknown default:
-                throw APIError.invalidResponse
-            }
-        case .undocumented(statusCode: let statusCode, _):
-            throw APIError.unknownStatus(statusCode)
-        @unknown default:
-            throw APIError.invalidResponse
-        }
-    }
-    
-    func handleCarrierResponse(_ response: Operations.getCarrier.Output) throws -> Components.Schemas.CarrierResponse {
-        switch response {
-        case .ok(let okResponse):
-            switch okResponse.body {
-            case .json(let carrierResponse):
-                return carrierResponse
-            @unknown default:
-                throw APIError.invalidResponse
-            }
-        case .undocumented(statusCode: let statusCode, _):
-            throw APIError.unknownStatus(statusCode)
-        @unknown default:
-            throw APIError.invalidResponse
-        }
-    }
-    
-    func handleCopyrightsResponse(_ response: Operations.getCopyrights.Output) throws -> Components.Schemas.CopyrightsResponse {
-        switch response {
-        case .ok(let okResponse):
-            switch okResponse.body {
-            case .json(let copyrightsResponse):
-                return copyrightsResponse
-            @unknown default:
-                throw APIError.invalidResponse
-            }
-        case .undocumented(statusCode: let statusCode, _):
-            throw APIError.unknownStatus(statusCode)
-        @unknown default:
-            throw APIError.invalidResponse
-        }
-    }
-    
-    func handleNearestSettlementResponse(_ response: Operations.getNearestSettlement.Output) throws -> Components.Schemas.NearestSettlementResponse {
-        switch response {
-        case .ok(let okResponse):
-            switch okResponse.body {
-            case .json(let settlementResponse):
-                return settlementResponse
-            @unknown default:
-                throw APIError.invalidResponse
-            }
-        case .undocumented(statusCode: let statusCode, _):
-            throw APIError.unknownStatus(statusCode)
-        @unknown default:
-            throw APIError.invalidResponse
-        }
-    }
-    
-    func handleScheduleBetweenStationsResponse(_ response: Operations.getScheduleBetweenStations.Output) throws -> Components.Schemas.Segments {
-        switch response {
-        case .ok(let okResponse):
-            switch okResponse.body {
-            case .json(let segmentsResponse):
-                return segmentsResponse
-            @unknown default:
-                throw APIError.invalidResponse
-            }
-        case .undocumented(statusCode: let statusCode, _):
-            throw APIError.unknownStatus(statusCode)
-        @unknown default:
-            throw APIError.invalidResponse
-        }
-    }
-    
-    func handleScheduleOnStationResponse(_ response: Operations.getScheduleOnStation.Output) throws -> Components.Schemas.ScheduleResponse {
-        switch response {
-        case .ok(let okResponse):
-            switch okResponse.body {
-            case .json(let scheduleResponse):
-                return scheduleResponse
-            @unknown default:
-                throw APIError.invalidResponse
-            }
-        case .undocumented(statusCode: let statusCode, _):
-            throw APIError.unknownStatus(statusCode)
-        @unknown default:
-            throw APIError.invalidResponse
-        }
-    }
-    
-    func handleThreadStationsResponse(_ response: Operations.getThread.Output) throws -> Components.Schemas.ThreadStationsResponse {
-        switch response {
-        case .ok(let okResponse):
-            switch okResponse.body {
-            case .json(let threadResponse):
-                return threadResponse
-            @unknown default:
-                throw APIError.invalidResponse
-            }
-        case .undocumented(statusCode: let statusCode, _):
-            throw APIError.unknownStatus(statusCode)
-        @unknown default:
-            throw APIError.invalidResponse
-        }
-    }
-    
-    // MARK: - HTML Response Handler
-    private func handleHTMLResponse(_ body: HTTPBody) async throws -> Components.Schemas.AllStationsResponse {
-        var data = Data()
-        for try await chunk in body {
-            data.append(contentsOf: chunk)
-        }
-        return try JSONDecoder().decode(Components.Schemas.AllStationsResponse.self, from: data)
     }
 }

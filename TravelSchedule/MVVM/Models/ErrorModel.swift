@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-struct ErrorModel {
+struct ErrorModel: Sendable {
     let type: ErrorType
     let title: String
     let imageName: String

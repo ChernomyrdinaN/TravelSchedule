@@ -4,6 +4,7 @@
 //
 //  Created by Наталья Черномырдина on 07.09.2025.
 //
+//
 
 import SwiftUI
 
@@ -19,15 +20,14 @@ struct MainTabView: View {
                     Image("icSchedule")
                         .renderingMode(.template)
                 }
-            
                 .tag(0)
-          
-            SettingsView() 
-                    .tabItem {
-                        Image("icSettings")
-                            .renderingMode(.template)
-                    }
-                    .tag(1)
+            
+            SettingsView()
+                .tabItem {
+                    Image("icSettings")
+                        .renderingMode(.template)
+                }
+                .tag(1)
         }
         .preferredColorScheme(isDarkTheme ? .dark : .light)
         .tint(.ypBlack)
