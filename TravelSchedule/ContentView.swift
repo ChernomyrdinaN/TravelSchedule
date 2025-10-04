@@ -21,7 +21,6 @@ struct ContentView: View {
             testFetchNearestStations()
             testFetchStationsList()
             testFetchCarrierInfo()
-            testFetchCopyrights()
             testFetchNearestSettlement()
             testFetchScheduleBetweenStations()
             testFetchScheduleOnStation()
@@ -38,6 +37,8 @@ struct ContentView: View {
         return formatter.string(from: date)
     }
     
+    // MARK: - APIClient Tests
+    
     private func testFetchNearestStations() {
         Task {
             do {
@@ -46,15 +47,19 @@ struct ContentView: View {
                     return
                 }
                 let client = Client(serverURL: url, transport: URLSessionTransport())
-                let service = NearestStationsService(client: client, apikey: Constants.yandexAPIKey)
+                let apiClient = APIClient(
+                    client: client,
+                    apiKey: Constants.yandexAPIKey,
+                    baseURL: URL(string: "https://api.rasp.yandex.net/v3.0")!
+                )
                 
-                _ = try await service.getNearestStations(
+                let stations = try await apiClient.getNearestStations(
                     lat: 59.864177,
                     lng: 30.319163,
                     distance: 50
                 )
                 
-                print("✅ Ближайшие станции: Успех")
+                print("✅ Ближайшие станции: Успех (APIClient) - \(stations.stations?.count ?? 0) станций")
             } catch let error as APIError {
                 print("❌ Ближайшие станции: \(error.localizedDescription)")
             } catch {
@@ -71,10 +76,14 @@ struct ContentView: View {
                     return
                 }
                 let client = Client(serverURL: url, transport: URLSessionTransport())
-                let service = AllStationsService(client: client, apikey: Constants.yandexAPIKey)
+                let apiClient = APIClient(
+                    client: client,
+                    apiKey: Constants.yandexAPIKey,
+                    baseURL: URL(string: "https://api.rasp.yandex.net/v3.0")!
+                )
                 
-                _ = try await service.getStationsList()
-                print("✅ Все станции: Успех")
+                let stations = try await apiClient.getAllStations()
+                print("✅ Все станции: Успех (APIClient) - стран: \(stations.countries?.count ?? 0)")
             } catch let error as APIError {
                 print("❌ Все станции: \(error.localizedDescription)")
             } catch {
@@ -91,14 +100,14 @@ struct ContentView: View {
                     return
                 }
                 let client = Client(serverURL: url, transport: URLSessionTransport())
-                let service = CarrierService(client: client, apikey: Constants.yandexAPIKey)
-                
-                _ = try await service.getCarrierInfo(
-                    code: "104",
-                    system: nil
+                let apiClient = APIClient(
+                    client: client,
+                    apiKey: Constants.yandexAPIKey,
+                    baseURL: URL(string: "https://api.rasp.yandex.net/v3.0")!
                 )
                 
-                print("✅ Информация о перевозчике: Успех")
+                let carrier = try await apiClient.getCarrierInfo(code: "104", system: nil)
+                print("✅ Информация о перевозчике: Успех (APIClient) - \(carrier.carrier?.title ?? "No title")")
             } catch let error as APIError {
                 print("❌ Информация о перевозчике: \(error.localizedDescription)")
             } catch {
@@ -106,27 +115,7 @@ struct ContentView: View {
             }
         }
     }
-    
-    private func testFetchCopyrights() {
-        Task {
-            do {
-                guard let url = URL(string: "https://api.rasp.yandex.net") else {
-                    print("❌ Копирайты: Неверный URL")
-                    return
-                }
-                let client = Client(serverURL: url, transport: URLSessionTransport())
-                let service = CopyrightsService(client: client, apikey: Constants.yandexAPIKey)
-                
-                _ = try await service.getCopyrights()
-                print("✅ Копирайты: Успех")
-            } catch let error as APIError {
-                print("❌ Копирайты: \(error.localizedDescription)")
-            } catch {
-                print("❌ Копирайты: Системная ошибка - \(error.localizedDescription)")
-            }
-        }
-    }
-    
+        
     private func testFetchNearestSettlement() {
         Task {
             do {
@@ -135,15 +124,18 @@ struct ContentView: View {
                     return
                 }
                 let client = Client(serverURL: url, transport: URLSessionTransport())
-                let service = NearestSettlementService(client: client, apikey: Constants.yandexAPIKey)
+                let apiClient = APIClient(
+                    client: client,
+                    apiKey: Constants.yandexAPIKey,
+                    baseURL: URL(string: "https://api.rasp.yandex.net/v3.0")!
+                )
                 
-                _ = try await service.getNearestSettlement(
+                let settlement = try await apiClient.getNearestSettlement(
                     lat: 55.755826,
                     lng: 37.617300,
                     distance: 50
                 )
-                
-                print("✅ Ближайший населенный пункт: Успех")
+                print("✅ Ближайший населенный пункт: Успех (APIClient) - \(settlement.title ?? "No title")")
             } catch let error as APIError {
                 print("❌ Ближайший населенный пункт: \(error.localizedDescription)")
             } catch {
@@ -161,21 +153,24 @@ struct ContentView: View {
                 }
                 
                 let client = Client(serverURL: url, transport: URLSessionTransport())
-                let service = ScheduleBetweenStationsService(client: client, apikey: Constants.yandexAPIKey)
+                let apiClient = APIClient(
+                    client: client,
+                    apiKey: Constants.yandexAPIKey,
+                    baseURL: URL(string: "https://api.rasp.yandex.net/v3.0")!
+                )
                 
-                _ = try await service.getScheduleBetweenStations(
+                let schedule = try await apiClient.getScheduleBetweenStations(
                     from: "s2000001",
                     to: "s9601840",
                     date: formattedDate(),
                     transportTypes: "train",
                     limit: 5
                 )
-                
-                print("✅ Расписание между станциями: Успех")
+                print("✅ Расписание между станциями: Успех (APIClient) - \(schedule.segments?.count ?? 0) сегментов")
             } catch let error as APIError {
                 print("❌ Расписание между станциями: \(error.localizedDescription)")
             } catch {
-                print("❌ Расписание между станциями: Системная ошибка - \(error.localizedDescription)")
+                print("❌ Расписание между станций: Системная ошибка - \(error.localizedDescription)")
             }
         }
     }
@@ -188,16 +183,19 @@ struct ContentView: View {
                     return
                 }
                 let client = Client(serverURL: url, transport: URLSessionTransport())
-                let service = ScheduleOnStationService(client: client, apikey: Constants.yandexAPIKey)
+                let apiClient = APIClient(
+                    client: client,
+                    apiKey: Constants.yandexAPIKey,
+                    baseURL: URL(string: "https://api.rasp.yandex.net/v3.0")!
+                )
                 
-                _ = try await service.getScheduleOnStation(
+                let schedule = try await apiClient.getScheduleOnStation(
                     station: "s2000001",
                     date: formattedDate(),
                     transportTypes: "train",
                     event: "departure"
                 )
-                
-                print("✅ Расписание на станции: Успех")
+                print("✅ Расписание на станции: Успех (APIClient) - \(schedule.schedule?.count ?? 0) расписаний")
             } catch let error as APIError {
                 print("❌ Расписание на станции: \(error.localizedDescription)")
             } catch {
@@ -215,16 +213,19 @@ struct ContentView: View {
                 }
                 
                 let client = Client(serverURL: url, transport: URLSessionTransport())
-                let threadService = ThreadStationsService(client: client, apikey: Constants.yandexAPIKey)
+                let apiClient = APIClient(
+                    client: client,
+                    apiKey: Constants.yandexAPIKey,
+                    baseURL: URL(string: "https://api.rasp.yandex.net/v3.0")!
+                )
                 
-                _ = try await threadService.getThreadStations(
+                let thread = try await apiClient.getThreadStations(
                     uid: "732YA_2_2",
                     from: "s2000001",
                     to: "s2004001",
                     date: formattedDate()
                 )
-                
-                print("✅ Станции маршрута: Успех")
+                print("✅ Станции маршрута: Успех (APIClient) - остановок: \(thread.stops?.count ?? 0)")
             } catch let error as APIError {
                 print("❌ Станции маршрута: \(error.localizedDescription)")
             } catch {
