@@ -72,13 +72,4 @@ struct DirectionCardView: View {
     }
 }
 
-// MARK: - Preview
-#Preview {
-    DirectionCardView(
-        fromStation: .constant(Station(name: "Москва (Курский вокзал)")),
-        toStation: .constant(Station(name: "Санкт-Петербург (Балтийский вокзал)")),
-        onFromStationTapped: {},
-        onToStationTapped: {},
-        onSwapStations: {}
-    )
-}
+

@@ -9,6 +9,7 @@ import Foundation
 import OpenAPIRuntime
 import OpenAPIURLSession
 
+// MARK: - Dependency Injection Container
 final class DIContainer {
     @MainActor static let shared = DIContainer()
     
@@ -20,13 +21,9 @@ final class DIContainer {
             transport: URLSessionTransport()
         )
         
-        let apiKey = "your_api_key_here"
-        let baseURL = URL(string: "https://api.rasp.yandex.net/v3.0/")!
-        
         self.apiClient = APIClient(
             client: client,
-            apiKey: apiKey,
-            baseURL: baseURL
+            apiKey: Constants.yandexAPIKey
         )
     }
 }

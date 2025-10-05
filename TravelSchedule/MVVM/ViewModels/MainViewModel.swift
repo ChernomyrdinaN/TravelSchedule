@@ -10,21 +10,17 @@ import SwiftUI
 
 @MainActor
 final class MainViewModel: ObservableObject {
-    // MARK: - Published Properties
     @Published var fromStation: Station?
     @Published var toStation: Station?
     @Published var showingError: ErrorModel.ErrorType?
     @Published var isLoading = false
     
-    // MARK: - Private Properties
     private let apiClient: APIClient
     
-    // MARK: - Init
-    init() {
-        self.apiClient = DIContainer.shared.apiClient
+    init(apiClient: APIClient = DIContainer.shared.apiClient) {
+        self.apiClient = apiClient
     }
     
-    // MARK: - Public Methods
     func loadInitialData() async {
     }
 
@@ -35,7 +31,7 @@ final class MainViewModel: ObservableObject {
     }
     
     var isFindButtonEnabled: Bool {
-        fromStation != nil && toStation != nil
+        fromStation != nil && toStation != nil && !isLoading
     }
 
     func showError(_ errorType: ErrorModel.ErrorType) {
@@ -46,20 +42,26 @@ final class MainViewModel: ObservableObject {
         showingError = nil
     }
     
-    // MARK: - Network Methods
+    func validateStations() -> Bool {
+        guard fromStation != nil, toStation != nil else {
+            showError(.serverError)
+            return false
+        }
+        
+        return true
+    }
+    
     func getAllStations() async throws -> Components.Schemas.AllStationsResponse {
         return try await apiClient.getAllStations()
     }
     
     func getScheduleBetweenStations(
-        from: String,
-        to: String,
-        date: String? = nil
+        from: Station,
+        to: Station
     ) async throws -> Components.Schemas.Segments {
         return try await apiClient.getScheduleBetweenStations(
-            from: from,
-            to: to,
-            date: date
+            from: from.name,
+            to: to.name
         )
     }
 }

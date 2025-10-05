@@ -12,9 +12,9 @@ struct CitySelectionView: View {
     @Binding var selectedStation: Station?
     let onStationSelected: (Station) -> Void
     
+    @StateObject private var viewModel = CitySelectionViewModel()
     @State private var searchText = ""
     
-    // MARK: - Body
     var body: some View {
         ZStack {
             Color.ypWhite
@@ -22,7 +22,11 @@ struct CitySelectionView: View {
             
             VStack(spacing: .zero) {
                 searchField
-                if filteredStations.isEmpty {
+                
+                if viewModel.isLoading {
+                    loadingView
+                }
+                else if viewModel.filteredCities.isEmpty {
                     noResultsView
                 } else {
                     stationsList
@@ -42,18 +46,14 @@ struct CitySelectionView: View {
             }
         }
         .toolbar(.hidden, for: .tabBar)
-    }
-    
-    // MARK: - Private Properties
-    private var filteredStations: [Station] {
-        if searchText.isEmpty {
-            return Station.mockData
-        } else {
-            return Station.mockData.filter { $0.name.localizedCaseInsensitiveContains(searchText) }
+        .task {
+            await viewModel.loadCities()
+        }
+        .onChange(of: searchText) { oldValue, newValue in
+            viewModel.filterCities(searchText: newValue)
         }
     }
     
-    // MARK: - Private Views
     private var searchField: some View {
         HStack {
             Image(systemName: "magnifyingglass")
@@ -82,7 +82,7 @@ struct CitySelectionView: View {
     private var stationsList: some View {
         ScrollView {
             LazyVStack(spacing: .zero) {
-                ForEach(filteredStations) { station in
+                ForEach(viewModel.filteredCities) { station in
                     stationRow(station: station)
                         .contentShape(Rectangle())
                         .onTapGesture {
@@ -108,7 +108,18 @@ struct CitySelectionView: View {
         .frame(height: 60)
     }
     
-    // MARK: - No Results View
+    private var loadingView: some View {
+        VStack(spacing: .zero) {
+            ProgressView()
+                .scaleEffect(1.5)
+                .tint(.ypBlueUniversal)
+                .padding(.top, 228)
+            
+            Spacer()
+        }
+        .frame(maxWidth: .infinity)
+    }
+    
     private var noResultsView: some View {
         VStack(spacing: .zero) {
             Text("Город не найден")
@@ -121,9 +132,8 @@ struct CitySelectionView: View {
         }
         .frame(maxWidth: .infinity)
     }
-    }
+}
 
-// MARK: - Preview
 #Preview {
     NavigationView {
         CitySelectionView(

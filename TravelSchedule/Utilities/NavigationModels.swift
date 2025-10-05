@@ -7,7 +7,7 @@
 
 import Foundation
 
-enum StationNavigation: Hashable {
+enum StationNavigation: Hashable, Sendable {
     case citySelection
     case stationSelection(city: String)
     case carrierList(from: String, to: String)

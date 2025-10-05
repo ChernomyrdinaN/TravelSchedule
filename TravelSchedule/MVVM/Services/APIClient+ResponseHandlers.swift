@@ -11,7 +11,6 @@ import HTTPTypes
 
 // MARK: - Response Handlers
 extension APIClient {
-    
     func handleNearestStationsResponse(_ response: Operations.getNearestStations.Output) throws -> Components.Schemas.Stations {
         switch response {
         case .ok(let okResponse):
@@ -35,7 +34,6 @@ extension APIClient {
             case .json(let payload):
                 return payload
             case .html(let body):
-            
                 return try await handleHTMLResponse(body)
             @unknown default:
                 throw APIError.invalidResponse
@@ -53,22 +51,6 @@ extension APIClient {
             switch okResponse.body {
             case .json(let carrierResponse):
                 return carrierResponse
-            @unknown default:
-                throw APIError.invalidResponse
-            }
-        case .undocumented(statusCode: let statusCode, _):
-            throw APIError.unknownStatus(statusCode)
-        @unknown default:
-            throw APIError.invalidResponse
-        }
-    }
-    
-    func handleCopyrightsResponse(_ response: Operations.getCopyrights.Output) throws -> Components.Schemas.CopyrightsResponse {
-        switch response {
-        case .ok(let okResponse):
-            switch okResponse.body {
-            case .json(let copyrightsResponse):
-                return copyrightsResponse
             @unknown default:
                 throw APIError.invalidResponse
             }
@@ -143,10 +125,8 @@ extension APIClient {
         }
     }
     
-    // MARK: - HTML Response Handler
-    private func handleHTMLResponse(_ body: HTTPBody) async throws -> Components.Schemas.AllStationsResponse {
+    func handleHTMLResponse(_ body: HTTPBody) async throws -> Components.Schemas.AllStationsResponse {
         var data = Data()
-        
         for try await chunk in body {
             data.append(contentsOf: chunk)
         }

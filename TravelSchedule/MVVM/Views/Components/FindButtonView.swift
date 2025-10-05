@@ -27,11 +27,3 @@ struct FindButtonView: View {
     }
 }
 
-// MARK: - Preview
-#Preview {
-    FindButtonView(
-        fromStation: Station(name: "Москва"),
-        toStation: Station(name: "Санкт-Петербург"),
-        onFindTapped: {}
-    )
-}
