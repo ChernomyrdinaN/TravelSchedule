@@ -49,13 +49,16 @@ struct MainView: View {
                     }
                 }
             }
-            .navigationDestination(for: StationNavigation.self) { destination in
+            .navigationDestination(for: NavigationModels.self) { destination in
                 switch destination {
                 case .citySelection:
                     CitySelectionView(
                         selectedStation: isSelectingFrom ? $viewModel.fromStation : $viewModel.toStation,
                         onStationSelected: { station in
-                            navigationPath.append(StationNavigation.stationSelection(city: station.name))
+                            navigationPath
+                                .append(
+                                    NavigationModels.stationSelection(city: station.name)
+                                )
                         }
                     )
                 case .stationSelection(let city):
@@ -97,14 +100,14 @@ struct MainView: View {
     // MARK: - Private Methods
     private func showCitySelection(isFrom: Bool) {
         isSelectingFrom = isFrom
-        navigationPath.append(StationNavigation.citySelection)
+        navigationPath.append(NavigationModels.citySelection)
     }
     
     private func showCarrierList() {
         filter = CarrierFilter()
         guard let from = viewModel.fromStation?.name,
               let to = viewModel.toStation?.name else { return }
-        navigationPath.append(StationNavigation.carrierList(from: from, to: to))
+        navigationPath.append(NavigationModels.carrierList(from: from, to: to))
     }
 }
 

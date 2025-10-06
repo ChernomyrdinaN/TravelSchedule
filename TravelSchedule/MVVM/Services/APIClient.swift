@@ -9,6 +9,7 @@ import Foundation
 import OpenAPIRuntime
 import HTTPTypes
 
+// MARK: - APIClient
 public actor APIClient {
     private let client: Client
     private let apiKey: String
@@ -123,7 +124,7 @@ extension APIClient {
 
 // MARK: - City and Station Filters
 extension APIClient {
-    public func getRussianCities() async throws -> [Station] {
+    func getRussianCities() async throws -> [Station] {
         let response = try await client.getStationsList(query: .init(
             apikey: apiKey,
             format: "json",
@@ -132,7 +133,7 @@ extension APIClient {
         return try await extractRussianCities(from: response)
     }
     
-    public func getStationsForCity(_ city: String) async throws -> [Station] {
+    func getStationsForCity(_ city: String) async throws -> [Station] {
         let response = try await client.getStationsList(query: .init(
             apikey: apiKey,
             format: "json",
@@ -187,14 +188,7 @@ extension APIClient {
                 for region in country.regions ?? [] {
                     for settlement in region.settlements ?? [] {
                         if let cityName = settlement.title?.trimmingCharacters(in: .whitespacesAndNewlines),
-                           !cityName.isEmpty,
-                           cityName.count >= 2,
-                           !cityName.lowercased().contains("деревня"),
-                           !cityName.lowercased().contains("село"),
-                           !cityName.lowercased().contains("поселок"),
-                           !cityName.lowercased().contains("посёлок"),
-                           !cityName.lowercased().contains("станица"),
-                           !cityName.lowercased().contains("хутор") {
+                           !cityName.isEmpty {
                             let city = Station(name: cityName)
                             cities.append(city)
                         }
@@ -219,8 +213,12 @@ extension APIClient {
                                !stationName.isEmpty {
                                 let cleanName = stationName.replacingOccurrences(of: "\(city), ", with: "")
                                     .replacingOccurrences(of: "\(city),", with: "")
-                                let stationModel = Station(name: cleanName.trimmingCharacters(in: .whitespacesAndNewlines))
-                                stations.append(stationModel)
+                                    .trimmingCharacters(in: .whitespacesAndNewlines)
+                                
+                                if !cleanName.isEmpty {
+                                    let stationModel = Station(name: cleanName)
+                                    stations.append(stationModel)
+                                }
                             }
                         }
                         break

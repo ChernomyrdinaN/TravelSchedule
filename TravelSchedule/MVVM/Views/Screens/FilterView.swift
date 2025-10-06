@@ -8,21 +8,23 @@
 import SwiftUI
 
 struct FilterView: View {
-    
-    // MARK: - Properties
     @Binding var filter: CarrierFilter
     let applyFilters: () -> Void
     @Environment(\.dismiss) private var dismiss
-    @State private var localFilter: CarrierFilter
     
-    // MARK: - Init
+    @StateObject private var viewModel: FilterViewModel
+    
     init(filter: Binding<CarrierFilter>, applyFilters: @escaping () -> Void) {
         self._filter = filter
         self.applyFilters = applyFilters
-        self._localFilter = State(initialValue: filter.wrappedValue)
+        
+        let viewModel = FilterViewModel(initialFilter: filter.wrappedValue) { newFilter in
+            filter.wrappedValue = newFilter
+            applyFilters()
+        }
+        self._viewModel = StateObject(wrappedValue: viewModel)
     }
     
-    // MARK: - Body
     var body: some View {
         ZStack {
             Color.ypWhite
@@ -31,15 +33,13 @@ struct FilterView: View {
             VStack(spacing: .zero) {
                 VStack(alignment: .leading, spacing: 24) {
                     timeFilterSection
-                    
                     transfersFilterSection
-                    
                     Spacer()
                 }
                 .padding(.horizontal, 16)
                 .padding(.top, 24)
                 
-                if hasSelectedFilters {
+                if viewModel.hasSelectedFilters {
                     applyButton
                         .padding(.top, 16)
                         .padding(.horizontal, 16)
@@ -59,7 +59,6 @@ struct FilterView: View {
         .toolbar(.hidden, for: .tabBar)
     }
     
-    // MARK: - Private Views
     private var timeFilterSection: some View {
         VStack(alignment: .leading, spacing: 8) {
             Text("Время отправления")
@@ -76,9 +75,10 @@ struct FilterView: View {
         }
     }
     
+    // MARK: - Private Methods
     private func timeOptionRow(option: CarrierFilter.TimeOption) -> some View {
         Button(action: {
-            toggleTimeOption(option)
+            viewModel.toggleTimeOption(option)
         }) {
             HStack {
                 Text(option.rawValue)
@@ -87,7 +87,7 @@ struct FilterView: View {
                 
                 Spacer()
                 
-                if localFilter.timeOptions.contains(option) {
+                if viewModel.filter.timeOptions.contains(option) {
                     Image("checkBoxOn")
                         .resizable()
                         .frame(width: 24, height: 24)
@@ -108,11 +108,11 @@ struct FilterView: View {
                 .foregroundColor(.ypBlack)
             
             VStack(spacing: .zero) {
-                transferOptionRow(title: "Да", isSelected: localFilter.showTransfers == true) {
-                    localFilter.showTransfers = true
+                transferOptionRow(title: "Да", isSelected: viewModel.filter.showTransfers == true) {
+                    viewModel.setTransferFilter(true)
                 }
-                transferOptionRow(title: "Нет", isSelected: localFilter.showTransfers == false) {
-                    localFilter.showTransfers = false
+                transferOptionRow(title: "Нет", isSelected: viewModel.filter.showTransfers == false) {
+                    viewModel.setTransferFilter(false)
                 }
             }
             .background(Color.ypWhite)
@@ -145,8 +145,7 @@ struct FilterView: View {
     
     private var applyButton: some View {
         Button(action: {
-            filter = localFilter
-            applyFilters()
+            viewModel.applyFilter()
             dismiss()
         }) {
             Text("Применить")
@@ -161,26 +160,16 @@ struct FilterView: View {
         .background(Color.ypLightGray)
         .cornerRadius(12)
     }
-    
-    // MARK: - Private Properties
-    private var hasSelectedFilters: Bool {
-        !localFilter.timeOptions.isEmpty && localFilter.showTransfers != nil
-    }
-    
-    // MARK: - Private Methods
-    private func toggleTimeOption(_ option: CarrierFilter.TimeOption) {
-        if localFilter.timeOptions.contains(option) {
-            localFilter.timeOptions.removeAll { $0 == option }
-        } else {
-            localFilter.timeOptions.append(option)
-        }
-    }
 }
 
 // MARK: - Preview
 #Preview {
-    FilterView(
-        filter: .constant(CarrierFilter()),
-        applyFilters: {}
-    )
+    NavigationView {
+        CarrierListView(
+            fromStation: "Москва",
+            toStation: "Санкт-Петербург",
+            navigationPath: .constant(NavigationPath()),
+            filter: .constant(CarrierFilter())
+        )
+    }
 }

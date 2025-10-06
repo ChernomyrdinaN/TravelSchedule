@@ -50,6 +50,7 @@ final class StationSelectionViewModel: ObservableObject {
         showingError = nil
     }
     
+    // MARK: - Private Methods
     private func checkAPIAvailability() async -> Bool {
         do {
             _ = try await apiClient.getAllStations()
