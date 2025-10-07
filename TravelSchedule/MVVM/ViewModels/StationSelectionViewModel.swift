@@ -7,6 +7,7 @@
 
 import Foundation
 
+// MARK: - StationSelectionViewModel
 @MainActor
 final class StationSelectionViewModel: ObservableObject {
     @Published var stations: [Station] = []
@@ -50,8 +51,15 @@ final class StationSelectionViewModel: ObservableObject {
         showingError = nil
     }
     
-    // MARK: - Private Methods
-    private func checkAPIAvailability() async -> Bool {
+    func prepareForLoading() {
+        isLoading = true
+        filteredStations = []
+    }
+}
+
+// MARK: - Private Methods
+private extension StationSelectionViewModel {
+    func checkAPIAvailability() async -> Bool {
         do {
             _ = try await apiClient.getAllStations()
             return true
@@ -60,7 +68,7 @@ final class StationSelectionViewModel: ObservableObject {
         }
     }
     
-    private func loadStationsFromAPI() async {
+    func loadStationsFromAPI() async {
         do {
             let apiStations = try await apiClient.getStationsForCity(city)
             
@@ -77,7 +85,7 @@ final class StationSelectionViewModel: ObservableObject {
         }
     }
     
-    private func useMockData() async {
+    func useMockData() async {
         stations = Station.mockStations(for: city)
         filteredStations = stations
         isUsingMockData = true

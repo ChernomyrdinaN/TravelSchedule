@@ -7,6 +7,7 @@
 
 import SwiftUI
 
+// MARK: - CitySelectionView
 struct CitySelectionView: View {
     @Environment(\.dismiss) private var dismiss
     @Binding var selectedStation: Station?
@@ -14,6 +15,8 @@ struct CitySelectionView: View {
     
     @StateObject private var viewModel = CitySelectionViewModel()
     @State private var searchText = ""
+    @State private var rotationDegrees = 0.0
+    @State private var isFirstLoad = true
     
     var body: some View {
         ZStack {
@@ -22,8 +25,9 @@ struct CitySelectionView: View {
             
             VStack(spacing: .zero) {
                 searchField
+                    .disabled(viewModel.isLoading && isFirstLoad)
                 
-                if viewModel.isLoading {
+                if viewModel.isLoading && isFirstLoad {
                     loadingView
                 }
                 else if viewModel.filteredCities.isEmpty {
@@ -47,14 +51,25 @@ struct CitySelectionView: View {
         }
         .toolbar(.hidden, for: .tabBar)
         .task {
-            await viewModel.loadCities()
+            if viewModel.cities.isEmpty {
+                await viewModel.loadCities()
+                isFirstLoad = false
+            }
         }
         .onChange(of: searchText) { oldValue, newValue in
             viewModel.filterCities(searchText: newValue)
         }
+        .onChange(of: viewModel.isLoading) { oldValue, newValue in
+            if newValue && isFirstLoad {
+                startLoaderAnimation()
+            }
+        }
     }
-    
-    private var searchField: some View {
+}
+
+// MARK: - View Components
+private extension CitySelectionView {
+    var searchField: some View {
         HStack {
             Image(systemName: "magnifyingglass")
                 .foregroundColor(.ypGrayUniversal)
@@ -79,7 +94,7 @@ struct CitySelectionView: View {
         .padding(.horizontal, 16)
     }
     
-    private var stationsList: some View {
+    var stationsList: some View {
         ScrollView {
             LazyVStack(spacing: .zero) {
                 ForEach(viewModel.filteredCities) { station in
@@ -93,7 +108,7 @@ struct CitySelectionView: View {
         }
     }
     
-    private func stationRow(station: Station) -> some View {
+    func stationRow(station: Station) -> some View {
         HStack {
             Text(station.name)
                 .font(.system(size: 17, weight: .regular))
@@ -108,11 +123,12 @@ struct CitySelectionView: View {
         .frame(height: 60)
     }
     
-    private var loadingView: some View {
+    var loadingView: some View {
         VStack(spacing: .zero) {
-            ProgressView()
-                .scaleEffect(1.5)
-                .tint(.ypBlueUniversal)
+            Image("loader")
+                .resizable()
+                .frame(width: 60, height: 60)
+                .rotationEffect(Angle(degrees: rotationDegrees))
                 .padding(.top, 228)
             
             Spacer()
@@ -120,7 +136,7 @@ struct CitySelectionView: View {
         .frame(maxWidth: .infinity)
     }
     
-    private var noResultsView: some View {
+    var noResultsView: some View {
         VStack(spacing: .zero) {
             Text("Город не найден")
                 .font(.system(size: 24, weight: .bold))
@@ -132,8 +148,16 @@ struct CitySelectionView: View {
         }
         .frame(maxWidth: .infinity)
     }
+    
+    func startLoaderAnimation() {
+        rotationDegrees = 0
+        withAnimation(.linear(duration: 1.2).repeatForever(autoreverses: false)) {
+            rotationDegrees = 360
+        }
+    }
 }
 
+// MARK: - Preview
 #Preview {
     NavigationView {
         CitySelectionView(

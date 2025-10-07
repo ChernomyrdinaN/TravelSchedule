@@ -4,8 +4,10 @@
 //
 //  Created by Наталья Черномырдина on 05.10.2025.
 //
+
 import Foundation
 
+// MARK: - CitySelectionViewModel
 @MainActor
 final class CitySelectionViewModel: ObservableObject {
     @Published var cities: [Station] = []
@@ -46,9 +48,11 @@ final class CitySelectionViewModel: ObservableObject {
     func hideError() {
         showingError = nil
     }
-    
-    // MARK: - Private Methods
-    private func checkAPIAvailability() async -> Bool {
+}
+
+// MARK: - Private Methods
+private extension CitySelectionViewModel {
+    func checkAPIAvailability() async -> Bool {
         do {
             _ = try await apiClient.getAllStations()
             return true
@@ -57,7 +61,7 @@ final class CitySelectionViewModel: ObservableObject {
         }
     }
     
-    private func loadCitiesFromAPI() async {
+    func loadCitiesFromAPI() async {
         do {
             let apiCities = try await apiClient.getRussianCities()
             
@@ -74,7 +78,7 @@ final class CitySelectionViewModel: ObservableObject {
         }
     }
     
-    private func useMockData() async {
+    func useMockData() async {
         cities = Station.mockData
         filteredCities = cities
         isUsingMockData = true

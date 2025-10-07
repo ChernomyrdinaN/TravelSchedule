@@ -7,6 +7,7 @@
 
 import SwiftUI
 
+// MARK: - StationSelectionView
 struct StationSelectionView: View {
     @Environment(\.dismiss) private var dismiss
     @Binding var selectedStation: Station?
@@ -15,6 +16,8 @@ struct StationSelectionView: View {
     
     @StateObject private var viewModel: StationSelectionViewModel
     @State private var searchText = ""
+    @State private var rotationDegrees = 0.0
+    @State private var isFirstLoad = true
     
     init(selectedStation: Binding<Station?>, city: String, onStationSelected: @escaping (Station) -> Void) {
         self._selectedStation = selectedStation
@@ -30,8 +33,9 @@ struct StationSelectionView: View {
             
             VStack(spacing: .zero) {
                 searchField
+                    .disabled(viewModel.isLoading && isFirstLoad)
                 
-                if viewModel.isLoading {
+                if viewModel.isLoading && isFirstLoad {
                     loadingView
                 }
                 else if viewModel.filteredStations.isEmpty {
@@ -55,14 +59,25 @@ struct StationSelectionView: View {
         }
         .toolbar(.hidden, for: .tabBar)
         .task {
-            await viewModel.loadStations()
+            if viewModel.stations.isEmpty {
+                await viewModel.loadStations()
+                isFirstLoad = false
+            }
         }
         .onChange(of: searchText) { oldValue, newValue in
             viewModel.filterStations(searchText: newValue)
         }
+        .onChange(of: viewModel.isLoading) { oldValue, newValue in
+            if newValue && isFirstLoad {
+                startLoaderAnimation()
+            }
+        }
     }
-    
-    private var searchField: some View {
+}
+
+// MARK: - View Components
+private extension StationSelectionView {
+    var searchField: some View {
         HStack {
             Image(systemName: "magnifyingglass")
                 .foregroundColor(.ypGrayUniversal)
@@ -87,7 +102,7 @@ struct StationSelectionView: View {
         .padding(.horizontal, 16)
     }
     
-    private var stationsList: some View {
+    var stationsList: some View {
         ScrollView {
             LazyVStack(spacing: .zero) {
                 ForEach(viewModel.filteredStations) { station in
@@ -101,7 +116,7 @@ struct StationSelectionView: View {
         }
     }
     
-    private func stationRow(station: Station) -> some View {
+    func stationRow(station: Station) -> some View {
         HStack {
             Text(station.name)
                 .font(.system(size: 17, weight: .regular))
@@ -116,11 +131,12 @@ struct StationSelectionView: View {
         .frame(height: 60)
     }
     
-    private var loadingView: some View {
+    var loadingView: some View {
         VStack(spacing: .zero) {
-            ProgressView()
-                .scaleEffect(1.5)
-                .tint(.ypBlueUniversal)
+            Image("loader")
+                .resizable()
+                .frame(width: 60, height: 60)
+                .rotationEffect(Angle(degrees: rotationDegrees))
                 .padding(.top, 228)
             
             Spacer()
@@ -128,7 +144,7 @@ struct StationSelectionView: View {
         .frame(maxWidth: .infinity)
     }
     
-    private var noResultsView: some View {
+    var noResultsView: some View {
         VStack(spacing: .zero) {
             Text("Станция не найдена")
                 .font(.system(size: 24, weight: .bold))
@@ -140,8 +156,16 @@ struct StationSelectionView: View {
         }
         .frame(maxWidth: .infinity)
     }
+    
+    func startLoaderAnimation() {
+        rotationDegrees = 0
+        withAnimation(.linear(duration: 1.1).repeatForever(autoreverses: false)) {
+            rotationDegrees = 360
+        }
+    }
 }
 
+// MARK: - Preview
 #Preview {
     NavigationView {
         StationSelectionView(
