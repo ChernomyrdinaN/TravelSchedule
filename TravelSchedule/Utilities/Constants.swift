@@ -11,5 +11,5 @@ enum Constants {
     
     // MARK: - API Configuration
     static let yandexAPIKey = "17dbdf13-ff18-4549-bbc7-ca3b8cd8b04b"
-    static let yandexAPIBaseURL = "https://api.rasp.yandex.net/v3.0"
+    static let yandexAPIBaseURL = "https://api.rasp.yandex-net.ru/v3.0"
 }

@@ -7,7 +7,6 @@
 
 import Foundation
 
-// 🎯 Сделаем Station public
 public struct Station: Identifiable, Hashable, Sendable {
     public let id = UUID()
     public let name: String

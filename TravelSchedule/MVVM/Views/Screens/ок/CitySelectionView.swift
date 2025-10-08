@@ -1,30 +1,22 @@
 //
-//  StationSelectionView.swift
+//  CitySelectionView.swift
 //  TravelSchedule
 //
-//  Created by Наталья Черномырдина on 11.09.2025.
+//  Created by Наталья Черномырдина on 10.09.2025.
 //
 
 import SwiftUI
 
-// MARK: - StationSelectionView
-struct StationSelectionView: View {
+// MARK: - CitySelectionView
+struct CitySelectionView: View {
     @Environment(\.dismiss) private var dismiss
     @Binding var selectedStation: Station?
-    let city: String
     let onStationSelected: (Station) -> Void
     
-    @StateObject private var viewModel: StationSelectionViewModel
+    @StateObject private var viewModel = CitySelectionViewModel()
     @State private var searchText = ""
     @State private var rotationDegrees = 0.0
     @State private var isFirstLoad = true
-    
-    init(selectedStation: Binding<Station?>, city: String, onStationSelected: @escaping (Station) -> Void) {
-        self._selectedStation = selectedStation
-        self.city = city
-        self.onStationSelected = onStationSelected
-        self._viewModel = StateObject(wrappedValue: StationSelectionViewModel(city: city))
-    }
     
     var body: some View {
         ZStack {
@@ -38,7 +30,7 @@ struct StationSelectionView: View {
                 if viewModel.isLoading && isFirstLoad {
                     loadingView
                 }
-                else if viewModel.filteredStations.isEmpty {
+                else if viewModel.filteredCities.isEmpty {
                     noResultsView
                 } else {
                     stationsList
@@ -47,7 +39,7 @@ struct StationSelectionView: View {
             }
         }
         .navigationBarBackButtonHidden(true)
-        .navigationTitle("Выбор станции")
+        .navigationTitle("Выбор города")
         .navigationBarTitleDisplayMode(.inline)
         .toolbar {
             ToolbarItem(placement: .navigationBarLeading) {
@@ -59,13 +51,13 @@ struct StationSelectionView: View {
         }
         .toolbar(.hidden, for: .tabBar)
         .task {
-            if viewModel.stations.isEmpty {
-                await viewModel.loadStations()
+            if viewModel.cities.isEmpty {
+                await viewModel.loadCities()
                 isFirstLoad = false
             }
         }
         .onChange(of: searchText) { oldValue, newValue in
-            viewModel.filterStations(searchText: newValue)
+            viewModel.filterCities(searchText: newValue)
         }
         .onChange(of: viewModel.isLoading) { oldValue, newValue in
             if newValue && isFirstLoad {
@@ -76,7 +68,7 @@ struct StationSelectionView: View {
 }
 
 // MARK: - View Components
-private extension StationSelectionView {
+private extension CitySelectionView {
     var searchField: some View {
         HStack {
             Image(systemName: "magnifyingglass")
@@ -105,7 +97,7 @@ private extension StationSelectionView {
     var stationsList: some View {
         ScrollView {
             LazyVStack(spacing: .zero) {
-                ForEach(viewModel.filteredStations) { station in
+                ForEach(viewModel.filteredCities) { station in
                     stationRow(station: station)
                         .contentShape(Rectangle())
                         .onTapGesture {
@@ -135,7 +127,7 @@ private extension StationSelectionView {
         VStack(spacing: .zero) {
             Image("loader")
                 .resizable()
-                .frame(width: 60, height: 60)
+                .frame(width: 48, height: 48)
                 .rotationEffect(Angle(degrees: rotationDegrees))
                 .padding(.top, 228)
             
@@ -146,7 +138,7 @@ private extension StationSelectionView {
     
     var noResultsView: some View {
         VStack(spacing: .zero) {
-            Text("Станция не найдена")
+            Text("Город не найден")
                 .font(.system(size: 24, weight: .bold))
                 .foregroundColor(.ypBlack)
                 .multilineTextAlignment(.center)
@@ -159,7 +151,7 @@ private extension StationSelectionView {
     
     func startLoaderAnimation() {
         rotationDegrees = 0
-        withAnimation(.linear(duration: 1.1).repeatForever(autoreverses: false)) {
+        withAnimation(.linear(duration: 1.2).repeatForever(autoreverses: false)) {
             rotationDegrees = 360
         }
     }
@@ -168,9 +160,8 @@ private extension StationSelectionView {
 // MARK: - Preview
 #Preview {
     NavigationView {
-        StationSelectionView(
+        CitySelectionView(
             selectedStation: .constant(nil),
-            city: "Москва",
             onStationSelected: { _ in }
         )
     }

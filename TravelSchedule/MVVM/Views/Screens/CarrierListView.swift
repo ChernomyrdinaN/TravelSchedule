@@ -12,31 +12,31 @@ struct CarrierListView: View {
     let toStation: String
     @Binding var navigationPath: NavigationPath
     @Binding var filter: CarrierFilter
+    @State private var carriers: [Carrier]
+    @State private var filteredCarriers: [Carrier] = []
     
-    @StateObject private var viewModel: CarrierListViewModel
-    
-    init(fromStation: String, toStation: String, navigationPath: Binding<NavigationPath>, filter: Binding<CarrierFilter>) {
+    init(fromStation: String, toStation: String, navigationPath: Binding<NavigationPath>, filter: Binding<CarrierFilter>, carriers: [Carrier] = Carrier.mockData) {
         self.fromStation = fromStation
         self.toStation = toStation
         self._navigationPath = navigationPath
         self._filter = filter
-        self._viewModel = StateObject(wrappedValue: CarrierListViewModel(
-            fromStation: fromStation,
-            toStation: toStation
-        ))
+        self._carriers = State(initialValue: carriers)
+        self._filteredCarriers = State(initialValue: carriers)
     }
     
+    // MARK: - Body
     var body: some View {
         ZStack {
             Color.ypWhite
                 .ignoresSafeArea()
             
             VStack(spacing: .zero) {
+    
                 headerView
                     .padding(.top, 16)
                     .background(Color.ypWhite)
-                
-                if viewModel.filteredCarriers.isEmpty && !viewModel.isLoading {
+            
+                if filteredCarriers.isEmpty {
                     emptyStateView
                 } else {
                     carriersList
@@ -61,16 +61,13 @@ struct CarrierListView: View {
                 }
             }
         }
-        
         .toolbar(.hidden, for: .tabBar)
-        .task {
-            await viewModel.loadCarriers()
-        }
-        .onChange(of: filter) {
-            viewModel.applyCarrierFilter(filter)
+        .onAppear {
+            applyFilters()
         }
     }
     
+    // MARK: - Private Views
     private var headerView: some View {
         Text("\(fromStation) → \(toStation)")
             .font(.system(size: 24, weight: .bold))
@@ -84,29 +81,25 @@ struct CarrierListView: View {
     
     private var carriersList: some View {
         ScrollView {
-            if viewModel.isLoading {
-                ProgressView()
-                    .padding(.top, 20)
-            } else {
-                LazyVStack(spacing: 8) {
-                    ForEach(viewModel.filteredCarriers) { carrier in
-                        NavigationLink {
-                            CarrierInfoView(carrier: carrier)
-                        } label: {
-                            CarrierCardView(
-                                carrier: carrier,
-                                onTimeClarificationTapped: {
-                                    navigationPath.append(NavigationModels.filters)
-                                }
-                            )
-                        }
-                        .buttonStyle(PlainButtonStyle())
-                        .background(Color.ypLightGray)
-                        .cornerRadius(24)
+            LazyVStack(spacing: 8) {
+                ForEach(filteredCarriers) { carrier in
+                    // MARK: - Navigation Link для перехода к информации о перевозчике
+                    NavigationLink {
+                        CarrierInfoView(carrier: carrier)
+                    } label: {
+                        CarrierCardView(
+                            carrier: carrier,
+                            onTimeClarificationTapped: {
+                                navigationPath.append(NavigationModels.filters)
+                            }
+                        )
                     }
+                    .buttonStyle(PlainButtonStyle())
+                    .background(Color.ypLightGray)
+                    .cornerRadius(24)
                 }
-                .padding(.horizontal, 16)
             }
+            .padding(.horizontal, 16)
         }
     }
     
@@ -150,7 +143,48 @@ struct CarrierListView: View {
         .frame(maxWidth: .infinity, maxHeight: .infinity)
     }
     
+    // MARK: - Private Properties
     private var hasActiveFilters: Bool {
         !filter.timeOptions.isEmpty || filter.showTransfers != nil
+    }
+    
+    // MARK: - Private Methods
+    private func applyFilters() {
+        if filter.timeOptions.isEmpty && filter.showTransfers == nil {
+            filteredCarriers = carriers
+            return
+        }
+        
+        filteredCarriers = carriers.filter { carrier in
+            if let showTransfers = filter.showTransfers {
+                let hasTransfer = carrier.transferInfo != nil
+                if showTransfers && !hasTransfer {
+                    return false
+                }
+                if !showTransfers && hasTransfer {
+                    return false
+                }
+            }
+            
+            if !filter.timeOptions.isEmpty {
+                let hour = carrier.departureHour
+                var matchesTime = false
+                
+                for timeOption in filter.timeOptions {
+                    switch timeOption {
+                    case .morning: if (6..<12).contains(hour) { matchesTime = true }
+                    case .afternoon: if (12..<18).contains(hour) { matchesTime = true }
+                    case .evening: if (18..<24).contains(hour) { matchesTime = true }
+                    case .night: if (0..<6).contains(hour) { matchesTime = true }
+                    }
+                }
+                
+                if !matchesTime {
+                    return false
+                }
+            }
+            
+            return true
+        }
     }
 }
