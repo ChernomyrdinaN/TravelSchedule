@@ -10,6 +10,6 @@ import Foundation
 enum NavigationModels: Hashable, Sendable {
     case citySelection
     case stationSelection(city: String)
-    case carrierList(from: String, to: String)
-    case filters 
+    case carrierList(from: Station, to: Station)
+    case filters
 }

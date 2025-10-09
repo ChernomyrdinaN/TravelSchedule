@@ -33,7 +33,7 @@ final class StationSelectionViewModel: ObservableObject {
         if isAPIAvailable {
             await loadStationsFromAPI()
         } else {
-            await useMockData()
+            print("Empty stations list")
         }
     }
     
@@ -73,7 +73,7 @@ private extension StationSelectionViewModel {
             let apiStations = try await apiClient.getStationsForCity(city)
             
             if apiStations.isEmpty {
-                await useMockData()
+                print("Empty statons list")
             } else {
                 stations = apiStations
                 filteredStations = stations
@@ -81,17 +81,8 @@ private extension StationSelectionViewModel {
             }
             
         } catch {
-            await useMockData()
+            print("Empty statons list")
         }
     }
     
-    func useMockData() async {
-        stations = Station.mockStations(for: city)
-        filteredStations = stations
-        isUsingMockData = true
-        
-        if !stations.isEmpty {
-            showingError = .serverError
-        }
-    }
 }

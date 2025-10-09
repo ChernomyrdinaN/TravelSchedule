@@ -30,8 +30,6 @@ final class CitySelectionViewModel: ObservableObject {
         
         if isAPIAvailable {
             await loadCitiesFromAPI()
-        } else {
-            await useMockData()
         }
     }
     
@@ -66,7 +64,7 @@ private extension CitySelectionViewModel {
             let apiCities = try await apiClient.getRussianCities()
             
             if apiCities.isEmpty {
-                await useMockData()
+                print("Empty cities list")
             } else {
                 cities = apiCities
                 filteredCities = cities
@@ -74,17 +72,9 @@ private extension CitySelectionViewModel {
             }
             
         } catch {
-            await useMockData()
+            print("Empty cities list")
         }
     }
     
-    func useMockData() async {
-        cities = Station.mockData
-        filteredCities = cities
-        isUsingMockData = true
-        
-        if !cities.isEmpty {
-            showingError = .serverError
-        }
-    }
+    
 }

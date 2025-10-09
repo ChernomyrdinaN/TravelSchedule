@@ -58,10 +58,11 @@ final class MainViewModel: ObservableObject {
     func getScheduleBetweenStations(
         from: Station,
         to: Station
-    ) async throws -> Components.Schemas.Segments {
+    ) async throws -> [Components.Schemas.Segment] {
         return try await apiClient.getScheduleBetweenStations(
-            from: from.name,
-            to: to.name
+            from: from.code,
+            to: to.code
         )
     }
 }
+

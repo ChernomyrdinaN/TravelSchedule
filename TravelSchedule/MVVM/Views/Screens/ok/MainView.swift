@@ -61,16 +61,23 @@ struct MainView: View {
                                 )
                         }
                     )
+                
                 case .stationSelection(let city):
                     StationSelectionView(
                         selectedStation: isSelectingFrom ? $viewModel.fromStation : $viewModel.toStation,
                         city: city,
                         onStationSelected: { station in
-                            let fullStationName = "\(city) (\(station.name))"
+                            let pretty = "\(city) (\(station.name))"
+                            let updated = Station(
+                                name: pretty,
+                                code: station.code,
+                                transportType: station.transportType,
+                                
+                            )
                             if isSelectingFrom {
-                                viewModel.fromStation = Station(name: fullStationName)
+                                viewModel.fromStation = updated
                             } else {
-                                viewModel.toStation = Station(name: fullStationName)
+                                viewModel.toStation = updated
                             }
                             navigationPath.removeLast(navigationPath.count)
                         }
@@ -105,8 +112,8 @@ struct MainView: View {
     
     private func showCarrierList() {
         filter = CarrierFilter()
-        guard let from = viewModel.fromStation?.name,
-              let to = viewModel.toStation?.name else { return }
+        guard let from = viewModel.fromStation,
+              let to = viewModel.toStation else { return }
         navigationPath.append(NavigationModels.carrierList(from: from, to: to))
     }
 }
