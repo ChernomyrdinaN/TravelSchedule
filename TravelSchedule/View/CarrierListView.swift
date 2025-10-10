@@ -13,8 +13,9 @@ struct CarrierListView: View {
     @Binding var filter: CarrierFilter
     
     @State private var rotationDegrees: Double = 0
+    @State private var isLoaderAnimating = false
+    @State private var showLoader = false
     
-    // MARK: - Initialization
     init(fromStation: Station,
          toStation: Station,
          navigationPath: Binding<NavigationPath>,
@@ -29,11 +30,11 @@ struct CarrierListView: View {
         self._filter = filter
     }
     
-    // MARK: - Body
     var body: some View {
         ZStack {
             Color.ypWhite.ignoresSafeArea()
             
+            // MARK: - Main Content
             VStack(spacing: .zero) {
                 headerView
                     .padding(.top, 16)
@@ -42,11 +43,20 @@ struct CarrierListView: View {
                 contentView
             }
             
+            // MARK: - Bottom Button
             VStack {
                 Spacer()
                 clarifyTimeButton
                     .padding(.horizontal, 16)
                     .padding(.bottom, 24)
+            }
+            
+            // MARK: - Loader Overlay
+            if viewModel.isLoading || showLoader {
+                Color.ypWhite.opacity(0.9)
+                    .ignoresSafeArea()
+                
+                loadingView
             }
         }
         .navigationBarBackButtonHidden(true)
@@ -60,14 +70,16 @@ struct CarrierListView: View {
         }
         .toolbar(.hidden, for: .tabBar)
         .task {
+            showLoader = true
             await viewModel.loadCarriers()
+            showLoader = false
         }
         .onChange(of: filter) { _, _ in
             viewModel.applyFilters(filter)
         }
     }
     
-    // MARK: - Private Views
+    // MARK: - Header
     private var headerView: some View {
         Text("\(viewModel.fromStation.name) → \(viewModel.toStation.name)")
             .font(.system(size: 24, weight: .bold))
@@ -78,11 +90,10 @@ struct CarrierListView: View {
             .padding(.bottom, 8)
     }
     
+    // MARK: - Content
     @ViewBuilder
     private var contentView: some View {
-        if viewModel.isLoading {
-            loadingView
-        } else if let loadError = viewModel.loadError {
+        if let loadError = viewModel.loadError {
             errorView(message: loadError)
         } else if viewModel.filteredCarriers.isEmpty {
             emptyStateView
@@ -91,19 +102,28 @@ struct CarrierListView: View {
         }
     }
     
+    // MARK: - Loading View
     private var loadingView: some View {
-        ZStack {
-            Color.ypWhite.ignoresSafeArea()
+        VStack(spacing: 16) {
             Image("loader")
                 .resizable()
                 .frame(width: 48, height: 48)
                 .rotationEffect(Angle(degrees: rotationDegrees))
-                .onAppear {
-                    startLoadingAnimation()
-                }
+            
+            Text("Загружаем расписание...")
+                .font(.system(size: 17))
+                .foregroundColor(.ypBlack)
+        }
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
+        .onAppear {
+            startLoadingAnimation()
+        }
+        .onDisappear {
+            stopLoadingAnimation()
         }
     }
     
+    // MARK: - Carriers List
     private var carriersList: some View {
         ScrollView {
             LazyVStack(spacing: 8) {
@@ -111,7 +131,6 @@ struct CarrierListView: View {
                     NavigationLink {
                         CarrierInfoView(carrier: carrier)
                     } label: {
-                        // ПРОСТО CarrierCardView БЕЗ ZStack
                         CarrierCardView(
                             carrier: carrier,
                             onTimeClarificationTapped: {
@@ -128,6 +147,7 @@ struct CarrierListView: View {
         }
     }
     
+    // MARK: - Clarify Time Button
     private var clarifyTimeButton: some View {
         Button(action: { navigationPath.append(NavigationModels.filters) }) {
             HStack {
@@ -148,6 +168,7 @@ struct CarrierListView: View {
         .cornerRadius(12)
     }
     
+    // MARK: - Error View
     private func errorView(message: String) -> some View {
         VStack(spacing: 12) {
             Text("Не удалось загрузить")
@@ -159,7 +180,11 @@ struct CarrierListView: View {
                 .multilineTextAlignment(.center)
                 .padding(.horizontal, 24)
             Button("Повторить") {
-                Task { await viewModel.loadCarriers() }
+                Task {
+                    showLoader = true
+                    await viewModel.loadCarriers()
+                    showLoader = false
+                }
             }
             .frame(height: 44)
             .frame(maxWidth: 180)
@@ -170,44 +195,38 @@ struct CarrierListView: View {
         .frame(maxWidth: .infinity, maxHeight: .infinity)
     }
     
+    // MARK: - Empty State
     private var emptyStateView: some View {
         VStack(spacing: .zero) {
             Text("Вариантов нет")
                 .font(.system(size: 24, weight: .bold))
                 .foregroundColor(.ypBlack)
                 .multilineTextAlignment(.center)
-                .padding(.top, 237)
+                .padding(.top, 100)
+            
             Spacer()
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
     }
     
-    // MARK: - Private Properties
+    // MARK: - Helper Properties
     private var hasActiveFilters: Bool {
         !filter.timeOptions.isEmpty || filter.showTransfers != nil
     }
     
-    // MARK: - Private Methods
+    // MARK: - Animation Methods
     private func startLoadingAnimation() {
-        withAnimation(.linear(duration: 1.5).repeatForever(autoreverses: false)) {
+        guard !isLoaderAnimating else { return }
+        isLoaderAnimating = true
+        rotationDegrees = 0
+        
+        withAnimation(.linear(duration: 1.2).repeatForever(autoreverses: false)) {
             rotationDegrees = 360
         }
     }
-}
-
-// MARK: - Extensions
-private extension Carrier {
-    var rasterLogoURL: URL? {
-        guard let url = URL(string: self.logo), url.scheme?.hasPrefix("http") == true else { return nil }
-        if url.path.lowercased().hasSuffix(".svg") { return nil }
-        let rasterExts = ["png", "jpg", "jpeg", "webp", "gif", "bmp", "tif", "tiff"]
-        let ext = url.pathExtension.lowercased()
-        if rasterExts.contains(ext) { return url }
-        if let q = URLComponents(url: url, resolvingAgainstBaseURL: false)?.queryItems,
-           let fmt = q.first(where: { $0.name.lowercased() == "format" })?.value?.lowercased(),
-           rasterExts.contains(fmt) {
-            return url
-        }
-        return nil
+    
+    private func stopLoadingAnimation() {
+        isLoaderAnimating = false
+        rotationDegrees = 0
     }
 }
