@@ -7,6 +7,7 @@
 
 import Foundation
 
+// MARK: - Station
 public struct Station: Identifiable, Hashable, Sendable {
     public let id = UUID()
     public let name: String

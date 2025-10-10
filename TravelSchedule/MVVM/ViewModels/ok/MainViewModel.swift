@@ -23,7 +23,7 @@ final class MainViewModel: ObservableObject {
     
     func loadInitialData() async {
     }
-
+    
     func swapStations() {
         let temp = fromStation
         fromStation = toStation
@@ -33,7 +33,7 @@ final class MainViewModel: ObservableObject {
     var isFindButtonEnabled: Bool {
         fromStation != nil && toStation != nil && !isLoading
     }
-
+    
     func showError(_ errorType: ErrorModel.ErrorType) {
         showingError = errorType
     }
@@ -59,10 +59,26 @@ final class MainViewModel: ObservableObject {
         from: Station,
         to: Station
     ) async throws -> [Components.Schemas.Segment] {
-        return try await apiClient.getScheduleBetweenStations(
+        let todayYMD = getTodayYMD()
+        
+        let response = try await apiClient.getScheduleBetweenStations(
             from: from.code,
-            to: to.code
+            to: to.code,
+            date: todayYMD // ← ДОБАВЬ ДАТУ
         )
+        
+        return response.segments ?? []
+    }
+    
+    private func getTodayYMD() -> String {
+        let formatter = DateFormatter()
+        formatter.dateFormat = "yyyy-MM-dd"
+        formatter.timeZone = TimeZone(identifier: "Europe/Moscow")
+        let today = Date()
+        
+        print("📅 REAL CURRENT DATE: \(formatter.string(from: today))")
+        print("📅 REAL CURRENT YEAR: \(Calendar.current.component(.year, from: today))")
+        
+        return formatter.string(from: today)
     }
 }
-

@@ -74,11 +74,11 @@ extension APIClient {
     public func getScheduleBetweenStations(
         from: String,
         to: String,
-        date: String? = nil,
+        date: String,
         transportTypes: [String]? = nil,
         limit: Int? = nil,
         transfers: Bool? = nil
-    ) async throws -> [Components.Schemas.Segment] {
+    ) async throws -> Components.Schemas.Segments {
         let response = try await client.getScheduleBetweenStations(query: .init(
             apikey: apiKey,
             from: from,
@@ -88,7 +88,7 @@ extension APIClient {
             limit: limit,
             transfers: transfers
         ))
-        return try handleScheduleBetweenStations(response)
+        return try handleScheduleBetweenStationsResponse(response)
     }
     
     public func getScheduleOnStation(
@@ -198,44 +198,6 @@ extension APIClient {
         }
     }
     
-    private func filterStationsForCity(from response: Components.Schemas.AllStationsResponse, city: String) -> [Station] {
-        var result: [Station] = []
-        
-        for country in response.countries ?? [] {
-            for region in country.regions ?? [] {
-                for settlement in region.settlements ?? [] where settlement.title == city {
-                    for st in settlement.stations ?? [] {
-                        guard
-                            let rawName = st.title?.trimmingCharacters(in: .whitespacesAndNewlines),
-                            !rawName.isEmpty
-                        else { continue }
-                        
-                        let cleanName = rawName
-                            .replacingOccurrences(of: "\(city), ", with: "")
-                            .replacingOccurrences(of: "\(city),", with: "")
-                            .trimmingCharacters(in: .whitespacesAndNewlines)
-                        
-                        let code = st.codes?.yandex_code
-                        guard let code, !code.isEmpty, !cleanName.isEmpty else { continue }
-                        
-                        let model = Station(
-                            name: cleanName,
-                            code: code,
-                            transportType: st.transport_type
-                        )
-                        result.append(model)
-                    }
-                    
-                    break
-                }
-            }
-        }
-        
-        
-        let unique = Dictionary(grouping: result, by: { $0.code }).compactMap { $0.value.first }
-        return unique.sorted { $0.name < $1.name }
-    }
-    
     private func filterRussianCities(from response: Components.Schemas.AllStationsResponse) -> [Station] {
         var result: [Station] = []
         
@@ -246,15 +208,20 @@ extension APIClient {
             
             for region in country.regions ?? [] {
                 for settlement in region.settlements ?? [] {
-                    guard let cityTitle = settlement.title?.trimmingCharacters(in: .whitespacesAndNewlines), !cityTitle.isEmpty else { continue }
+                    guard let cityTitle = settlement.title?.trimmingCharacters(in: .whitespacesAndNewlines),
+                          !cityTitle.isEmpty else { continue }
                     
-                    let cityCode = settlement.codes?.yandex_code
                     
-                    if !(settlement.stations ?? []).isEmpty {
+                    if let firstRailwayStation = settlement.stations?.first(where: {
+                        $0.transport_type == "train" || $0.transport_type == "suburban"
+                    }) {
+                        guard let stationCode = firstRailwayStation.codes?.yandex_code,
+                              !stationCode.isEmpty else { continue }
+                        
                         let station = Station(
                             name: cityTitle,
-                            code: cityCode ?? cityTitle,
-                            transportType: nil
+                            code: stationCode,
+                            transportType: firstRailwayStation.transport_type
                         )
                         result.append(station)
                     }
@@ -262,7 +229,46 @@ extension APIClient {
             }
         }
         
-        let unique = Dictionary(grouping: result, by: { !$0.code.isEmpty ? $0.code : $0.name }).compactMap { $0.value.first }
+        let unique = Dictionary(grouping: result, by: { $0.code }).compactMap { $0.value.first }
+        return unique.sorted { $0.name < $1.name }
+    }
+    
+    private func filterStationsForCity(from response: Components.Schemas.AllStationsResponse, city: String) -> [Station] {
+        var result: [Station] = []
+        
+        for country in response.countries ?? [] {
+            for region in country.regions ?? [] {
+                for settlement in region.settlements ?? [] where settlement.title == city {
+                    for st in settlement.stations ?? [] {
+                        
+                        guard st.transport_type == "train" || st.transport_type == "suburban",
+                              let rawName = st.title?.trimmingCharacters(in: .whitespacesAndNewlines),
+                              !rawName.isEmpty,
+                              let code = st.codes?.yandex_code,
+                              !code.isEmpty else {
+                            continue
+                        }
+                        
+                        let cleanName = rawName
+                            .replacingOccurrences(of: "\(city), ", with: "")
+                            .replacingOccurrences(of: "\(city),", with: "")
+                            .trimmingCharacters(in: .whitespacesAndNewlines)
+                        
+                        guard !cleanName.isEmpty else { continue }
+                        
+                        let model = Station(
+                            name: cleanName,
+                            code: code,
+                            transportType: st.transport_type
+                        )
+                        result.append(model)
+                    }
+                    break
+                }
+            }
+        }
+        
+        let unique = Dictionary(grouping: result, by: { $0.code }).compactMap { $0.value.first }
         return unique.sorted { $0.name < $1.name }
     }
 }
