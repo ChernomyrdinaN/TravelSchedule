@@ -37,19 +37,35 @@ struct CarrierInfoView: View {
         .toolbar(.hidden, for: .tabBar)
     }
     
-    // MARK: - Carrier Image
     private var carrierImage: some View {
-        Image(carrier.logo)
-            .resizable()
-            .scaledToFit()
-            .frame(maxWidth: .infinity, maxHeight: 104)
-            .background(.ypWhiteUniversal)
-            .cornerRadius(24)
-            .padding(.horizontal, 16)
-            .padding(.bottom, 16)
+        Group {
+            if let url = validLogoURL(carrier.logo) {
+                AsyncImage(url: url) { phase in
+                    switch phase {
+                    case .empty:
+                        ProgressView()
+                            .frame(maxWidth: .infinity, maxHeight: 104)
+                    case .success(let image):
+                        image
+                            .resizable()
+                            .scaledToFit()
+                    case .failure:
+                        placeholderLogo
+                    @unknown default:
+                        placeholderLogo
+                    }
+                }
+            } else {
+                placeholderLogo
+            }
+        }
+        .frame(maxWidth: .infinity, maxHeight: 104)
+        .background(.ypWhiteUniversal)
+        .cornerRadius(24)
+        .padding(.horizontal, 16)
+        .padding(.bottom, 16)
     }
     
-    // MARK: - Carrier Info
     private var carrierInfo: some View {
         VStack(alignment: .leading, spacing: .zero) {
             Text(carrier.name)
@@ -63,7 +79,6 @@ struct CarrierInfoView: View {
         }
     }
     
-    // MARK: - Contact Info
     private var contactInfo: some View {
         VStack(spacing: .zero) {
             VStack(alignment: .leading, spacing: .zero) {
@@ -109,11 +124,37 @@ struct CarrierInfoView: View {
             .padding(.horizontal, 16)
         }
     }
+    
+    private func validLogoURL(_ logoString: String) -> URL? {
+        guard !logoString.isEmpty,
+              let url = URL(string: logoString),
+              let scheme = url.scheme,
+              scheme.hasPrefix("http") else {
+            return nil
+        }
+        return url
+    }
+    
+    private var placeholderLogo: some View {
+        Rectangle()
+            .fill(Color.ypLightGray)
+            .overlay(
+                Image(systemName: "train.side.front.car")
+                    .foregroundColor(.ypBlack)
+            )
+    }
 }
 
-// MARK: - Preview
 #Preview {
     NavigationView {
-        CarrierInfoView(carrier: Carrier.mockData[0])
+        CarrierInfoView(carrier: Carrier(
+            name: "РЖД",
+            logo: "https://yastat.net/s3/rasp/media/data/company/logo/logo.gif",
+            transferInfo: nil,
+            date: "14 января",
+            departureTime: "22:30",
+            travelTime: "20 часов",
+            arrivalTime: "08:15"
+        ))
     }
 }

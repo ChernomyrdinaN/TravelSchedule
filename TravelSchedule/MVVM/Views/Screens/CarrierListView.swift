@@ -111,50 +111,13 @@ struct CarrierListView: View {
                     NavigationLink {
                         CarrierInfoView(carrier: carrier)
                     } label: {
-                        ZStack(alignment: .topLeading) {
-                            CarrierCardView(
-                                carrier: carrier,
-                                onTimeClarificationTapped: {
-                                    navigationPath.append(NavigationModels.filters)
-                                }
-                            )
-                            
-                            RoundedRectangle(cornerRadius: 8)
-                                .fill(Color.ypWhite)
-                                .frame(width: 40, height: 40)
-                                .padding(.top, 12)
-                                .padding(.leading, 16)
-                            
-                            if let url = carrier.rasterLogoURL {
-                                AsyncImage(url: url) { phase in
-                                    switch phase {
-                                    case .empty:
-                                        ProgressView()
-                                            .frame(width: 40, height: 40)
-                                            .padding(.top, 12)
-                                            .padding(.leading, 16)
-                                    case .success(let image):
-                                        image
-                                            .resizable()
-                                            .scaledToFit()
-                                            .frame(width: 40, height: 40)
-                                            .clipShape(RoundedRectangle(cornerRadius: 8))
-                                            .padding(.top, 12)
-                                            .padding(.leading, 16)
-                                    case .failure:
-                                        EmptyView()
-                                            .frame(width: 40, height: 40)
-                                            .padding(.top, 12)
-                                            .padding(.leading, 16)
-                                    @unknown default:
-                                        EmptyView()
-                                            .frame(width: 40, height: 40)
-                                            .padding(.top, 12)
-                                            .padding(.leading, 16)
-                                    }
-                                }
+                        // ПРОСТО CarrierCardView БЕЗ ZStack
+                        CarrierCardView(
+                            carrier: carrier,
+                            onTimeClarificationTapped: {
+                                navigationPath.append(NavigationModels.filters)
                             }
-                        }
+                        )
                     }
                     .buttonStyle(PlainButtonStyle())
                     .background(Color.ypLightGray)

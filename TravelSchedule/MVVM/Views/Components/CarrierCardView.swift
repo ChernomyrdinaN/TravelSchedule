@@ -11,12 +11,10 @@ struct CarrierCardView: View {
     let carrier: Carrier
     let onTimeClarificationTapped: () -> Void
     
-    // MARK: - Body
     var body: some View {
         VStack(alignment: .leading, spacing: 12) {
             HStack(alignment: .top) {
-                Image(carrier.logo)
-                    .resizable()
+                carrierLogoImage
                     .frame(width: 38, height: 38)
                     .cornerRadius(8)
                 
@@ -70,7 +68,6 @@ struct CarrierCardView: View {
         )
     }
     
-    // MARK: - Private Views
     private var timelineView: some View {
         HStack(spacing: 4) {
             Rectangle()
@@ -89,6 +86,49 @@ struct CarrierCardView: View {
                 .frame(maxWidth: .infinity)
         }
     }
+    
+    private var carrierLogoImage: some View {
+        Group {
+            if let url = validLogoURL(carrier.logo) {
+                AsyncImage(url: url) { phase in
+                    switch phase {
+                    case .empty:
+                        ProgressView()
+                    case .success(let image):
+                        image
+                            .resizable()
+                            .scaledToFill()
+                    case .failure:
+                        placeholderLogo
+                    @unknown default:
+                        placeholderLogo
+                    }
+                }
+            } else {
+                placeholderLogo
+            }
+        }
+        .cornerRadius(8)
+    }
+    
+    private func validLogoURL(_ logoString: String) -> URL? {
+        guard !logoString.isEmpty,
+              let url = URL(string: logoString),
+              let scheme = url.scheme,
+              scheme.hasPrefix("http") else {
+            return nil
+        }
+        return url
+    }
+    
+    private var placeholderLogo: some View {
+        Rectangle()
+            .fill(Color.ypLightGray)
+            .overlay(
+                Image(systemName: "train.side.front.car")
+                    .foregroundColor(.ypBlack)
+            )
+    }
 }
 
 #Preview {
@@ -96,7 +136,7 @@ struct CarrierCardView: View {
         CarrierCardView(
             carrier: Carrier(
                 name: "РЖД",
-                logo: "BrandIcon1",
+                logo: "https://yastat.net/s3/rasp/media/data/company/logo/logo.gif",
                 transferInfo: "С пересадкой в Костроме",
                 date: "14 января",
                 departureTime: "22:30",
@@ -109,7 +149,7 @@ struct CarrierCardView: View {
         CarrierCardView(
             carrier: Carrier(
                 name: "РЖД",
-                logo: "BrandIcon1",
+                logo: "",
                 transferInfo: nil,
                 date: "17 января",
                 departureTime: "Уточнить время",
