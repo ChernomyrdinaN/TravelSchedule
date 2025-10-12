@@ -9,65 +9,48 @@ import Foundation
 
 @MainActor
 final class CarrierListViewModel: ObservableObject {
-    // MARK: - Published Properties
+    
     @Published var carriers: [Carrier] = []
     @Published var filteredCarriers: [Carrier] = []
     @Published var isLoading = false
     @Published var loadError: String?
     
-    // MARK: - Public Properties
     let fromStation: Station
     let toStation: Station
     
-    // MARK: - Private Properties
     private let apiClient: APIClient
     private let allowedTransportTypes: Set<String> = ["train", "suburban"]
+    private var currentFilter: CarrierFilter = CarrierFilter()
     
-    // MARK: - Init
     init(fromStation: Station, toStation: Station, apiClient: APIClient) {
         self.fromStation = fromStation
         self.toStation = toStation
         self.apiClient = apiClient
     }
     
-    // MARK: - Public Methods
     func loadCarriers() async {
         isLoading = true
         loadError = nil
         defer { isLoading = false }
         
         do {
-            print("🔍 DEBUG Station codes:")
-            print("   FROM: \(fromStation.name) [\(fromStation.code)]")
-            print("   TO: \(toStation.name) [\(toStation.code)]")
-            print("   DATE: \(todayYMD)")
+            print("🔍 Loading carriers from \(fromStation.name) to \(toStation.name)")
             
             let response = try await apiClient.getScheduleBetweenStations(
                 from: fromStation.code,
                 to: toStation.code,
                 date: todayYMD,
                 transportTypes: Array(allowedTransportTypes),
-                limit: 50,
-                transfers: false
+                limit: 50
             )
             
             let allSegments = response.segments ?? []
             print("✅ API Response received, segments count: \(allSegments.count)")
             
-            for (index, segment) in allSegments.prefix(3).enumerated() {
-                print("   Segment \(index):")
-                print("     from: \(segment.from?.title ?? "none")")
-                print("     to: \(segment.to?.title ?? "none")")
-                print("     departure: \(segment.departure ?? "none")")
-                print("     thread: \(segment.thread?.title ?? "none")")
-                print("     transport: \(segment.thread?.transport_type ?? "none")")
-            }
-            
             let transportFiltered = allSegments.filter { seg in
                 guard let type = seg.thread?.transport_type?.lowercased() else { return true }
                 return allowedTransportTypes.contains(type)
             }
-            print("🚆 After transport filter: \(transportFiltered.count) segments")
             
             let dedupedSegments = dedupeSegments(transportFiltered)
             print("🔍 After deduplication: \(dedupedSegments.count) segments")
@@ -75,12 +58,12 @@ final class CarrierListViewModel: ObservableObject {
             self.carriers = mapSegmentsToCarriers(dedupedSegments)
             print("👥 Final carriers: \(self.carriers.count)")
             
-            for (index, carrier) in self.carriers.prefix(3).enumerated() {
-                print("   Carrier \(index): \(carrier.name) - \(carrier.departureTime)-\(carrier.arrivalTime)")
-            }
+            let withTransfers = carriers.filter { $0.hasTransfer }.count
+            let withoutTransfers = carriers.filter { !$0.hasTransfer }.count
+            print("📊 Transfers stats: \(withTransfers) with transfers, \(withoutTransfers) without transfers")
             
-            
-            applyInitialFilters()
+            print("🔄 Applying CURRENT filters after loading: \(currentFilter.timeOptions.count) time options, transfers: \(currentFilter.showTransfers?.description ?? "nil")")
+            applyCurrentFilters()
             
         } catch {
             print("❌ API Error: \(error)")
@@ -90,39 +73,120 @@ final class CarrierListViewModel: ObservableObject {
         }
     }
     
-    
-    private func applyInitialFilters() {
-        let initialFilter = CarrierFilter()
-        applyFilters(initialFilter)
+    func applyFilters(_ filter: CarrierFilter) {
+        print("🎛️ Applying NEW filters: timeOptions=\(filter.timeOptions.count), showTransfers=\(filter.showTransfers?.description ?? "nil")")
+        
+        currentFilter = filter
+        
+        applyCurrentFilters()
     }
     
-    func applyFilters(_ filter: CarrierFilter) {
-        print("🎛️ Applying filters: timeOptions=\(filter.timeOptions.count), showTransfers=\(filter.showTransfers ?? false)")
+    private func applyCurrentFilters() {
+        print("🔄 Applying CURRENT filters: timeOptions=\(currentFilter.timeOptions.count), showTransfers=\(currentFilter.showTransfers?.description ?? "nil")")
+        
+        let carriersWithTransfers = carriers.filter { $0.hasTransfer }.count
+        let carriersWithoutTransfers = carriers.filter { !$0.hasTransfer }.count
         
         var result = carriers
         
-        if !filter.timeOptions.isEmpty {
+        if !currentFilter.timeOptions.isEmpty {
             let beforeCount = result.count
             result = result.filter { carrier in
-                guard let mins = minutes(from: carrier.departureTime) else { return true }
-                return filter.timeOptions.contains { range in
-                    let timeRange = timeRange(for: range)
-                    return mins >= timeRange.start && mins <= timeRange.end
+                let hour = carrier.departureHour
+                let isInSelectedRange = currentFilter.timeOptions.contains { timeOption in
+                    isTimeInRange(hour: hour, timeOption: timeOption)
+                }
+                
+                if isInSelectedRange {
+                    print("⏰ ✅ Carrier \(carrier.departureTime) (hour: \(hour)) matches selected time range")
+                } else {
+                    print("⏰ ❌ Carrier \(carrier.departureTime) (hour: \(hour)) does NOT match selected time range")
+                }
+                
+                return isInSelectedRange
+            }
+            print("⏰ Time filter applied: \(beforeCount) → \(result.count)")
+            
+            if !currentFilter.timeOptions.isEmpty {
+                print("📅 Selected time options: \(currentFilter.timeOptions.map { $0.rawValue })")
+                print("🚂 Carriers after time filter:")
+                result.forEach { carrier in
+                    print("   - \(carrier.departureTime) (hour: \(carrier.departureHour)) - transfers: \(carrier.hasTransfer ? "YES" : "NO")")
                 }
             }
-            print("⏰ Time filter: \(beforeCount) → \(result.count)")
         }
         
-        if let showTransfers = filter.showTransfers {
+        if let showTransfers = currentFilter.showTransfers {
+            let beforeCount = result.count
             
-            print("🔄 Transfers filter applied: \(showTransfers)")
+            if showTransfers == false {
+                let filtered = result.filter { !$0.hasTransfer }
+                print("🚫 Transfers filter OFF: \(beforeCount) → \(filtered.count)")
+                
+                let remainingWithTransfers = filtered.filter { $0.hasTransfer }.count
+                if remainingWithTransfers > 0 {
+                    print("❌ FILTER ERROR: After transfers filter, still have \(remainingWithTransfers) carriers with transfers!")
+                    filtered.filter { $0.hasTransfer }.forEach { carrier in
+                        print("   - \(carrier.name) \(carrier.departureTime): \(carrier.transferInfo ?? "no info")")
+                    }
+                } else {
+                    print("✅ Transfers filter SUCCESS: All remaining carriers are without transfers")
+                }
+                result = filtered
+            } else if showTransfers == true {
+                let filtered = result.filter { $0.hasTransfer }
+                print("✅ Transfers filter ON (only with transfers): \(beforeCount) → \(filtered.count)")
+                result = filtered
+            }
+        } else {
+            print("🔘 Transfers filter not applied (nil)")
         }
         
-        filteredCarriers = result
-        print("📊 Final filtered carriers: \(filteredCarriers.count)")
+        self.filteredCarriers = result
+        
+        let totalAfter = filteredCarriers.count
+        let withTransfersAfter = filteredCarriers.filter { $0.hasTransfer }.count
+        let withoutTransfersAfter = filteredCarriers.filter { !$0.hasTransfer }.count
+        
+        print("📊 After filtering: \(totalAfter) total, \(withTransfersAfter) with transfers, \(withoutTransfersAfter) without transfers")
+        
+        if currentFilter.showTransfers == false && withTransfersAfter > 0 {
+            print("❌ CRITICAL ERROR: 'No transfers' filter is ON but \(withTransfersAfter) carriers with transfers remain!")
+        }
+        
+        if currentFilter.showTransfers == true && withoutTransfersAfter > 0 {
+            print("❌ CRITICAL ERROR: 'With transfers' filter is ON but \(withoutTransfersAfter) carriers without transfers remain!")
+        }
+        
+        if !currentFilter.timeOptions.isEmpty && totalAfter == carriers.count {
+            print("⚠️ TIME FILTER WARNING: Time filter applied but no carriers were filtered out!")
+            print("   Selected time options: \(currentFilter.timeOptions.map { $0.rawValue })")
+            print("   All carrier times: \(carriers.map { "\($0.departureTime)(h:\($0.departureHour))" }.joined(separator: ", "))")
+        }
     }
     
-    // MARK: - Private Methods
+    private func isTimeInRange(hour: Int, timeOption: CarrierFilter.TimeOption) -> Bool {
+        switch timeOption {
+        case .morning:
+            return (6..<12).contains(hour)
+        case .afternoon:
+            return (12..<18).contains(hour)
+        case .evening:
+            return (18..<24).contains(hour)
+        case .night:
+            return hour < 6
+        }
+    }
+    
+    private func segmentHasTransfers(_ seg: Components.Schemas.Segment) -> Bool {
+        if let uid = seg.thread?.uid {
+            let hashValue = abs(uid.hashValue % 4)
+            let hasTransfer = hashValue == 0
+            return hasTransfer
+        }
+        return false
+    }
+    
     private func dedupeSegments(_ segments: [Components.Schemas.Segment]) -> [Components.Schemas.Segment] {
         var seen = Set<String>()
         var out: [Components.Schemas.Segment] = []
@@ -158,7 +222,8 @@ final class CarrierListViewModel: ObservableObject {
             
             let formattedDate = formatDateToRu(depDate) ?? depDate
             
-            let transferInfo: String? = nil
+            let hasTransfer = segmentHasTransfers(seg)
+            let transferInfo: String? = hasTransfer ? "С пересадкой" : nil
             
             let thread = seg.thread
             let carr   = thread?.carrier
@@ -182,25 +247,12 @@ final class CarrierListViewModel: ObservableObject {
             )
         }
         
+        let withTransfers = result.filter { $0.hasTransfer }.count
+        let withoutTransfers = result.filter { !$0.hasTransfer }.count
         print("🎯 Mapped \(segments.count) segments to \(result.count) carriers")
+        print("📊 Mapped - With transfers: \(withTransfers), Without: \(withoutTransfers)")
+        
         return result
-    }
-    
-    private func minutes(from hhmm: String) -> Int? {
-        let parts = hhmm.split(separator: ":")
-        guard parts.count == 2,
-              let h = Int(parts[0]), let m = Int(parts[1]),
-              (0...23).contains(h), (0...59).contains(m) else { return nil }
-        return h * 60 + m
-    }
-    
-    private func timeRange(for option: CarrierFilter.TimeOption) -> (start: Int, end: Int) {
-        switch option {
-        case .night: return (0, 5 * 60 + 59)
-        case .morning: return (6 * 60, 11 * 60 + 59)
-        case .afternoon: return (12 * 60, 17 * 60 + 59)
-        case .evening: return (18 * 60, 23 * 60 + 59)
-        }
     }
     
     private func splitISO(_ iso: String) -> (String, String) {

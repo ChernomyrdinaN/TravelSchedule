@@ -159,7 +159,7 @@ private extension StationSelectionView {
     
     func startLoaderAnimation() {
         rotationDegrees = 0
-        withAnimation(.linear(duration: 1.1).repeatForever(autoreverses: false)) {
+        withAnimation(.linear(duration: 2).repeatForever(autoreverses: false)) {
             rotationDegrees = 360
         }
     }

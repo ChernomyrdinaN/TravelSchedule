@@ -21,13 +21,13 @@ struct ErrorModel: Sendable {
     // MARK: - Static Instances
     static let error1 = ErrorModel(
         type: .noInternet,
-        title: "Нет интернета",
+        title: "Ошибка сервера",
         imageName: "error1"
     )
     
     static let error2 = ErrorModel(
         type: .serverError,
-        title: "Ошибка сервера",
+        title: "Нет интернета",
         imageName: "error2"
     )
 }

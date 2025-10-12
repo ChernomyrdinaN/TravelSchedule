@@ -86,7 +86,7 @@ struct CarrierInfoView: View {
                     .font(.system(size: 17, weight: .regular))
                     .foregroundColor(.ypBlack)
                     .frame(maxWidth: .infinity, alignment: .leading)
-             
+                
                 if let emailURL = URL(string: "mailto:i.lozgkina@yandex.ru") {
                     Link("i.lozgkina@yandex.ru", destination: emailURL)
                         .tint(.ypBlueUniversal)
@@ -107,7 +107,7 @@ struct CarrierInfoView: View {
                     .font(.system(size: 17, weight: .regular))
                     .foregroundColor(.ypBlack)
                     .frame(maxWidth: .infinity, alignment: .leading)
-
+                
                 if let phoneURL = URL(string: "tel://+79043292771") {
                     Link("+7 (904) 329-27-71", destination: phoneURL)
                         .tint(.ypBlueUniversal)

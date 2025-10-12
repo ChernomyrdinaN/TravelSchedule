@@ -39,6 +39,7 @@ struct FilterView: View {
                 .padding(.horizontal, 16)
                 .padding(.top, 24)
                 
+                // ВЕРНУТО ОРИГИНАЛЬНОЕ ПОВЕДЕНИЕ: кнопка показывается только когда выбраны оба фильтра
                 if hasSelectedFilters {
                     applyButton
                         .padding(.top, 16)
@@ -164,6 +165,7 @@ struct FilterView: View {
     
     // MARK: - Private Properties
     private var hasSelectedFilters: Bool {
+        // ВЕРНУТО ОРИГИНАЛЬНОЕ ПОВЕДЕНИЕ: кнопка активна только когда выбраны И время И пересадки
         !localFilter.timeOptions.isEmpty && localFilter.showTransfers != nil
     }
     
@@ -175,12 +177,4 @@ struct FilterView: View {
             localFilter.timeOptions.append(option)
         }
     }
-}
-
-// MARK: - Preview
-#Preview {
-    FilterView(
-        filter: .constant(CarrierFilter()),
-        applyFilters: {}
-    )
 }
