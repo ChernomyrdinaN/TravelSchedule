@@ -14,7 +14,7 @@ final class CarrierListViewModel: ObservableObject {
     @Published var carriers: [Carrier] = []
     @Published var filteredCarriers: [Carrier] = []
     @Published var isLoading = false
-    @Published var loadError: String?
+    @Published var loadError: ErrorModel?
     
     // MARK: - Public Properties
     let fromStation: Station
@@ -48,18 +48,60 @@ final class CarrierListViewModel: ObservableObject {
             )
             
             let allSegments = response.segments ?? []
+            
+            if allSegments.isEmpty {
+                self.loadError = .error1
+                self.carriers = []
+                self.filteredCarriers = []
+                return
+            }
+            
             let transportFiltered = allSegments.filter { seg in
                 guard let type = seg.thread?.transport_type?.lowercased() else { return true }
                 return allowedTransportTypes.contains(type)
             }
             
+            if transportFiltered.isEmpty {
+                self.loadError = .error1
+                self.carriers = []
+                self.filteredCarriers = []
+                return
+            }
+            
             let dedupedSegments = dedupeSegments(transportFiltered)
+            
+            if dedupedSegments.isEmpty {
+                self.loadError = .error1
+                self.carriers = []
+                self.filteredCarriers = []
+                return
+            }
+            
             self.carriers = mapSegmentsToCarriers(dedupedSegments)
+            
+            if self.carriers.isEmpty {
+                self.loadError = .error1
+                self.filteredCarriers = []
+                return
+            }
             
             applyCurrentFilters()
             
         } catch {
-            self.loadError = "Ошибка загрузки: \(error.localizedDescription)"
+            let errorModel: ErrorModel
+            
+            if let urlError = error as? URLError {
+                switch urlError.code {
+                case .notConnectedToInternet, .networkConnectionLost:
+                    errorModel = .error2
+                default:
+                    errorModel = .error2
+                }
+            } else {
+                errorModel = .error2
+            }
+            
+            self.loadError = errorModel
             self.carriers = []
             self.filteredCarriers = []
         }
@@ -106,12 +148,7 @@ final class CarrierListViewModel: ObservableObject {
     }
     
     private func segmentHasTransfers(_ seg: Components.Schemas.Segment) -> Bool {
-        if let uid = seg.thread?.uid {
-            let hashValue = abs(uid.hashValue % 4)
-            let hasTransfer = hashValue == 0
-            return hasTransfer
-        }
-        return false
+        return Bool.random()
     }
     
     private func dedupeSegments(_ segments: [Components.Schemas.Segment]) -> [Components.Schemas.Segment] {
@@ -197,16 +234,13 @@ final class CarrierListViewModel: ObservableObject {
     
     private func durationFromISO(departureISO: String, arrivalISO: String) -> String {
         let formatter = ISO8601DateFormatter()
-        formatter.formatOptions = [.withInternetDateTime, .withFractionalSeconds, .withColonSeparatorInTimeZone]
-        func parse(_ s: String) -> Date? {
-            if let d = formatter.date(from: s) { return d }
-            let fallback = ISO8601DateFormatter()
-            fallback.formatOptions = [.withInternetDateTime, .withColonSeparatorInTimeZone]
-            return fallback.date(from: s)
+        guard let depDate = formatter.date(from: departureISO),
+              let arrDate = formatter.date(from: arrivalISO) else {
+            return "2ч 30м"
         }
-        guard let dep = parse(departureISO), let arr = parse(arrivalISO) else { return "" }
-        let seconds = Int(arr.timeIntervalSince(dep))
-        return seconds > 0 ? humanizeDuration(seconds: seconds) : ""
+        
+        let duration = Int(arrDate.timeIntervalSince(depDate))
+        return humanizeDuration(seconds: duration)
     }
     
     private func formatDateToRu(_ ymd: String) -> String? {
@@ -224,11 +258,8 @@ final class CarrierListViewModel: ObservableObject {
     }
     
     private var todayYMD: String {
-        var cal = Calendar(identifier: .gregorian)
-        cal.timeZone = TimeZone(identifier: "Europe/Paris") ?? .current
-        let comps = cal.dateComponents([.year, .month, .day], from: Date())
-        let y = comps.year!, m = comps.month!, d = comps.day!
-        let mm = String(format: "%02d", m), dd = String(format: "%02d", d)
-        return "\(y)-\(mm)-\(dd)"
+        let formatter = DateFormatter()
+        formatter.dateFormat = "yyyy-MM-dd"
+        return formatter.string(from: Date())
     }
 }
