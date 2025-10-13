@@ -8,8 +8,6 @@
 import SwiftUI
 
 struct CarrierListView: View {
-    
-    // MARK: - Properties
     @StateObject private var viewModel: CarrierListViewModel
     @Binding var navigationPath: NavigationPath
     @Binding var filter: CarrierFilter
@@ -17,7 +15,7 @@ struct CarrierListView: View {
     @State private var rotationDegrees: Double = 0
     @State private var isLoaderAnimating = false
     
-    // MARK: - Init
+    // MARK: - Initialization
     init(fromStation: Station,
          toStation: Station,
          navigationPath: Binding<NavigationPath>,
@@ -57,9 +55,11 @@ struct CarrierListView: View {
             viewModel.applyFilters(newFilter)
         }
     }
-    
-    // MARK: - Main Content
-    private var mainContent: some View {
+}
+
+// MARK: - Private Views
+private extension CarrierListView {
+    var mainContent: some View {
         VStack(spacing: .zero) {
             headerView
                 .padding(.top, 16)
@@ -69,8 +69,7 @@ struct CarrierListView: View {
         }
     }
     
-    // MARK: - Header
-    private var headerView: some View {
+    var headerView: some View {
         Text("\(viewModel.fromStation.name) → \(viewModel.toStation.name)")
             .font(.system(size: 24, weight: .bold))
             .foregroundColor(.ypBlack)
@@ -80,9 +79,8 @@ struct CarrierListView: View {
             .padding(.bottom, 16)
     }
     
-    // MARK: - Content Views
     @ViewBuilder
-    private var contentView: some View {
+    var contentView: some View {
         if let loadError = viewModel.loadError {
             ErrorView(errorModel: loadError)
         } else if viewModel.filteredCarriers.isEmpty {
@@ -90,7 +88,6 @@ struct CarrierListView: View {
         } else {
             ZStack(alignment: .bottom) {
                 carriersList
-                
                 clarifyTimeButton
                     .padding(.horizontal, 16)
                     .padding(.bottom, 24)
@@ -98,32 +95,26 @@ struct CarrierListView: View {
         }
     }
     
-    private var loadingView: some View {
+    var loadingView: some View {
         VStack {
             Spacer()
-            
             Image("loader")
                 .resizable()
                 .frame(width: 48, height: 48)
                 .rotationEffect(Angle(degrees: rotationDegrees))
-            
             Spacer()
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
-        .onAppear {
-            startLoadingAnimation()
-        }
-        .onDisappear {
-            stopLoadingAnimation()
-        }
+        .onAppear { startLoadingAnimation() }
+        .onDisappear { stopLoadingAnimation() }
     }
     
-    private var carriersList: some View {
+    var carriersList: some View {
         ScrollView {
             LazyVStack(spacing: 8) {
                 ForEach(viewModel.filteredCarriers) { carrier in
                     NavigationLink {
-                        CarrierInfoView(carrier: carrier)
+                        CarrierInfoView(carrier: carrier, apiClient: viewModel.apiClient)
                     } label: {
                         CarrierCardView(
                             carrier: carrier,
@@ -142,7 +133,7 @@ struct CarrierListView: View {
         }
     }
     
-    private var clarifyTimeButton: some View {
+    var clarifyTimeButton: some View {
         Button(action: { navigationPath.append(NavigationModels.filters) }) {
             HStack {
                 Text("Уточнить время")
@@ -165,7 +156,7 @@ struct CarrierListView: View {
         .cornerRadius(12)
     }
     
-    private var emptyStateView: some View {
+    var emptyStateView: some View {
         VStack(spacing: .zero) {
             Text("Вариантов нет")
                 .font(.system(size: 24, weight: .bold))
@@ -173,27 +164,26 @@ struct CarrierListView: View {
                 .multilineTextAlignment(.center)
                 .kerning(0)
                 .padding(.top, 237)
-            
             Spacer()
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
     }
     
-    // MARK: - Buttons
-    private var backButton: some View {
+    var backButton: some View {
         Button(action: { navigationPath.removeLast() }) {
             Image(systemName: "chevron.left")
                 .foregroundColor(.ypBlack)
         }
     }
-    
-    // MARK: - Private Properties
-    private var hasActiveFilters: Bool {
+}
+
+// MARK: - Private Properties & Methods
+private extension CarrierListView {
+    var hasActiveFilters: Bool {
         !filter.timeOptions.isEmpty || filter.showTransfers != nil
     }
     
-    // MARK: - Private Methods
-    private func startLoadingAnimation() {
+    func startLoadingAnimation() {
         guard !isLoaderAnimating else { return }
         isLoaderAnimating = true
         rotationDegrees = 0
@@ -203,7 +193,7 @@ struct CarrierListView: View {
         }
     }
     
-    private func stopLoadingAnimation() {
+    func stopLoadingAnimation() {
         isLoaderAnimating = false
         rotationDegrees = 0
     }

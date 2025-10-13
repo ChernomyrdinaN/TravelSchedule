@@ -10,17 +10,23 @@ import SwiftUI
 
 @MainActor
 final class MainViewModel: ObservableObject {
+    // MARK: - Published Properties
     @Published var fromStation: Station?
     @Published var toStation: Station?
     @Published var showingError: ErrorModel.ErrorType?
     @Published var isLoading = false
     
+    // MARK: - Private Properties
     private let apiClient: APIClient
     
+    // MARK: - Initialization
     init(apiClient: APIClient = DIContainer.shared.apiClient) {
         self.apiClient = apiClient
     }
-    
+}
+
+// MARK: - Public Methods
+extension MainViewModel {
     func loadInitialData() async {
     }
     
@@ -28,10 +34,6 @@ final class MainViewModel: ObservableObject {
         let temp = fromStation
         fromStation = toStation
         toStation = temp
-    }
-    
-    var isFindButtonEnabled: Bool {
-        fromStation != nil && toStation != nil && !isLoading
     }
     
     func showError(_ errorType: ErrorModel.ErrorType) {
@@ -64,21 +66,26 @@ final class MainViewModel: ObservableObject {
         let response = try await apiClient.getScheduleBetweenStations(
             from: from.code,
             to: to.code,
-            date: todayYMD // ← ДОБАВЬ ДАТУ
+            date: todayYMD
         )
         
         return response.segments ?? []
     }
-    
-    private func getTodayYMD() -> String {
+}
+
+// MARK: - Computed Properties
+extension MainViewModel {
+    var isFindButtonEnabled: Bool {
+        fromStation != nil && toStation != nil && !isLoading
+    }
+}
+
+// MARK: - Private Methods
+private extension MainViewModel {
+    func getTodayYMD() -> String {
         let formatter = DateFormatter()
         formatter.dateFormat = "yyyy-MM-dd"
         formatter.timeZone = TimeZone(identifier: "Europe/Moscow")
-        let today = Date()
-        
-        print("📅 REAL CURRENT DATE: \(formatter.string(from: today))")
-        print("📅 REAL CURRENT YEAR: \(Calendar.current.component(.year, from: today))")
-        
-        return formatter.string(from: today)
+        return formatter.string(from: Date())
     }
 }

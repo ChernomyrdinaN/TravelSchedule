@@ -13,12 +13,13 @@ extension Carrier {
     static let mockData: [Carrier] = [
         Carrier(
             name: "ОАО РЖД",
-            logo: "BrandIcon1", // Image1
+            logo: "BrandIcon1",
             transferInfo: "С пересадкой в Костроме",
             date: "14 января",
             departureTime: "22:30",
             travelTime: "20 часов",
-            arrivalTime: "08:15"
+            arrivalTime: "08:15",
+            code: "RZD"
         ),
         Carrier(
             name: "ФГК",
@@ -27,7 +28,8 @@ extension Carrier {
             date: "15 января",
             departureTime: "01:15",
             travelTime: "9 часов",
-            arrivalTime: "09:00"
+            arrivalTime: "09:00",
+            code: "FGK"
         ),
         Carrier(
             name: "Урал логистика",
@@ -36,7 +38,8 @@ extension Carrier {
             date: "16 января",
             departureTime: "12:30",
             travelTime: "9 часов",
-            arrivalTime: "21:00"
+            arrivalTime: "21:00",
+            code: "URAL"
         ),
         Carrier(
             name: "ОАО РЖД",
@@ -45,7 +48,8 @@ extension Carrier {
             date: "17 января",
             departureTime: "22:30",
             travelTime: "20 часов",
-            arrivalTime: "08:15"
+            arrivalTime: "08:15",
+            code: "RZD"
         )
     ]
 }

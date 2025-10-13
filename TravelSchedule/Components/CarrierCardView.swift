@@ -13,52 +13,8 @@ struct CarrierCardView: View {
     
     var body: some View {
         VStack(alignment: .leading, spacing: 12) {
-            HStack(alignment: .top) {
-                carrierLogoImage
-                    .frame(width: 38, height: 38)
-                    .cornerRadius(8)
-                
-                VStack(alignment: .leading, spacing: 4) {
-                    Text(carrier.name)
-                        .font(.system(size: 17, weight: .regular))
-                        .foregroundColor(.ypBlackUniversal)
-                    
-                    if let transferInfo = carrier.transferInfo {
-                        Text(transferInfo)
-                            .font(.system(size: 12, weight: .regular))
-                            .foregroundColor(.ypRed)
-                    }
-                }
-                
-                Spacer()
-                
-                Text(carrier.date)
-                    .font(.system(size: 12, weight: .regular))
-                    .foregroundColor(.ypBlackUniversal)
-            }
-            
-            if carrier.departureTime == "Уточнить время" {
-                Button(action: onTimeClarificationTapped) {
-                    Text("Уточнить время")
-                        .font(.system(size: 17, weight: .regular))
-                        .foregroundColor(.ypBlueUniversal)
-                        .frame(maxWidth: .infinity, alignment: .center)
-                }
-            } else {
-                HStack(spacing: .zero) {
-                    Text(carrier.departureTime)
-                        .font(.system(size: 17, weight: .regular))
-                        .foregroundColor(.ypBlackUniversal)
-                        .frame(width: 60, alignment: .leading)
-                    
-                    timelineView
-                    
-                    Text(carrier.arrivalTime)
-                        .font(.system(size: 17, weight: .regular))
-                        .foregroundColor(.ypBlackUniversal)
-                        .frame(width: 60, alignment: .trailing)
-                }
-            }
+            headerSection
+            timeSection
         }
         .padding(16)
         .cornerRadius(12)
@@ -67,8 +23,71 @@ struct CarrierCardView: View {
                 .stroke(Color.ypLightGray, lineWidth: 1)
         )
     }
+}
+
+// MARK: - Private Views
+private extension CarrierCardView {
+    var headerSection: some View {
+        HStack(alignment: .top) {
+            carrierLogoImage
+                .frame(width: 38, height: 38)
+                .cornerRadius(8)
+            
+            VStack(alignment: .leading, spacing: 4) {
+                Text(carrier.name)
+                    .font(.system(size: 17, weight: .regular))
+                    .foregroundColor(.ypBlackUniversal)
+                
+                if let transferInfo = carrier.transferInfo {
+                    Text(transferInfo)
+                        .font(.system(size: 12, weight: .regular))
+                        .foregroundColor(.ypRed)
+                }
+            }
+            
+            Spacer()
+            
+            Text(carrier.date)
+                .font(.system(size: 12, weight: .regular))
+                .foregroundColor(.ypBlackUniversal)
+        }
+    }
     
-    private var timelineView: some View {
+    @ViewBuilder
+    var timeSection: some View {
+        if carrier.departureTime == "Уточнить время" {
+            clarificationButton
+        } else {
+            scheduleView
+        }
+    }
+    
+    var clarificationButton: some View {
+        Button(action: onTimeClarificationTapped) {
+            Text("Уточнить время")
+                .font(.system(size: 17, weight: .regular))
+                .foregroundColor(.ypBlueUniversal)
+                .frame(maxWidth: .infinity, alignment: .center)
+        }
+    }
+    
+    var scheduleView: some View {
+        HStack(spacing: .zero) {
+            Text(carrier.departureTime)
+                .font(.system(size: 17, weight: .regular))
+                .foregroundColor(.ypBlackUniversal)
+                .frame(width: 60, alignment: .leading)
+            
+            timelineView
+            
+            Text(carrier.arrivalTime)
+                .font(.system(size: 17, weight: .regular))
+                .foregroundColor(.ypBlackUniversal)
+                .frame(width: 60, alignment: .trailing)
+        }
+    }
+    
+    var timelineView: some View {
         HStack(spacing: 4) {
             Rectangle()
                 .fill(.ypGrayUniversal)
@@ -87,7 +106,7 @@ struct CarrierCardView: View {
         }
     }
     
-    private var carrierLogoImage: some View {
+    var carrierLogoImage: some View {
         Group {
             if let url = validLogoURL(carrier.logo) {
                 AsyncImage(url: url) { phase in
@@ -111,17 +130,7 @@ struct CarrierCardView: View {
         .cornerRadius(8)
     }
     
-    private func validLogoURL(_ logoString: String) -> URL? {
-        guard !logoString.isEmpty,
-              let url = URL(string: logoString),
-              let scheme = url.scheme,
-              scheme.hasPrefix("http") else {
-            return nil
-        }
-        return url
-    }
-    
-    private var placeholderLogo: some View {
+    var placeholderLogo: some View {
         Rectangle()
             .fill(Color.ypLightGray)
             .overlay(
@@ -131,6 +140,20 @@ struct CarrierCardView: View {
     }
 }
 
+// MARK: - Private Methods
+private extension CarrierCardView {
+    func validLogoURL(_ logoString: String) -> URL? {
+        guard !logoString.isEmpty,
+              let url = URL(string: logoString),
+              let scheme = url.scheme,
+              scheme.hasPrefix("http") else {
+            return nil
+        }
+        return url
+    }
+}
+
+// MARK: - Preview
 #Preview {
     VStack {
         CarrierCardView(
@@ -141,7 +164,8 @@ struct CarrierCardView: View {
                 date: "14 января",
                 departureTime: "22:30",
                 travelTime: "20 часов",
-                arrivalTime: "08:15"
+                arrivalTime: "08:15",
+                code: "RZD"
             ),
             onTimeClarificationTapped: {}
         )
@@ -154,7 +178,8 @@ struct CarrierCardView: View {
                 date: "17 января",
                 departureTime: "Уточнить время",
                 travelTime: "",
-                arrivalTime: ""
+                arrivalTime: "",
+                code: "RZD"
             ),
             onTimeClarificationTapped: {}
         )

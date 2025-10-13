@@ -17,6 +17,7 @@ struct Carrier: Identifiable, Hashable, Sendable {
     let departureTime: String
     let travelTime: String
     let arrivalTime: String
+    let code: String 
     
     var hasTransfer: Bool {
         transferInfo != nil

@@ -19,6 +19,7 @@ public actor APIClient {
     }
 }
 
+// MARK: - Public Methods
 extension APIClient {
     public func getAllStations() async throws -> Components.Schemas.AllStationsResponse {
         let response = try await client.getStationsList(query: .init(
@@ -136,8 +137,11 @@ extension APIClient {
         ))
         return try handleThreadStationsResponse(response)
     }
-    
-    private func handleScheduleBetweenStations(_ response: Operations.getScheduleBetweenStations.Output) throws -> [Components.Schemas.Segment] {
+}
+
+// MARK: - Private Methods
+private extension APIClient {
+    func handleScheduleBetweenStations(_ response: Operations.getScheduleBetweenStations.Output) throws -> [Components.Schemas.Segment] {
         switch response {
         case .ok(let okResponse):
             switch okResponse.body {
@@ -152,10 +156,8 @@ extension APIClient {
             throw APIError.invalidResponse
         }
     }
-}
-
-extension APIClient {
-    private func extractRussianCities(from response: Operations.getStationsList.Output) async throws -> [Station] {
+    
+    func extractRussianCities(from response: Operations.getStationsList.Output) async throws -> [Station] {
         switch response {
         case .ok(let okResponse):
             switch okResponse.body {
@@ -174,7 +176,7 @@ extension APIClient {
         }
     }
     
-    private func filterRussianCities(from response: Components.Schemas.AllStationsResponse) -> [Station] {
+    func filterRussianCities(from response: Components.Schemas.AllStationsResponse) -> [Station] {
         var result: [Station] = []
         
         for country in response.countries ?? [] {
@@ -186,7 +188,6 @@ extension APIClient {
                 for settlement in region.settlements ?? [] {
                     guard let cityTitle = settlement.title?.trimmingCharacters(in: .whitespacesAndNewlines),
                           !cityTitle.isEmpty else { continue }
-                    
                     
                     if let firstRailwayStation = settlement.stations?.first(where: {
                         $0.transport_type == "train" || $0.transport_type == "suburban"
@@ -209,7 +210,7 @@ extension APIClient {
         return unique.sorted { $0.name < $1.name }
     }
     
-    private func extractStationsForCity(from response: Operations.getStationsList.Output, city: String) async throws -> [Station] {
+    func extractStationsForCity(from response: Operations.getStationsList.Output, city: String) async throws -> [Station] {
         switch response {
         case .ok(let okResponse):
             switch okResponse.body {
@@ -228,7 +229,7 @@ extension APIClient {
         }
     }
     
-    private func filterStationsForCity(from response: Components.Schemas.AllStationsResponse, city: String) -> [Station] {
+    func filterStationsForCity(from response: Components.Schemas.AllStationsResponse, city: String) -> [Station] {
         var result: [Station] = []
         
         for country in response.countries ?? [] {

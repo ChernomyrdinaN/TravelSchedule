@@ -7,6 +7,7 @@
 
 import Foundation
 
+// MARK: - Navigation
 enum NavigationModels: Hashable, Sendable {
     case citySelection
     case stationSelection(city: String)
