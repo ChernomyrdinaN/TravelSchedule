@@ -11,8 +11,9 @@ struct SettingsView: View {
     @Environment(\.dismiss) private var dismiss
     @AppStorage("isDarkTheme") private var isDarkTheme = false
     @State private var showUserAgreement = false
+
+    @EnvironmentObject private var overlay: AppOverlayCenter
     
-    // MARK: - Body
     var body: some View {
         NavigationStack {
             ZStack {
@@ -58,7 +59,6 @@ struct SettingsView: View {
                     
                     Spacer()
                     
-                    // MARK: - Info Section
                     VStack(spacing: 16) {
                         Text("Приложение использует API «Яндекс.Расписания»")
                             .font(.system(size: 12, weight: .regular))
@@ -73,14 +73,32 @@ struct SettingsView: View {
                     .frame(height: 44)
                     .padding(.bottom, 24)
                 }
+
+                if let apiError = overlay.serverErrorToShow {
+                    ErrorOverlayView(model: ErrorModel.fromAPIError(apiError))
+                        .transition(.move(edge: .top).combined(with: .opacity))
+                }
+
+                if overlay.isInternetDown {
+                    ErrorOverlayView(model: .noInternet)
+                        .transition(.move(edge: .top).combined(with: .opacity))
+                }
             }
-            
-           
+        }
+        .onReceive(NotificationCenter.default.publisher(for: .serverErrorOccurred)) { note in
+            if let code = note.userInfo?["code"] as? Int {
+                overlay.showServerError(.serverError(code))
+            } else {
+                overlay.showServerError(.serverError(0))
+            }
+        }
+        .onDisappear {
+            overlay.clearServerError()
         }
     }
 }
 
-// MARK: - Preview
 #Preview {
     SettingsView()
+        .environmentObject(DIContainer.shared.overlayCenter)
 }

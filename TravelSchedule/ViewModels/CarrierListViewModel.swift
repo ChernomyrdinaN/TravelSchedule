@@ -9,22 +9,19 @@ import Foundation
 
 @MainActor
 final class CarrierListViewModel: ObservableObject {
-    // MARK: - Published Properties
     @Published var carriers: [Carrier] = []
     @Published var filteredCarriers: [Carrier] = []
     @Published var isLoading = false
     @Published var loadError: ErrorModel?
+    @Published var hasEmptyResults = false
     
-    // MARK: - Public Properties
     let fromStation: Station
     let toStation: Station
     let apiClient: APIClient
     
-    // MARK: - Private Properties
     private let allowedTransportTypes: Set<String> = ["train", "suburban"]
     private var currentFilter: CarrierFilter = CarrierFilter()
     
-    // MARK: - Initialization
     init(fromStation: Station, toStation: Station, apiClient: APIClient) {
         self.fromStation = fromStation
         self.toStation = toStation
@@ -37,6 +34,7 @@ extension CarrierListViewModel {
     func loadCarriers() async {
         isLoading = true
         loadError = nil
+        hasEmptyResults = false
         defer { isLoading = false }
         
         do {
@@ -51,7 +49,9 @@ extension CarrierListViewModel {
             let allSegments = response.segments ?? []
             
             if allSegments.isEmpty {
-                self.loadError = .error1
+                self.hasEmptyResults = true
+                self.carriers = []
+                self.filteredCarriers = []
                 return
             }
             
@@ -61,25 +61,30 @@ extension CarrierListViewModel {
             }
             
             if transportFiltered.isEmpty {
-                self.loadError = .error1
+                self.hasEmptyResults = true
+                self.carriers = []
+                self.filteredCarriers = []
                 return
             }
             
             let dedupedSegments = dedupeSegments(transportFiltered)
             
             if dedupedSegments.isEmpty {
-                self.loadError = .error1
+                self.hasEmptyResults = true
+                self.carriers = []
+                self.filteredCarriers = []
                 return
             }
             
             self.carriers = try await mapSegmentsToCarriers(dedupedSegments)
             
             if self.carriers.isEmpty {
-                self.loadError = .error1
-                return
+                self.hasEmptyResults = true
+                self.filteredCarriers = []
+            } else {
+                self.hasEmptyResults = false
+                applyCurrentFilters()
             }
-            
-            applyCurrentFilters()
             
         } catch {
             handleError(error)
@@ -113,6 +118,57 @@ private extension CarrierListViewModel {
         }
 
         self.filteredCarriers = result
+        self.hasEmptyResults = result.isEmpty
+    }
+    
+    func handleError(_ error: Error) {
+        let errorModel: ErrorModel
+        
+        if let urlError = error as? URLError {
+            switch urlError.code {
+            case .notConnectedToInternet, .networkConnectionLost, .cannotConnectToHost:
+                errorModel = .noInternet
+            default:
+                errorModel = .serverError
+            }
+        }
+        else if let apiError = error as? APIError {
+            switch apiError {
+            case .serverError:
+                errorModel = .serverError
+            case .badRequest, .invalidRequest, .invalidStationCode:
+                errorModel = .serverError
+            case .unauthorized:
+                errorModel = .serverError
+            case .notFound:
+                self.hasEmptyResults = true
+                self.carriers = []
+                self.filteredCarriers = []
+                self.loadError = nil
+                return
+            case .networkError(let underlyingError):
+                if let urlError = underlyingError as? URLError {
+                    switch urlError.code {
+                    case .notConnectedToInternet, .networkConnectionLost:
+                        errorModel = .noInternet
+                    default:
+                        errorModel = .serverError
+                    }
+                } else {
+                    errorModel = .serverError
+                }
+            default:
+                errorModel = .serverError
+            }
+        }
+        else {
+            errorModel = .serverError
+        }
+        
+        self.loadError = errorModel
+        self.carriers = []
+        self.filteredCarriers = []
+        self.hasEmptyResults = false
     }
     
     func isTimeInRange(hour: Int, timeOption: CarrierFilter.TimeOption) -> Bool {
@@ -249,25 +305,6 @@ private extension CarrierListViewModel {
         outputFormatter.dateFormat = "d MMMM"
         
         return outputFormatter.string(from: date)
-    }
-    
-    func handleError(_ error: Error) {
-        let errorModel: ErrorModel
-        
-        if let urlError = error as? URLError {
-            switch urlError.code {
-            case .notConnectedToInternet, .networkConnectionLost:
-                errorModel = .error2
-            default:
-                errorModel = .error2
-            }
-        } else {
-            errorModel = .error2
-        }
-        
-        self.loadError = errorModel
-        self.carriers = []
-        self.filteredCarriers = []
     }
     
     var todayYMD: String {

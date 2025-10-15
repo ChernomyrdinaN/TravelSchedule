@@ -31,7 +31,8 @@ private extension CarrierCardView {
         HStack(alignment: .top) {
             carrierLogoImage
                 .frame(width: 38, height: 38)
-                .cornerRadius(8)
+                .background(Color.white)
+                .clipShape(RoundedRectangle(cornerRadius: 8, style: .continuous))
             
             VStack(alignment: .leading, spacing: 4) {
                 Text(carrier.name)
@@ -113,10 +114,12 @@ private extension CarrierCardView {
                     switch phase {
                     case .empty:
                         ProgressView()
+                            .frame(maxWidth: .infinity, maxHeight: .infinity)
                     case .success(let image):
                         image
                             .resizable()
-                            .scaledToFill()
+                            .scaledToFit()
+                            .padding(2)
                     case .failure:
                         placeholderLogo
                     @unknown default:
@@ -127,16 +130,14 @@ private extension CarrierCardView {
                 placeholderLogo
             }
         }
-        .cornerRadius(8)
     }
     
     var placeholderLogo: some View {
-        Rectangle()
-            .fill(Color.ypLightGray)
-            .overlay(
-                Image(systemName: "train.side.front.car")
-                    .foregroundColor(.ypBlack)
-            )
+        ZStack {
+            Color.white
+            Image(systemName: "train.side.front.car")
+                .foregroundColor(.ypBlack)
+        }
     }
 }
 
@@ -155,7 +156,7 @@ private extension CarrierCardView {
 
 // MARK: - Preview
 #Preview {
-    VStack {
+    VStack(spacing: 16) {
         CarrierCardView(
             carrier: Carrier(
                 name: "РЖД",
@@ -172,7 +173,7 @@ private extension CarrierCardView {
         
         CarrierCardView(
             carrier: Carrier(
-                name: "РЖД",
+                name: "Без логотипа",
                 logo: "",
                 transferInfo: nil,
                 date: "17 января",
@@ -185,4 +186,5 @@ private extension CarrierCardView {
         )
     }
     .padding()
+    .frame(width: 360)
 }

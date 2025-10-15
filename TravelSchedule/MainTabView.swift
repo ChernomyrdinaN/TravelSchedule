@@ -11,16 +11,20 @@ import SwiftUI
 struct MainTabView: View {
     @State private var selectedTab = 0
     @AppStorage("isDarkTheme") private var isDarkTheme = false
+
+    @EnvironmentObject private var overlay: AppOverlayCenter
+    @EnvironmentObject private var net: NetworkChecker
     
-    // MARK: - Body
     var body: some View {
         TabView(selection: $selectedTab) {
-            MainView()
-                .tabItem {
-                    Image("icSchedule")
-                        .renderingMode(.template)
-                }
-                .tag(0)
+            NavigationStack {
+                MainView()
+            }
+            .tabItem {
+                Image("icSchedule")
+                    .renderingMode(.template)
+            }
+            .tag(0)
             
             SettingsView()
                 .tabItem {
@@ -33,10 +37,27 @@ struct MainTabView: View {
         .tint(.ypBlack)
         .onAppear {
             configureTabBarToHideText()
+            overlay.isInternetDown = (net.state == .offline)
+            if overlay.isInternetDown {
+                selectedTab = 1
+            }
+        }
+        .onChange(of: selectedTab) { oldValue, newValue in
+            if oldValue == newValue && newValue == 0 {
+                NotificationCenter.default.post(name: .resetMainNavigation, object: nil)
+            }
+        }
+        .onChange(of: net.state) { _, newValue in
+            overlay.isInternetDown = (newValue == .offline)
+            if overlay.isInternetDown {
+                selectedTab = 1
+            }
+        }
+        .onReceive(NotificationCenter.default.publisher(for: .serverErrorOccurred)) { _ in
+            selectedTab = 1
         }
     }
     
-    // MARK: - Private Methods
     private func configureTabBarToHideText() {
         let appearance = UITabBarAppearance()
         appearance.configureWithOpaqueBackground()
@@ -54,7 +75,7 @@ struct MainTabView: View {
     }
 }
 
-// MARK: - Preview
-#Preview {
-    MainTabView()
+extension Notification.Name {
+    static let resetMainNavigation = Notification.Name("resetMainNavigation")
+    static let serverErrorOccurred = Notification.Name("serverErrorOccurred")
 }

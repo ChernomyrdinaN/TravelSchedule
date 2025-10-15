@@ -9,7 +9,6 @@ import Foundation
 import OpenAPIRuntime
 import HTTPTypes
 
-// MARK: - Response Handlers
 extension APIClient {
     func handleNearestStationsResponse(_ response: Operations.getNearestStations.Output) throws -> Components.Schemas.Stations {
         switch response {
@@ -87,7 +86,18 @@ extension APIClient {
                 throw APIError.invalidResponse
             }
         case .undocumented(statusCode: let statusCode, _):
-            throw APIError.unknownStatus(statusCode)
+            switch statusCode {
+            case 400:
+                throw APIError.badRequest
+            case 401:
+                throw APIError.unauthorized
+            case 404:
+                return Components.Schemas.Segments(segments: [])
+            case 500...599:
+                throw APIError.serverError(statusCode)
+            default:
+                throw APIError.unknownStatus(statusCode)
+            }
         @unknown default:
             throw APIError.invalidResponse
         }

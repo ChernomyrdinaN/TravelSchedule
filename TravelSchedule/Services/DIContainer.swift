@@ -6,24 +6,27 @@
 //
 
 import Foundation
-import OpenAPIRuntime
 import OpenAPIURLSession
 
-// MARK: - Dependency Injection Container
-final class DIContainer {
+final class DIContainer: ObservableObject {
     @MainActor static let shared = DIContainer()
-    
+
     let apiClient: APIClient
-    
+    let networkChecker: NetworkChecker
+    let overlayCenter: AppOverlayCenter
+
     private init() {
         let client = Client(
             serverURL: try! Servers.Server1.url(),
             transport: URLSessionTransport()
         )
-        
+
         self.apiClient = APIClient(
             client: client,
             apiKey: Constants.yandexAPIKey
         )
+
+        self.networkChecker = NetworkChecker()
+        self.overlayCenter  = AppOverlayCenter()
     }
 }

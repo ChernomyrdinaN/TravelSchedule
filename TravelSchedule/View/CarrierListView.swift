@@ -15,7 +15,6 @@ struct CarrierListView: View {
     @State private var rotationDegrees: Double = 0
     @State private var isLoaderAnimating = false
     
-    // MARK: - Initialization
     init(fromStation: Station,
          toStation: Station,
          navigationPath: Binding<NavigationPath>,
@@ -30,24 +29,26 @@ struct CarrierListView: View {
         self._filter = filter
     }
     
-    // MARK: - Body
     var body: some View {
         ZStack {
             Color.ypWhite.ignoresSafeArea()
             
             if viewModel.isLoading {
                 loadingView
+            } else if let loadError = viewModel.loadError {
+                ErrorView(errorModel: loadError)
+                    .onTapGesture {
+                        navigationPath.removeLast(navigationPath.count)
+                    }
+            } else if viewModel.hasEmptyResults || viewModel.filteredCarriers.isEmpty {
+                emptyStateView
             } else {
                 mainContent
             }
         }
         .navigationBarBackButtonHidden(true)
-        .toolbar {
-            ToolbarItem(placement: .navigationBarLeading) {
-                backButton
-            }
-        }
-        .toolbar(.hidden, for: .tabBar)
+        .toolbar(.hidden, for: .navigationBar)
+        .toolbar(viewModel.loadError != nil ? .visible : .hidden, for: .tabBar)
         .task {
             await viewModel.loadCarriers()
         }
@@ -61,6 +62,14 @@ struct CarrierListView: View {
 private extension CarrierListView {
     var mainContent: some View {
         VStack(spacing: .zero) {
+            HStack {
+                backButton
+                    .padding(.leading, 8)
+                
+                Spacer()
+            }
+            .padding(.bottom, 8)
+            
             headerView
                 .padding(.top, 16)
                 .background(Color.ypWhite)
@@ -81,17 +90,11 @@ private extension CarrierListView {
     
     @ViewBuilder
     var contentView: some View {
-        if let loadError = viewModel.loadError {
-            ErrorView(errorModel: loadError)
-        } else if viewModel.filteredCarriers.isEmpty {
-            emptyStateView
-        } else {
-            ZStack(alignment: .bottom) {
-                carriersList
-                clarifyTimeButton
-                    .padding(.horizontal, 16)
-                    .padding(.bottom, 24)
-            }
+        ZStack(alignment: .bottom) {
+            carriersList
+            clarifyTimeButton
+                .padding(.horizontal, 16)
+                .padding(.bottom, 24)
         }
     }
     
@@ -158,21 +161,34 @@ private extension CarrierListView {
     
     var emptyStateView: some View {
         VStack(spacing: .zero) {
+            HStack {
+                backButton
+                    .padding(.leading, 16)
+                    .padding(.top, 16)
+                
+                Spacer()
+            }
+            
             Text("Вариантов нет")
                 .font(.system(size: 24, weight: .bold))
                 .foregroundColor(.ypBlack)
                 .multilineTextAlignment(.center)
                 .kerning(0)
-                .padding(.top, 237)
+                .padding(.top, 260)
             Spacer()
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
     }
     
     var backButton: some View {
-        Button(action: { navigationPath.removeLast() }) {
-            Image(systemName: "chevron.left")
-                .foregroundColor(.ypBlack)
+        Button(action: {
+            navigationPath.removeLast(navigationPath.count)
+        }) {
+            HStack(spacing: 4) {
+                Image(systemName: "chevron.left")
+                    .font(.system(size: 16, weight: .medium))
+            }
+            .foregroundColor(.ypBlack)
         }
     }
 }

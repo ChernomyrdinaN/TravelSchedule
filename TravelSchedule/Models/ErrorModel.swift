@@ -12,22 +12,46 @@ struct ErrorModel: Sendable {
     let title: String
     let imageName: String
     
-    // MARK: - Error Type
     enum ErrorType {
         case noInternet
         case serverError
+        case notFound
+        case unauthorized
+        case badRequest
     }
     
-    // MARK: - Static Instances
-    static let error1 = ErrorModel(
-        type: .noInternet,
+    static let serverError = ErrorModel(
+        type: .serverError,
         title: "Ошибка сервера",
         imageName: "error1"
     )
     
-    static let error2 = ErrorModel(
-        type: .serverError,
+    static let noInternet = ErrorModel(
+        type: .noInternet,
         title: "Нет интернета",
         imageName: "error2"
     )
+    
+    static func from(apiError: APIError) -> ErrorModel {
+        switch apiError {
+        case .unauthorized:
+            return .serverError
+        case .notFound:
+            return .serverError
+        case .serverError:
+            return .serverError
+        case .badRequest, .invalidRequest:
+            return .serverError
+        case .networkError(let error as URLError) where error.code == URLError.Code.notConnectedToInternet:
+            return .noInternet
+        case .networkError, .invalidResponse, .invalidStationCode, .decodingError, .unknownStatus:
+            return .serverError
+        }
+    }
+}
+
+extension ErrorModel {
+    static func fromAPIError(_ apiError: APIError) -> ErrorModel {
+        return from(apiError: apiError)
+    }
 }

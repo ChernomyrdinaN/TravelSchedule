@@ -18,6 +18,7 @@ enum APIError: Error {
     case serverError(Int)
     case invalidStationCode
     case invalidRequest
+    case badRequest 
 }
 
 // MARK: - Localized Error
@@ -40,7 +41,7 @@ extension APIError: LocalizedError {
             return "Ошибка сервера: \(statusCode)"
         case .invalidStationCode:
             return "Неверный код станции"
-        case .invalidRequest:
+        case .invalidRequest, .badRequest:
             return "Неверный запрос"
         }
     }
