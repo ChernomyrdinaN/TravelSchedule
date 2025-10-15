@@ -109,7 +109,6 @@ struct MainView: View {
             }
         }
         .onAppear {
-            // Откладываем инициализацию overlay
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
                 isOverlayReady = true
                 overlay.clearServerError()
