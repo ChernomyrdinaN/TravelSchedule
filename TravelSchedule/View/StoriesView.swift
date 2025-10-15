@@ -5,17 +5,11 @@
 //  Created by Наталья Черномырдина on 08.09.2025.
 //
 
-//
-//  StoriesView.swift
-//  TravelSchedule
-//
-//  Created by Наталья Черномырдина on 08.09.2025.
-//
-
 import SwiftUI
 
 private struct StorySelection: Identifiable { let id: Int }
 
+// MARK: - Stories View
 struct StoriesView: View {
     @State private var stories = [
         StoryItem(slides: [
@@ -75,6 +69,7 @@ struct StoriesView: View {
         }
     }
     
+    // MARK: - Private Views
     private var storiesScrollView: some View {
         ScrollView(.horizontal, showsIndicators: false) {
             HStack(spacing: 12) {

@@ -5,10 +5,15 @@
 //  Created by Наталья Черномырдина on 15.10.2025.
 //
 
-import Foundation
 import Network
+import Foundation
 
-enum ConnectivityState { case online, offline }
+// MARK: - Connectivity State
+enum ConnectivityState {
+    case online, offline
+}
+
+// MARK: - Network Connectivity Checker
 
 final class NetworkChecker: ObservableObject {
     @Published private(set) var state: ConnectivityState = .online

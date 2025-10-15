@@ -10,6 +10,7 @@ import SwiftUI
 struct ErrorView: View {
     let errorModel: ErrorModel
 
+    // MARK: - Body
     var body: some View {
         VStack(spacing: 20) {
             Spacer()

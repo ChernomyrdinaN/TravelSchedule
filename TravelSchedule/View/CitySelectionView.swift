@@ -7,7 +7,6 @@
 
 import SwiftUI
 
-// MARK: - CitySelectionView
 struct CitySelectionView: View {
     @Environment(\.dismiss) private var dismiss
     @Binding var selectedStation: Station?

@@ -7,6 +7,7 @@
 
 import Foundation
 
+// MARK: - App Overlay Center
 final class AppOverlayCenter: ObservableObject {
     @Published var isInternetDown: Bool = false
     @Published var serverErrorToShow: APIError? = nil

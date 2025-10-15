@@ -8,6 +8,7 @@
 import Foundation
 import OpenAPIURLSession
 
+// MARK: - Dependency Injection Container
 final class DIContainer: ObservableObject {
     @MainActor static let shared = DIContainer()
 

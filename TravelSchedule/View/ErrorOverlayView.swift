@@ -9,7 +9,8 @@ import SwiftUI
 
 struct ErrorOverlayView: View {
     let model: ErrorModel
-
+    
+    // MARK: - Body
     var body: some View {
         Color.clear
             .safeAreaInset(edge: .top) {

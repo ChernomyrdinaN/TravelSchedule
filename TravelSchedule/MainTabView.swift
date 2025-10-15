@@ -8,6 +8,13 @@
 
 import SwiftUI
 
+// MARK: - Notification Names Extension
+extension Notification.Name {
+    static let resetMainNavigation = Notification.Name("resetMainNavigation")
+    static let serverErrorOccurred = Notification.Name("serverErrorOccurred")
+}
+
+// MARK: - Main Tab View
 struct MainTabView: View {
     @State private var selectedTab = 0
     @AppStorage("isDarkTheme") private var isDarkTheme = false
@@ -58,6 +65,7 @@ struct MainTabView: View {
         }
     }
     
+    // MARK: - Private Methods
     private func configureTabBarToHideText() {
         let appearance = UITabBarAppearance()
         appearance.configureWithOpaqueBackground()
@@ -73,9 +81,4 @@ struct MainTabView: View {
         UITabBar.appearance().standardAppearance = appearance
         UITabBar.appearance().scrollEdgeAppearance = appearance
     }
-}
-
-extension Notification.Name {
-    static let resetMainNavigation = Notification.Name("resetMainNavigation")
-    static let serverErrorOccurred = Notification.Name("serverErrorOccurred")
 }

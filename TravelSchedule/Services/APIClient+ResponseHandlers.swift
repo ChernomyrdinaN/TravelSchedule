@@ -4,12 +4,14 @@
 //
 //  Created by Наталья Черномырдина on 05.10.2025.
 //
-
 import Foundation
 import OpenAPIRuntime
 import HTTPTypes
 
+// MARK: - API Response Handlers Extension
 extension APIClient {
+    
+    // MARK: - Nearest Stations Response
     func handleNearestStationsResponse(_ response: Operations.getNearestStations.Output) throws -> Components.Schemas.Stations {
         switch response {
         case .ok(let okResponse):
@@ -26,6 +28,7 @@ extension APIClient {
         }
     }
     
+    // MARK: - All Stations Response
     func handleAllStationsResponse(_ response: Operations.getStationsList.Output) async throws -> Components.Schemas.AllStationsResponse {
         switch response {
         case .ok(let okResponse):
@@ -44,6 +47,7 @@ extension APIClient {
         }
     }
     
+    // MARK: - Carrier Response
     func handleCarrierResponse(_ response: Operations.getCarrier.Output) throws -> Components.Schemas.CarrierResponse {
         switch response {
         case .ok(let okResponse):
@@ -60,6 +64,7 @@ extension APIClient {
         }
     }
     
+    // MARK: - Nearest Settlement Response
     func handleNearestSettlementResponse(_ response: Operations.getNearestSettlement.Output) throws -> Components.Schemas.NearestSettlementResponse {
         switch response {
         case .ok(let okResponse):
@@ -76,6 +81,7 @@ extension APIClient {
         }
     }
     
+    // MARK: - Schedule Between Stations Response
     func handleScheduleBetweenStationsResponse(_ response: Operations.getScheduleBetweenStations.Output) throws -> Components.Schemas.Segments {
         switch response {
         case .ok(let okResponse):
@@ -103,6 +109,7 @@ extension APIClient {
         }
     }
     
+    // MARK: - Schedule On Station Response
     func handleScheduleOnStationResponse(_ response: Operations.getScheduleOnStation.Output) throws -> Components.Schemas.ScheduleResponse {
         switch response {
         case .ok(let okResponse):
@@ -119,6 +126,7 @@ extension APIClient {
         }
     }
     
+    // MARK: - Thread Stations Response
     func handleThreadStationsResponse(_ response: Operations.getThread.Output) throws -> Components.Schemas.ThreadStationsResponse {
         switch response {
         case .ok(let okResponse):
@@ -135,6 +143,7 @@ extension APIClient {
         }
     }
     
+    // MARK: - HTML Response Handler
     func handleHTMLResponse(_ body: HTTPBody) async throws -> Components.Schemas.AllStationsResponse {
         var data = Data()
         for try await chunk in body {

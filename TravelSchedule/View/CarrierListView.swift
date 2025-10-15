@@ -15,6 +15,7 @@ struct CarrierListView: View {
     @State private var rotationDegrees: Double = 0
     @State private var isLoaderAnimating = false
     
+    // MARK: - Init
     init(fromStation: Station,
          toStation: Station,
          navigationPath: Binding<NavigationPath>,

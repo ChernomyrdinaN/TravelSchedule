@@ -14,6 +14,7 @@ struct SettingsView: View {
 
     @EnvironmentObject private var overlay: AppOverlayCenter
     
+    // MARK: - Body
     var body: some View {
         NavigationStack {
             ZStack {

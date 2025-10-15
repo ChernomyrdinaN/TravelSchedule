@@ -18,7 +18,7 @@ final class CarrierInfoViewModel: ObservableObject {
     let carrier: Carrier
     let apiClient: APIClient
     
-    // MARK: - Initialization
+    // MARK: - Init
     init(carrier: Carrier, apiClient: APIClient) {
         self.carrier = carrier
         self.apiClient = apiClient

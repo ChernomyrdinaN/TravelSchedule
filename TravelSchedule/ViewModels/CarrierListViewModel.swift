@@ -22,6 +22,7 @@ final class CarrierListViewModel: ObservableObject {
     private let allowedTransportTypes: Set<String> = ["train", "suburban"]
     private var currentFilter: CarrierFilter = CarrierFilter()
     
+    // MARK: - Init
     init(fromStation: Station, toStation: Station, apiClient: APIClient) {
         self.fromStation = fromStation
         self.toStation = toStation

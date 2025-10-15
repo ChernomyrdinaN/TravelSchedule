@@ -7,6 +7,7 @@
 
 import SwiftUI
 
+// MARK: - Travel Schedule App
 @main
 struct TravelScheduleApp: App {
     @StateObject private var container = DIContainer.shared

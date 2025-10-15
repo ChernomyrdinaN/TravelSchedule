@@ -15,6 +15,7 @@ struct MainView: View {
 
     @EnvironmentObject private var overlay: AppOverlayCenter
     
+    // MARK: - Body
     var body: some View {
         NavigationStack(path: $navigationPath) {
             ZStack {
@@ -111,6 +112,7 @@ struct MainView: View {
         }
     }
     
+    // MARK: - Private Methods
     private func showCitySelection(isFrom: Bool) {
         isSelectingFrom = isFrom
         navigationPath.append(NavigationModels.citySelection)
@@ -134,6 +136,7 @@ struct MainView: View {
     }
 }
 
+// MARK: - Preview
 #Preview {
     MainView()
         .environmentObject(DIContainer.shared.overlayCenter)

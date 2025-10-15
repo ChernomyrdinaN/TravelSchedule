@@ -7,7 +7,6 @@
 
 import SwiftUI
 
-// MARK: - StationSelectionView
 struct StationSelectionView: View {
     @Environment(\.dismiss) private var dismiss
     @Binding var selectedStation: Station?
@@ -26,6 +25,7 @@ struct StationSelectionView: View {
         self._viewModel = StateObject(wrappedValue: StationSelectionViewModel(city: city))
     }
     
+    // MARK: - Body
     var body: some View {
         ZStack {
             Color.ypWhite

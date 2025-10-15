@@ -7,7 +7,6 @@
 
 import Foundation
 
-// MARK: - CitySelectionViewModel
 @MainActor
 final class CitySelectionViewModel: ObservableObject {
     @Published var cities: [Station] = []

@@ -9,7 +9,7 @@ struct CarrierInfoView: View {
     @Environment(\.dismiss) private var dismiss
     @StateObject private var viewModel: CarrierInfoViewModel
     
-    // MARK: - Initialization
+    // MARK: - Init
     init(carrier: Carrier, apiClient: APIClient) {
         _viewModel = StateObject(wrappedValue: CarrierInfoViewModel(carrier: carrier, apiClient: apiClient))
     }
