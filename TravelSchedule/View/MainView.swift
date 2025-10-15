@@ -12,6 +12,7 @@ struct MainView: View {
     @State private var navigationPath = NavigationPath()
     @State private var isSelectingFrom = true
     @State private var filter = CarrierFilter()
+    @State private var isOverlayReady = false
 
     @EnvironmentObject private var overlay: AppOverlayCenter
     
@@ -47,7 +48,7 @@ struct MainView: View {
                     Spacer()
                 }
 
-                if overlay.isInternetDown {
+                if isOverlayReady && overlay.isInternetDown {
                     ErrorOverlayView(model: .noInternet)
                         .transition(.move(edge: .top).combined(with: .opacity))
                         .zIndex(10)
@@ -108,7 +109,11 @@ struct MainView: View {
             }
         }
         .onAppear {
-            overlay.clearServerError()
+            // Откладываем инициализацию overlay
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+                isOverlayReady = true
+                overlay.clearServerError()
+            }
         }
     }
     

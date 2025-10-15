@@ -10,6 +10,6 @@ import Foundation
 enum Constants {
     
     // MARK: - API Configuration
-    static let yandexAPIKey = "17dbdf13-ff18-4549-bbc7-ca3b8cd8b04b"
+    static let yandexAPIKey = "94dc75e0-c117-4d78-91ed-83b6125dc143"
     static let yandexAPIBaseURL = "https://api.rasp.yandex-net.ru/v3.0"
 }
