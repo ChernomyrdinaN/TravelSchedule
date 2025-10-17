@@ -28,14 +28,14 @@ struct MainTabView: View {
                 MainView()
             }
             .tabItem {
-                Image("icSchedule")
+                Image(.icSchedule)
                     .renderingMode(.template)
             }
             .tag(0)
             
             SettingsView()
                 .tabItem {
-                    Image("icSettings")
+                    Image(.icSettings)
                         .renderingMode(.template)
                 }
                 .tag(1)

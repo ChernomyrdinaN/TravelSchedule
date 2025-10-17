@@ -13,7 +13,7 @@ public actor APIClient {
     private let client: Client
     private let apiKey: String
     
-    public init(client: Client, apiKey: String) {
+    init(client: Client, apiKey: String) {
         self.client = client
         self.apiKey = apiKey
     }
@@ -21,7 +21,7 @@ public actor APIClient {
 
 // MARK: - Public Methods
 extension APIClient {
-    public func getAllStations() async throws -> Components.Schemas.AllStationsResponse {
+    func getAllStations() async throws -> Components.Schemas.AllStationsResponse {
         let response = try await client.getStationsList(query: .init(
             apikey: apiKey,
             format: "json",
@@ -30,7 +30,7 @@ extension APIClient {
         return try await handleAllStationsResponse(response)
     }
     
-    public func getStationsForCity(_ city: String) async throws -> [Station] {
+    func getStationsForCity(_ city: String) async throws -> [Station] {
         let response = try await client.getStationsList(query: .init(
             apikey: apiKey,
             format: "json",
@@ -39,7 +39,7 @@ extension APIClient {
         return try await extractStationsForCity(from: response, city: city)
     }
     
-    public func getRussianCities() async throws -> [Station] {
+    func getRussianCities() async throws -> [Station] {
         let response = try await client.getStationsList(query: .init(
             apikey: apiKey,
             format: "json",
@@ -48,7 +48,7 @@ extension APIClient {
         return try await extractRussianCities(from: response)
     }
     
-    public func getNearestStations(
+    func getNearestStations(
         lat: Double,
         lng: Double,
         distance: Int
@@ -62,7 +62,7 @@ extension APIClient {
         return try handleNearestStationsResponse(response)
     }
     
-    public func getCarrierInfo(
+    func getCarrierInfo(
         code: String,
         system: String? = nil
     ) async throws -> Components.Schemas.CarrierResponse {
@@ -74,7 +74,7 @@ extension APIClient {
         return try handleCarrierResponse(response)
     }
     
-    public func getNearestSettlement(
+    func getNearestSettlement(
         lat: Double,
         lng: Double,
         distance: Int
@@ -88,7 +88,7 @@ extension APIClient {
         return try handleNearestSettlementResponse(response)
     }
     
-    public func getScheduleBetweenStations(
+    func getScheduleBetweenStations(
         from: String,
         to: String,
         date: String,
@@ -106,7 +106,7 @@ extension APIClient {
         return try handleScheduleBetweenStationsResponse(response)
     }
     
-    public func getScheduleOnStation(
+    func getScheduleOnStation(
         station: String,
         date: String? = nil,
         transportTypes: String? = nil,
@@ -122,7 +122,7 @@ extension APIClient {
         return try handleScheduleOnStationResponse(response)
     }
     
-    public func getThread(
+    func getThread(
         uid: String,
         from: String? = nil,
         to: String? = nil,
@@ -177,37 +177,35 @@ private extension APIClient {
     }
     
     func filterRussianCities(from response: Components.Schemas.AllStationsResponse) -> [Station] {
-        var result: [Station] = []
-        
-        for country in response.countries ?? [] {
-            let isRussiaByTitle = (country.title?.localizedCaseInsensitiveContains("россия") ?? false)
-            let isRussiaByCode = (country.codes?.yandex_code == "RU")
-            if !(isRussiaByTitle || isRussiaByCode) { continue }
-            
-            for region in country.regions ?? [] {
-                for settlement in region.settlements ?? [] {
-                    guard let cityTitle = settlement.title?.trimmingCharacters(in: .whitespacesAndNewlines),
-                          !cityTitle.isEmpty else { continue }
-                    
-                    if let firstRailwayStation = settlement.stations?.first(where: {
-                        $0.transport_type == "train" || $0.transport_type == "suburban"
-                    }) {
-                        guard let stationCode = firstRailwayStation.codes?.yandex_code,
-                              !stationCode.isEmpty else { continue }
-                        
-                        let station = Station(
-                            name: cityTitle,
-                            code: stationCode,
-                            transportType: firstRailwayStation.transport_type
-                        )
-                        result.append(station)
-                    }
-                }
+        response.countries?
+            .filter { country in
+                let isRussiaByTitle = country.title?.localizedCaseInsensitiveContains("россия") ?? false
+                let isRussiaByCode = country.codes?.yandex_code == "RU"
+                return isRussiaByTitle || isRussiaByCode
             }
-        }
-        
-        let unique = Dictionary(grouping: result, by: { $0.code }).compactMap { $0.value.first }
-        return unique.sorted { $0.name < $1.name }
+            .flatMap { $0.regions ?? [] }
+            .flatMap { $0.settlements ?? [] }
+            .compactMap { settlement -> Station? in
+                guard let cityTitle = settlement.title?.trimmingCharacters(in: .whitespacesAndNewlines),
+                      !cityTitle.isEmpty,
+                      let station = settlement.stations?.first(where: {
+                          $0.transport_type == "train" || $0.transport_type == "suburban"
+                      }),
+                      let stationCode = station.codes?.yandex_code,
+                      !stationCode.isEmpty else {
+                    return nil
+                }
+                return Station(
+                    name: cityTitle,
+                    code: stationCode,
+                    transportType: station.transport_type
+                )
+            }
+            .reduce(into: [:]) { unique, station in
+                unique[station.code] = station
+            }
+            .values
+            .sorted { $0.name < $1.name } ?? []
     }
     
     func extractStationsForCity(from response: Operations.getStationsList.Output, city: String) async throws -> [Station] {

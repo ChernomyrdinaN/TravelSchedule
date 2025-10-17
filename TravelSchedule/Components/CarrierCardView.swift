@@ -17,7 +17,7 @@ struct CarrierCardView: View {
             timeSection
         }
         .padding(16)
-        .cornerRadius(12)
+        .clipShape(RoundedRectangle(cornerRadius: 12))
         .overlay(
             RoundedRectangle(cornerRadius: 12)
                 .stroke(Color.ypLightGray, lineWidth: 1)
@@ -54,21 +54,22 @@ private extension CarrierCardView {
         }
     }
     
-    @ViewBuilder
     var timeSection: some View {
-        if carrier.departureTime == "Уточнить время" {
+        ZStack {
             clarificationButton
-        } else {
+                .opacity(carrier.departureTime == "Уточнить время" ? 1 : 0)
+            
             scheduleView
+                .opacity(carrier.departureTime == "Уточнить время" ? 0 : 1)
         }
     }
-    
+
     var clarificationButton: some View {
         Button(action: onTimeClarificationTapped) {
             Text("Уточнить время")
                 .font(.system(size: 17, weight: .regular))
                 .foregroundColor(.ypBlueUniversal)
-                .frame(maxWidth: .infinity, alignment: .center)
+                .frame(maxWidth: .infinity)
         }
     }
     

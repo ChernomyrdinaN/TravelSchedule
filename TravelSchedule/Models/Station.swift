@@ -8,9 +8,9 @@
 import Foundation
 
 // MARK: - Station
-public struct Station: Identifiable, Hashable, Sendable {
-    public let id = UUID()
-    public let name: String
-    public let code: String
-    public let transportType: String? 
+struct Station: Identifiable, Hashable, Sendable {
+     let id = UUID()
+     let name: String
+     let code: String
+     let transportType: String? 
 }

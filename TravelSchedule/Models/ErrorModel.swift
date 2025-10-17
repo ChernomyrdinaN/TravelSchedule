@@ -35,17 +35,17 @@ struct ErrorModel: Sendable {
     static func from(apiError: APIError) -> ErrorModel {
         switch apiError {
         case .unauthorized:
-            return .serverError
+             .serverError
         case .notFound:
-            return .serverError
+             .serverError
         case .serverError:
-            return .serverError
+             .serverError
         case .badRequest, .invalidRequest:
-            return .serverError
+             .serverError
         case .networkError(let error as URLError) where error.code == URLError.Code.notConnectedToInternet:
-            return .noInternet
+             .noInternet
         case .networkError, .invalidResponse, .invalidStationCode, .decodingError, .unknownStatus:
-            return .serverError
+             .serverError
         }
     }
 }

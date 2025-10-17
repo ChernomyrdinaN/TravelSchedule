@@ -33,12 +33,8 @@ final class CitySelectionViewModel: ObservableObject {
     }
     
     func filterCities(searchText: String) {
-        if searchText.isEmpty {
-            filteredCities = cities
-        } else {
-            filteredCities = cities.filter { city in
-                city.name.localizedCaseInsensitiveContains(searchText)
-            }
+            filteredCities = searchText.isEmpty ? cities : cities.filter { city in
+               city.name.localizedCaseInsensitiveContains(searchText)
         }
     }
     

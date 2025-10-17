@@ -81,7 +81,7 @@ private extension StationSelectionViewModel {
             }
             
         } catch {
-            print("Empty statons list")
+            print("Empty stations list")
         }
     }
     

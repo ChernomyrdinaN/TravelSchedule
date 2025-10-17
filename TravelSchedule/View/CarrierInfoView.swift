@@ -72,8 +72,7 @@ private extension CarrierInfoView {
         .frame(maxWidth: .infinity, maxHeight: 104)
         .background(.ypWhiteUniversal)
         .cornerRadius(24)
-        .padding(.horizontal, 16)
-        .padding(.bottom, 16)
+        .padding([.horizontal, .bottom], 16)
     }
     
     var carrierInfo: some View {
@@ -82,8 +81,7 @@ private extension CarrierInfoView {
                 .font(.system(size: 24, weight: .bold))
                 .foregroundColor(.ypBlack)
                 .frame(maxWidth: .infinity, alignment: .leading)
-                .padding(.horizontal, 16)
-                .padding(.bottom, 16)
+                .padding([.horizontal, .bottom], 16)
             
             contactInfo
         }
@@ -115,8 +113,7 @@ private extension CarrierInfoView {
                     .frame(maxWidth: .infinity, alignment: .leading)
             }
         }
-        .padding(.vertical, 16)
-        .padding(.horizontal, 16)
+        .padding(16)
     }
     
     var phoneSection: some View {

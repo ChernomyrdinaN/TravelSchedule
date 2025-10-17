@@ -10,7 +10,7 @@ import Foundation
 // MARK: - App Overlay Center
 final class AppOverlayCenter: ObservableObject {
     @Published var isInternetDown: Bool = false
-    @Published var serverErrorToShow: APIError? = nil
+    @Published var serverErrorToShow: APIError?
 
     func showServerError(_ err: APIError) { serverErrorToShow = err }
     func clearServerError() { serverErrorToShow = nil }

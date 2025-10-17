@@ -55,10 +55,10 @@ struct CitySelectionView: View {
                 isFirstLoad = false
             }
         }
-        .onChange(of: searchText) { oldValue, newValue in
+        .onChange(of: searchText) { newValue in
             viewModel.filterCities(searchText: newValue)
         }
-        .onChange(of: viewModel.isLoading) { oldValue, newValue in
+        .onChange(of: viewModel.isLoading) { newValue in
             if newValue && isFirstLoad {
                 startLoaderAnimation()
             }

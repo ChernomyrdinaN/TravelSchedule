@@ -17,10 +17,15 @@ final class DIContainer: ObservableObject {
     let overlayCenter: AppOverlayCenter
 
     private init() {
-        let client = Client(
-            serverURL: try! Servers.Server1.url(),
-            transport: URLSessionTransport()
-        )
+        let client: Client
+        do {
+            client = try Client(
+                serverURL: Servers.Server1.url(),
+                transport: URLSessionTransport()
+            )
+        } catch {
+            fatalError("Failed to create Client: \(error)")
+        }
 
         self.apiClient = APIClient(
             client: client,
@@ -28,6 +33,6 @@ final class DIContainer: ObservableObject {
         )
 
         self.networkChecker = NetworkChecker()
-        self.overlayCenter  = AppOverlayCenter()
+        self.overlayCenter = AppOverlayCenter()
     }
 }

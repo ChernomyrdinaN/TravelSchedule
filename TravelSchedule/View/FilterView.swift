@@ -155,11 +155,11 @@ struct FilterView: View {
                 .frame(maxWidth: .infinity)
                 .frame(height: 60)
                 .background(.ypBlueUniversal)
-                .cornerRadius(12)
+                .clipShape(RoundedRectangle(cornerRadius: 12))
         }
         .buttonStyle(PlainButtonStyle())
         .background(Color.ypLightGray)
-        .cornerRadius(12)
+        .clipShape(RoundedRectangle(cornerRadius: 12))
     }
     
     // MARK: - Private Properties
