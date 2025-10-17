@@ -7,13 +7,16 @@
 
 import SwiftUI
 
+// MARK: - Travel Schedule App
 @main
 struct TravelScheduleApp: App {
-    
-    // MARK: - Body
+    @StateObject private var container = DIContainer.shared
+
     var body: some Scene {
         WindowGroup {
             MainTabView()
+                .environmentObject(container.overlayCenter)
+                .environmentObject(container.networkChecker)
         }
     }
 }

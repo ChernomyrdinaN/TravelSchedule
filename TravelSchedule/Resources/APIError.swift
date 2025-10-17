@@ -16,6 +16,9 @@ enum APIError: Error {
     case unauthorized
     case notFound
     case serverError(Int)
+    case invalidStationCode
+    case invalidRequest
+    case badRequest 
 }
 
 // MARK: - Localized Error
@@ -36,6 +39,10 @@ extension APIError: LocalizedError {
             return "Ресурс не найден"
         case .serverError(let statusCode):
             return "Ошибка сервера: \(statusCode)"
+        case .invalidStationCode:
+            return "Неверный код станции"
+        case .invalidRequest, .badRequest:
+            return "Неверный запрос"
         }
     }
 }

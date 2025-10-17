@@ -7,7 +7,5 @@
 		<key>UIApplicationSupportsMultipleScenes</key>
 		<false/>
 	</dict>
-    <key>UILaunchStoryboardName</key>
-    <string>LaunchScreen</string>
 </dict>
 </plist>

@@ -1,0 +1,88 @@
+//
+//  StationSelectionViewModel.swift
+//  TravelSchedule
+//
+//  Created by Наталья Черномырдина on 05.10.2025.
+//
+
+import Foundation
+
+// MARK: - StationSelectionViewModel
+@MainActor
+final class StationSelectionViewModel: ObservableObject {
+    @Published var stations: [Station] = []
+    @Published var filteredStations: [Station] = []
+    @Published var isLoading = false
+    @Published var showingError: ErrorModel.ErrorType?
+    @Published var isUsingMockData = true
+    
+    private let apiClient: APIClient
+    private let city: String
+    
+    init(city: String, apiClient: APIClient = DIContainer.shared.apiClient) {
+        self.city = city
+        self.apiClient = apiClient
+    }
+    
+    func loadStations() async {
+        isLoading = true
+        defer { isLoading = false }
+        
+        let isAPIAvailable = await checkAPIAvailability()
+        
+        if isAPIAvailable {
+            await loadStationsFromAPI()
+        } else {
+            print("Empty stations list")
+        }
+    }
+    
+    func filterStations(searchText: String) {
+        if searchText.isEmpty {
+            filteredStations = stations
+        } else {
+            filteredStations = stations.filter { station in
+                station.name.localizedCaseInsensitiveContains(searchText)
+            }
+        }
+    }
+    
+    func hideError() {
+        showingError = nil
+    }
+    
+    func prepareForLoading() {
+        isLoading = true
+        filteredStations = []
+    }
+}
+
+// MARK: - Private Methods
+private extension StationSelectionViewModel {
+    func checkAPIAvailability() async -> Bool {
+        do {
+            _ = try await apiClient.getAllStations()
+            return true
+        } catch {
+            return false
+        }
+    }
+    
+    func loadStationsFromAPI() async {
+        do {
+            let apiStations = try await apiClient.getStationsForCity(city)
+            
+            if apiStations.isEmpty {
+                print("Empty statons list")
+            } else {
+                stations = apiStations
+                filteredStations = stations
+                isUsingMockData = false
+            }
+            
+        } catch {
+            print("Empty statons list")
+        }
+    }
+    
+}
